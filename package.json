@@ -14,5 +14,8 @@
   "type": "module",
   "workspaces": [
     "src/pickme_frontend"
-  ]
+  ],
+  "dependencies": {
+    "@dfinity/auth-client": "^1.3.0"
+  }
 }
