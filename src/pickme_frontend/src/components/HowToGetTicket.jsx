@@ -12,23 +12,23 @@ export default function HowToUse() {
 
     return (
         <div>
-            <div class="line"></div>
+            <div className="line"></div>
 
-            <div class="container py-lg-5">
-                <div class="row g-4">
-                    <div class="col-12 text-center mb-lg-5">
-                        <div class="text-uppercase color ls-3 fw-bold mb-2">How to do</div>
-                        <h2 class="display-5 fw-bold mb-0">Simple steps to get your ticket</h2>
+            <div className="container py-lg-5">
+                <div className="row g-4">
+                    <div className="col-12 text-center mb-lg-5">
+                        <div className="text-uppercase color ls-3 fw-bold mb-2">How to do</div>
+                        <h2 className="display-5 fw-bold mb-0">Simple steps to get your ticket</h2>
                     </div>
-                    <div class="clear"></div>
+                    <div className="clear"></div>
 
                     {steps.map(step => (
-                        <div class="col-md-4">
-                            <div class="card rounded-6 card-bg-dark text-center">
-                                <div class="card-body p-5">
-                                    <img src={step.img} alt="..." height="150" class="mb-5"/>
-                                    <h3 class="text-white mb-3">{step.title}</h3>
-                                    <p class="text-white-50">{step.desc}</p>
+                        <div key={step.id} className="col-md-4">
+                            <div className="card rounded-6 card-bg-dark text-center">
+                                <div className="card-body p-5">
+                                    <img src={step.img} alt="..." height="150" className="mb-5"/>
+                                    <h3 className="text-white mb-3">{step.title}</h3>
+                                    <p className="text-white-50">{step.desc}</p>
                                 </div>
                             </div>
                         </div>

@@ -7,9 +7,9 @@ function App() {
   return (
     <main>
 
-      <div class="stretched dark">
+      <div className="stretched dark">
 
-        <div id="wrapper" class="noice-effect overflow-hidden">
+        <div id="wrapper" className="noice-effect overflow-hidden">
           <Navbar/>
           <Home/>
         </div>

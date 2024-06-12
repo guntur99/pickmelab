@@ -12,55 +12,62 @@ let listEvent = [
     { id: 8, img: 'src/assets/theme/images/users/9.jpg', title: 'Humbug', icpCurrency: 243 },
 ];
 
+let listTime = [
+    { id: 0, val: 'Week' },
+    { id: 1, val: 'Month' },
+    { id: 2, val: '3 Month' },
+    { id: 3, val: 'Year' },
+];
+
 export default function TopEvents() {
 
     const [events, setEvents] = useState(listEvent);
+    const [times, setTimes] = useState(listTime);
     
     return (
         <div>
-            <div class="line"></div>
+            <div className="line"></div>
 
-            <div class="container py-lg-5">
-                <div class="row g-4">
-                    <div class="col-12 text-lg-center mb-lg-5">
-                        <div class="text-uppercase color ls-3 fw-bold mb-2">Latest Event</div>
-                        <div class="hstack align-content-center justify-content-center">
-                            <h2 class="display-5 fw-bold mb-0">Top Latest Event in</h2>
-                            <div class="ms-3">
-                                <select class="form-select form-select-lg headeing-select mb-0" aria-label="example">
-                                    <option value="7 Days" selected>a 7 Days</option>
-                                    <option value="1 Month">a month</option>
-                                    <option value="3 Months">3 Months</option>
-                                    <option value="Year">a Year</option>
+            <div className="container py-lg-5">
+                <div className="row g-4">
+                    <div className="col-12 text-lg-center mb-lg-5">
+                        <div className="text-uppercase color ls-3 fw-bold mb-2">Latest Event</div>
+                        <div className="hstack align-content-center justify-content-center">
+                            <h2 className="display-5 fw-bold mb-0">Top Latest Event in</h2>
+                            <div className="ms-3">
+                                <select className="form-select form-select-lg headeing-select mb-0" aria-label="example">
+                                    {times.map(time => (
+                                        <option key={time.id} value={time.val}>{time.val}</option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <div class="clear"></div>
+                    <div className="clear"></div>
 
                     {events.map(event => (
-                        <div class="col-md-4">
-                            <div class="card rounded-6 card-bg-dark">
-                                <div class="card-body p-4">
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col-auto user-rank">#1</div>
-                                        <div class="col-auto">
-                                            <img src={event.img} class="square square-md rounded-6" alt="..."/>
-                                                <span class="position-absolute top-0 mt-1 translate-middle p-2 bg-color border-0 rounded-circle"><span class="visually-hidden">Online</span></span>
+                        <div key={event.id} className="col-md-4">
+                            <div className="card rounded-6 card-bg-dark">
+                                <div className="card-body p-4">
+                                    <div className="row g-3 align-items-center">
+                                        <div className="col-auto user-rank">#1</div>
+                                        <div className="col-auto">
+                                            <img src={event.img} className="square square-md rounded-6" alt="..."/>
+                                                <span className="position-absolute top-0 mt-1 translate-middle p-2 bg-color border-0 rounded-circle"><span className="visually-hidden">Online</span></span>
                                         </div>
-                                        <div class="col">
-                                            <h4 class="mb-0"><a class="text-white" href="#">{event.title}</a></h4>
-                                            <h6 class="card-subtitle m-2 text-white-50">{event.icpCurrency} ICP</h6>
+                                        <div className="col">
+                                            <h4 className="mb-0"><a className="text-white" href="#">{event.title}</a></h4>
+                                            <h6 className="card-subtitle m-2 text-white-50">{event.icpCurrency} ICP</h6>
                                         </div>
-                                        <div class="col-auto">
-                                            <div class="dropdown">
-                                                <button class="btn btn-secondary btn-sm rounded-circle bg-transparent" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="bi-three-dots text-light text-opacity-50"></i>
+                                        <div className="col-auto">
+                                            <div className="dropdown">
+                                                <button className="btn btn-secondary btn-sm rounded-circle bg-transparent" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i className="bi-three-dots text-light text-opacity-50"></i>
                                                 </button>
-                                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
-                                                    <li><a class="dropdown-item" href="#">Facebook</a></li>
-                                                    <li><a class="dropdown-item" href="#">Whatsapp</a></li>
-                                                    <li><a class="dropdown-item" href="#">Email</a></li>
+                                                <ul className="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+                                                    <li><a className="dropdown-item" href="#">Facebook</a></li>
+                                                    <li><a className="dropdown-item" href="#">Whatsapp</a></li>
+                                                    <li><a className="dropdown-item" href="#">Email</a></li>
                                                 </ul>
                                             </div>
                                         </div>
