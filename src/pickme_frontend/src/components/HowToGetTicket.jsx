@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
 let listStep = [
-    { id: 0, img: 'src/assets/theme/images/icons/1.svg', title: 'Create a Free Account', desc: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusantium quos ipsam placeat fuga tenetur earum.' },
-    { id: 1, img: 'src/assets/theme/images/icons/2.png', title: 'Manage your wallet', desc: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusantium quos ipsam placeat fuga tenetur earum.' },
-    { id: 2, img: 'src/assets/theme/images/icons/3.svg', title: 'Buy/sell ticket', desc: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusantium quos ipsam placeat fuga tenetur earum.' },
+    { id: 0, img: '../theme/images/icons/1.svg', title: 'Create a Free Account', desc: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusantium quos ipsam placeat fuga tenetur earum.' },
+    { id: 1, img: '../theme/images/icons/2.png', title: 'Manage your wallet', desc: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusantium quos ipsam placeat fuga tenetur earum.' },
+    { id: 2, img: '../theme/images/icons/3.svg', title: 'Buy/sell ticket', desc: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusantium quos ipsam placeat fuga tenetur earum.' },
 ];
 
 export default function HowToUse() {

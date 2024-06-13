@@ -72,7 +72,7 @@ export default function Navbar() {
                     <div className="header-row">
 
                         <div id="logo" className="me-5">
-                            <a href="#" ><img src="src/assets/theme/images/logo.svg" alt="Pick Me" className="py-3"/></a>
+                            <a href="#" ><img src={`theme/images/logo.svg`} alt="Pick Me" className="py-3"/></a>
                         </div>
 
                         <div className="header-misc ms-auto">

@@ -10,14 +10,14 @@ let listCategory = [
 ];
 
 let listEvent = [
-    { id: 0, img: 'src/assets/theme/images/products/1.jpg', title: 'Live with U in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
-    { id: 1, img: 'src/assets/theme/images/products/2.jpg', title: 'Hipster portrait animal', account: '@alexPoint', icpCurrency: 9.33, dollarCurrency: 19.88 },
-    { id: 2, img: 'src/assets/theme/images/products/3.jpg', title: 'Hipster portrait man', account: '@alexPoint', icpCurrency: 12.33, dollarCurrency: 23.33 },
-    { id: 3, img: 'src/assets/theme/images/products/4.jpg', title: 'Portrait of a woman', account: '@steavejosh', icpCurrency: 3.33, dollarCurrency: 14.33 },
-    { id: 4, img: 'src/assets/theme/images/products/5.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
-    { id: 5, img: 'src/assets/theme/images/products/6.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
-    { id: 6, img: 'src/assets/theme/images/products/7.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
-    { id: 7, img: 'src/assets/theme/images/products/8.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
+    { id: 0, img: '../theme/images/products/1.jpg', title: 'Live with U in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
+    { id: 1, img: '../theme/images/products/2.jpg', title: 'Hipster portrait animal', account: '@alexPoint', icpCurrency: 9.33, dollarCurrency: 19.88 },
+    { id: 2, img: '../theme/images/products/3.jpg', title: 'Hipster portrait man', account: '@alexPoint', icpCurrency: 12.33, dollarCurrency: 23.33 },
+    { id: 3, img: '../theme/images/products/4.jpg', title: 'Portrait of a woman', account: '@steavejosh', icpCurrency: 3.33, dollarCurrency: 14.33 },
+    { id: 4, img: '../theme/images/products/5.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
+    { id: 5, img: '../theme/images/products/6.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
+    { id: 6, img: '../theme/images/products/7.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
+    { id: 7, img: '../theme/images/products/8.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
 ];
 
 export default function BestEventsCategories() {
@@ -58,9 +58,9 @@ export default function BestEventsCategories() {
                                             <img src={event.img} className="rounded-5" alt="..."/>
                                             <div id="nft-counter1" className="nft-counter countdown countdown-inline customjs position-absolute start-0 top-0" data-year="2024" data-month="3" data-day="22" data-format="dHMS"></div>
                                             <div className="bbp-author position-absolute start-0 bottom-0 w-100">
-                                                <a href="#"><img alt="User" src="src/assets/theme/images/authors/3.jpg"/></a>
-                                                <a href="#"><img alt="User" src="src/assets/theme/images/authors/2.jpg"/></a>
-                                                <a href="#"><img alt="User" src="src/assets/theme/images/authors/1.jpg"/></a>
+                                                <a href="#"><img alt="User" src="../theme/images/authors/3.jpg"/></a>
+                                                <a href="#"><img alt="User" src="../theme/images/authors/2.jpg"/></a>
+                                                <a href="#"><img alt="User" src="../theme/images/authors/1.jpg"/></a>
                                             </div>
                                         </div>
                                         <div className="row justify-content-between">

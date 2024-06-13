@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
 let listPartner = [
-    { id: 0, img: 'src/assets/theme/images/logo/coinbase.svg' },
-    { id: 1, img: 'src/assets/theme/images/logo/binance.svg' },
-    { id: 2, img: 'src/assets/theme/images/logo/opensea.svg' },
-    { id: 3, img: 'src/assets/theme/images/logo/metamask.svg' },
-    { id: 4, img: 'src/assets/theme/images/logo/bitgo.svg' },
-    { id: 5, img: 'src/assets/theme/images/logo/coindcx.svg' },
+    { id: 0, img: '../theme/images/logo/coinbase.svg' },
+    { id: 1, img: '../theme/images/logo/binance.svg' },
+    { id: 2, img: '../theme/images/logo/opensea.svg' },
+    { id: 3, img: '../theme/images/logo/metamask.svg' },
+    { id: 4, img: '../theme/images/logo/bitgo.svg' },
+    { id: 5, img: '../theme/images/logo/coindcx.svg' },
 ];
 
 export default function Partners() {

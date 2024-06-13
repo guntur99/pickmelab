@@ -25,12 +25,12 @@ export default function Headline() {
                                 >
                                     <div className="card-body p-4">
                                         <div className="mb-4 position-relative">
-                                            <img src="src/assets/theme/images/products/7.jpg" className="" alt="..."/>
+                                            <img src={`../theme/images/products/7.jpg`} className="" alt="..."/>
                                             <div id="nft-counter" className="nft-counter countdown countdown-inline customjs position-absolute start-0 top-0" data-year="2024" data-month="3" data-day="22" data-format="dHMS"></div>
                                             <div className="bbp-author position-absolute start-0 bottom-0 w-100">
-                                                <a href="#"><img alt="User" src="src/assets/theme/images/authors/3.jpg"/></a>
-                                                <a href="#"><img alt="User" src="src/assets/theme/images/authors/2.jpg"/></a>
-                                                <a href="#"><img alt="User" src="src/assets/theme/images/forum/images/user.png"/></a>
+                                                <a href="#"><img alt="User" src={`../theme/images/authors/3.jpg`}/></a>
+                                                <a href="#"><img alt="User" src={`../theme/images/authors/2.jpg`}/></a>
+                                                <a href="#"><img alt="User" src={`../theme/images/forum/images/user.png`}/></a>
                                             </div>
                                         </div>
                                         <div className="row justify-content-between">

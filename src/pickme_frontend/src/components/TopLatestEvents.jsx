@@ -1,15 +1,15 @@
 import { useState } from 'react';
 
 let listEvent = [
-    { id: 0, img: 'src/assets/theme/images/users/1.jpg', title: 'Chasseur', icpCurrency: 2.643 },
-    { id: 1, img: 'src/assets/theme/images/users/2.jpg', title: 'Hoydenism_', icpCurrency: 643 },
-    { id: 2, img: 'src/assets/theme/images/users/3.jpg', title: 'Raconteur_y', icpCurrency: 1.643 },
-    { id: 3, img: 'src/assets/theme/images/users/4.jpg', title: 'Kumquat', icpCurrency: 2.001 },
-    { id: 4, img: 'src/assets/theme/images/users/5.jpg', title: 'Razzmatazz_z', icpCurrency: 2.243 },
-    { id: 5, img: 'src/assets/theme/images/users/6.jpg', title: 'Zeugma', icpCurrency: 3.643 },
-    { id: 6, img: 'src/assets/theme/images/users/7.jpg', title: 'Sanguine', icpCurrency: 5.643 },
-    { id: 7, img: 'src/assets/theme/images/users/8.jpg', title: 'Portico', icpCurrency: 643 },
-    { id: 8, img: 'src/assets/theme/images/users/9.jpg', title: 'Humbug', icpCurrency: 243 },
+    { id: 0, img: '../theme/images/users/1.jpg', title: 'Chasseur', icpCurrency: 2.643 },
+    { id: 1, img: '../theme/images/users/2.jpg', title: 'Hoydenism_', icpCurrency: 643 },
+    { id: 2, img: '../theme/images/users/3.jpg', title: 'Raconteur_y', icpCurrency: 1.643 },
+    { id: 3, img: '../theme/images/users/4.jpg', title: 'Kumquat', icpCurrency: 2.001 },
+    { id: 4, img: '../theme/images/users/5.jpg', title: 'Razzmatazz_z', icpCurrency: 2.243 },
+    { id: 5, img: '../theme/images/users/6.jpg', title: 'Zeugma', icpCurrency: 3.643 },
+    { id: 6, img: '../theme/images/users/7.jpg', title: 'Sanguine', icpCurrency: 5.643 },
+    { id: 7, img: '../theme/images/users/8.jpg', title: 'Portico', icpCurrency: 643 },
+    { id: 8, img: '../theme/images/users/9.jpg', title: 'Humbug', icpCurrency: 243 },
 ];
 
 let listTime = [
