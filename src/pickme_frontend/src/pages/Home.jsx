@@ -14,7 +14,7 @@ import '../../public/assets/css/custom.css';
 import '../../public/assets/css/exm2kgx.css';
 import '../../public/theme/theme.css';
 
-// import '../../public/assets/js/functions.bundle.js';
+import '../../public/assets/js/functions.bundle.js';
 import '../../public/assets/js/particles/particles.min.js';
 import '../../public/assets/js/skrollr.min.js';
 
