@@ -33,9 +33,9 @@ export default function TopEvents() {
                     <div className="col-12 text-lg-center mb-lg-5">
                         <div className="text-uppercase color ls-3 fw-bold mb-2">Latest Event</div>
                         <div className="hstack align-content-center justify-content-center">
-                            <h2 className="display-5 fw-bold mb-0">Top Latest Event in</h2>
+                            <h2 className="display-5 fw-bold text-white mb-0">Top Latest Event in</h2>
                             <div className="ms-3">
-                                <select className="form-select form-select-lg headeing-select mb-0" aria-label="example">
+                                <select className="form-select form-select-lg color headeing-select mb-0" aria-label="example">
                                     {times.map(time => (
                                         <option key={time.id} value={time.val}>{time.val}</option>
                                     ))}

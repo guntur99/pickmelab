@@ -1,10 +1,11 @@
 
 
-import Headline from './Headline';
-import BestEventsCategories from './BestEventsCategories';
-import HowToGetTicket from './HowToGetTicket';
-import TopLatestEvents from './TopLatestEvents';
-import ConnectWallet from './ConnectWallet';
+// import Navbar from '../components/Navbar.jsx';
+import Headline from '../components/Headline.jsx';
+import BestEventsCategories from '../components/BestEventsCategories.jsx';
+import HowToGetTicket from '../components/HowToGetTicket.jsx';
+import TopLatestEvents from '../components/TopLatestEvents.jsx';
+import ConnectWallet from '../components/ConnectWallet.jsx';
 
 import '../../public/assets/style.css';
 import '../../public/assets/css/font-icons.css';

@@ -1,18 +1,15 @@
 import Partners from './Partners';
+import { Link } from "react-router-dom";
 
 export default function Headline() {
 
     return (
         <div className="container pb-lg-5">
-            
             <div className="row align-items-center justify-content-between pt-lg-6 col-mb-30">
-
                 <div className="col-lg-7">
                     <h2 className="display-3 fw-bold text-white">Buy &amp; Sell your Event Ticket in our <span className="gradient-text gradient-color">Pick Me Platform</span>.</h2>
                     <p className="op-07 lead mb-5 text-white">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate dolorem, unde molestias, tenetur fuga odio in.</p>
-
                     <div className="clear"></div>
-
                     <a href="#" className="button button-large gradient-color rounded-5 border-0">Explore Now</a>
                 </div>
 
@@ -53,19 +50,15 @@ export default function Headline() {
                                             </div>
                                         </div>
                                     </div>
-                                    <a href="#" className="card-footer-btn text-center gradient-color fw-medium text-light">
-                                        Buy Ticket
-                                    </a>
+                                    <Link className="menu-link card-footer-btn text-center gradient-color fw-medium py-4 text-light" to="/event-detail">Buy Ticket</Link>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <div className="clear line"></div>
-
             <Partners/>
         </div>
     )

@@ -1,21 +1,18 @@
-import Home from './components/Home';
 import Navbar from './components/Navbar';
-import Greeting from './components/Greeting';
+import Routes from './routes';
 
 function App() {
 
   return (
-    <main>
-
+    <>
+      <main>
       <div className="stretched dark">
-
-        <div id="wrapper" className="noice-effect overflow-hidden">
-          <Navbar/>
-          <Home/>
-        </div>
+        <Navbar/>
+        <div id="wrapper" className="noice-effect overflow-hidden"></div>
       </div>
-          {/* <Greeting/> */}
     </main>
+    <Routes/>
+    </>
   );
 }
 

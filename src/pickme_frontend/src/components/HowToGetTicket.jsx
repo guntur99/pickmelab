@@ -18,7 +18,7 @@ export default function HowToUse() {
                 <div className="row g-4">
                     <div className="col-12 text-center mb-lg-5">
                         <div className="text-uppercase color ls-3 fw-bold mb-2">How to do</div>
-                        <h2 className="display-5 fw-bold mb-0">Simple steps to get your ticket</h2>
+                        <h2 className="display-5 fw-bold text-white mb-0">Simple steps to get your ticket</h2>
                     </div>
                     <div className="clear"></div>
 

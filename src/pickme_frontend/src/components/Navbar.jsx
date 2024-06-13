@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { AuthClient } from '@dfinity/auth-client';
+import { NavLink } from "react-router-dom";
 
 export default function Navbar() {
     
@@ -72,18 +73,13 @@ export default function Navbar() {
                     <div className="header-row">
 
                         <div id="logo" className="me-5">
-                            <a href="#" ><img src={`theme/images/logo.svg`} alt="Pick Me" className="py-3"/></a>
+                            <NavLink to="/"><img src={`theme/images/logo.svg`} alt="Pick Me" className="py-3"/></NavLink>
                         </div>
 
                         <div className="header-misc ms-auto">
 
                             <div className="header-misc ms-0">
-                                {/* <div className="input-group input-group-search d-none d-xl-flex">
-                                    <a href="#" className="input-group-text uil uil-search"></a>
-                                    <input type="text" className="form-control ps-0" aria-label="Text input with dropdown button" placeholder="Search your Products"/>
-                                </div> */}
 
-                                {/* <a href="#" className="button border-0 bg-gradient gradient-color rounded-6 button-small m-0 ms-lg-4 me-lg-3 d-none d-md-block">Connect Wallet</a> */}
                                 {principal ?
                                     <div className="header-misc">
                                         <form onSubmit={handleLogout}>
@@ -118,7 +114,7 @@ export default function Navbar() {
                         <nav className="primary-menu with-arrows">
 
                             <ul className="menu-container">
-                                {/* <li className="menu-item current"><a className="menu-link" href="#"><div>Headline</div></a></li> */}
+                                <li className="menu-item current"><a className="menu-link" href="#"><div>Headline</div></a></li>
                                 <li className="menu-item"><a className="menu-link" href="#"><div>Partners</div></a></li>
                                 <li className="menu-item"><a className="menu-link" href="#"><div>New Events</div></a></li>
                                 <li className="menu-item"><a className="menu-link" href="#"><div>How to Use</div></a></li>

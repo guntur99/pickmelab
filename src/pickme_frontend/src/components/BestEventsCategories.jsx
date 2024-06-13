@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from "react-router-dom";
 
 let listCategory = [
     { id: 0, name: 'Show All', filter: '*', status: 'activeFilter' },
@@ -32,7 +33,7 @@ export default function BestEventsCategories() {
             <div className="row g-4">
                 <div className="col-12 text-center">
                     <div className="text-uppercase color ls-3 fw-bold mb-2">Our Best Event</div>
-                    <h2 className="display-5 fw-bold">Popular Available Drops</h2>
+                    <h2 className="display-5 fw-bold text-white">Popular Available Drops</h2>
                 </div>
 
                 <div className="col-12">
@@ -40,7 +41,7 @@ export default function BestEventsCategories() {
 
                         <ul className="grid-filter style-2 mx-auto mb-0" data-container="#nft-products">
                             {categories.map(category => (
-                                <li key={category.id} className={category.status} ><a href="#" className={ category.status == 'activeFilter' ? "button-gradient gradient-color button rounded-6 mx-1" : 'button rounded-6 mx-1' } data-filter={category.filter}>{category.name}</a></li>
+                                <li key={category.id} className={category.status} ><a href="#" className={ category.status == 'activeFilter' ? "button-gradient gradient-color button rounded-6 mx-1" : 'button text-white rounded-6 mx-1' } data-filter={category.filter}>{category.name}</a></li>
                             ))}
                         </ul>
 
@@ -65,7 +66,7 @@ export default function BestEventsCategories() {
                                         </div>
                                         <div className="row justify-content-between">
                                             <div className="col">
-                                                <h4 className="mb-2">{event.title}</h4>
+                                                <h4 className="text-white mb-2">{event.title}</h4>
                                                 <h6 className="card-subtitle mb-2 text-white-50">{event.account}</h6>
                                                 <div className="color fw-bold">{event.icpCurrency} ICP <span className="text-light text-opacity-50">/ ${event.dollarCurrency}</span></div>
                                             </div>
@@ -83,9 +84,8 @@ export default function BestEventsCategories() {
                                             </div>
                                         </div>
                                     </div>
-                                    <a href="#" className="card-footer-btn text-center gradient-color fw-medium text-light h-op-09">
-                                        Buy Ticket
-                                    </a>
+
+                                    <Link className="menu-link card-footer-btn text-center gradient-color fw-medium text-light py-4 h-op-09" to="/event-detail">Buy Ticket</Link>
                                 </div>
                             </article>
                         ))}
