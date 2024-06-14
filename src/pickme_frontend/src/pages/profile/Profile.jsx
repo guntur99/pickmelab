@@ -1,4 +1,12 @@
+import { Navigate } from "react-router-dom";
+
 export default function Profile() {
+
+    const data = window.localStorage.getItem('auth');
+    if ( data == null ) {
+        return <Navigate to="/" />;
+    };
+
     return (
             <div className="container pt-6">
                 <div className="row pt-6">

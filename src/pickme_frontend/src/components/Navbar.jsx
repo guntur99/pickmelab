@@ -33,8 +33,7 @@ export default function Navbar() {
             onSuccess: () => {
             handleAuthenticated(authClient);
             setAuth(authClient);
-
-        window.location.reload();
+            window.location.reload();
             }
         });
         }
@@ -51,9 +50,9 @@ export default function Navbar() {
         if (principal) {
             localStorage.clear();
             sessionStorage.clear();
-            // window.location.reload();
             setAuth(null);
             setPrincipal(null);
+            window.location.reload();
         }
     };
 
@@ -61,7 +60,7 @@ export default function Navbar() {
         event.preventDefault();
         logout();
         
-        return false;
+        return <Navigate to="/" />;
     }
 
     return (
@@ -120,18 +119,12 @@ export default function Navbar() {
                                         </div>
                                     </div> :
                                     <form onSubmit={handleLogin}>
-                                        <button id="login" className="button border-0 bg-gradient rounded-6 button-small m-0 ms-lg-4 me-lg-3 d-none d-md-block">Sign In</button>
+                                        <button id="login" className="cnvs-hamburger button border-0 bg-gradient rounded-6 button-small m-0 ms-lg-4 me-lg-3">Sign In</button>
                                     </form>
                                 }
                             </div>
 
                         </div>
-
-                        {/* <div className="primary-menu-trigger">
-                            <button className="cnvs-hamburger" type="button" title="Open Mobile Menu">
-                                <span className="cnvs-hamburger-box"><span className="cnvs-hamburger-inner"></span></span>
-                            </button>
-                        </div> */}
 
                     </div>
                 </div>

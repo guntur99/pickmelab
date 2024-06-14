@@ -5,7 +5,7 @@ export default function Headline() {
 
     return (
         <div className="container pb-lg-5">
-            <div className="row align-items-center justify-content-between pt-lg-6 col-mb-30">
+            <div className="row align-items-center justify-content-between pt-6 col-mb-30">
                 <div className="col-lg-7">
                     <h2 className="display-3 fw-bold text-white">Buy &amp; Sell your Event Ticket in our <span className="gradient-text gradient-color">Pick Me Platform</span>.</h2>
                     <p className="op-07 lead mb-5 text-white">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate dolorem, unde molestias, tenetur fuga odio in.</p>
