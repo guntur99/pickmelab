@@ -56,7 +56,7 @@ export default function BestEventsCategories() {
                                 <div className="card rounded-6 overflow-hidden card-bg-dark">
                                     <div className="card-body p-4">
                                         <div className="mb-4 position-relative">
-                                            <img src={event.img} className="rounded-5" alt="..."/>
+                                            <img src={event.img} className="rounded-5 w-100 h-auto" alt="..."/>
                                             <div id="nft-counter1" className="nft-counter countdown countdown-inline customjs position-absolute start-0 top-0" data-year="2024" data-month="3" data-day="22" data-format="dHMS"></div>
                                             <div className="bbp-author position-absolute start-0 bottom-0 w-100">
                                                 <a href="#"><img alt="User" src="../theme/images/authors/3.jpg"/></a>
@@ -85,7 +85,7 @@ export default function BestEventsCategories() {
                                         </div>
                                     </div>
 
-                                    <Link className="menu-link card-footer-btn text-center gradient-color fw-medium text-light py-4 h-op-09" to="/event-detail">Buy Ticket</Link>
+                                    <Link className="menu-link card-footer-btn text-center gradient-color fw-medium text-light py-4 h-op-09" to="/event">Buy Ticket</Link>
                                 </div>
                             </article>
                         ))}

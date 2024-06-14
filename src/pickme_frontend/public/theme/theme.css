@@ -120,6 +120,7 @@ body {
 	justify-content: center;
 	align-items: center;
 	font-size: 16px;
+	background-color: #E85C31;
 }
 
 .dark .header-misc-icon .header-icon-notification {

@@ -17,12 +17,10 @@ export default function Headline() {
                     <div className="swiper_wrapper h-auto overflow-visible customjs">
                         <div className="swiper">
                             <div className="swiper-slide rounded-6">
-                                <div className="card overflow-hidden card-bg-dark" 
-                                // style="--cnvs-card-bg: 145deg, var(--cnvs-color-1), var(--cnvs-color-2);"
-                                >
+                                <div className="card overflow-hidden card-bg-dark">
                                     <div className="card-body p-4">
                                         <div className="mb-4 position-relative">
-                                            <img src={`../theme/images/products/7.jpg`} className="" alt="..."/>
+                                            <img src={`../theme/images/products/7.jpg`} className="rounded-5 w-100 h-auto" alt="..."/>
                                             <div id="nft-counter" className="nft-counter countdown countdown-inline customjs position-absolute start-0 top-0" data-year="2024" data-month="3" data-day="22" data-format="dHMS"></div>
                                             <div className="bbp-author position-absolute start-0 bottom-0 w-100">
                                                 <a href="#"><img alt="User" src={`../theme/images/authors/3.jpg`}/></a>
@@ -50,7 +48,7 @@ export default function Headline() {
                                             </div>
                                         </div>
                                     </div>
-                                    <Link className="menu-link card-footer-btn text-center gradient-color fw-medium py-4 text-light" to="/event-detail">Buy Ticket</Link>
+                                    <Link className="menu-link card-footer-btn text-center gradient-color fw-medium py-4 text-light" to="/event">Buy Ticket</Link>
                                 </div>
                             </div>
                         </div>

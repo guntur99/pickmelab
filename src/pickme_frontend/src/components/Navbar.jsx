@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { AuthClient } from '@dfinity/auth-client';
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 export default function Navbar() {
     
@@ -51,7 +51,7 @@ export default function Navbar() {
         if (principal) {
             localStorage.clear();
             sessionStorage.clear();
-            window.location.reload();
+            // window.location.reload();
             setAuth(null);
             setPrincipal(null);
         }
@@ -64,65 +64,74 @@ export default function Navbar() {
         return false;
     }
 
-
     return (
 
-        <header id="header" className="dark header-size-md floating-nft-header" data-sticky-shrink="false">
+        <header id="header" className="dark header-size-md floating-nft-header floating-header" style={{ 
+            position: 'fixed',
+            overflow: 'hidden',
+            backgroundColor: '#333',
+            top: 0,
+            width: '100%',
+            zIndex: 999,
+         }} data-sticky-shrink="false">
             <div id="header-wrap" className="border-0">
                 <div className="container">
                     <div className="header-row">
 
                         <div id="logo" className="me-5">
-                            <NavLink to="/"><img src={`theme/images/logo.svg`} alt="Pick Me" className="py-3"/></NavLink>
+                            <NavLink to="/"><img src={`theme/images/icons/pick-me-logo.svg`} alt="Pick Me" className="pick-me-navbar py-3"/></NavLink>
                         </div>
 
                         <div className="header-misc ms-auto">
 
                             <div className="header-misc ms-0">
 
+                                {/* <nav className="header-misc ms-0">
+                                    <ul className="menu-container text-white">
+                                        <li className="menu-item current"><a className="menu-link" href="#"><div>Headline</div></a></li>
+                                        <li className="menu-item"><a className="menu-link" href="#"><div>Partners</div></a></li>
+                                        <li className="menu-item"><a className="menu-link" href="#"><div>New Events</div></a></li>
+                                        <li className="menu-item"><a className="menu-link" href="#"><div>How to Use</div></a></li>
+                                        <li className="menu-item"><a className="menu-link" href="#"><div>Latest Events</div></a></li>
+                                        <li className="menu-item"><a className="menu-link" href="#"><div>Wallet</div></a></li>
+                                    </ul>
+                                </nav> */}
                                 {principal ?
                                     <div className="header-misc">
-                                        <form onSubmit={handleLogout}>
-                                            <button id="logout" className="button border-0 bg-dark rounded-6 button-small m-0 ms-lg-4 me-lg-3 d-none d-md-block">Logout</button>
-                                        </form>
-                                        <div className="header-misc-icon">
-                                            <a href="#" className="header-icon-notification">
-                                                <i className="bi-bell text-light text-opacity-75"></i>
-                                                <span className="position-absolute top-0 start-100 translate-middle badge gradient-color rounded-circle">5<span className="visually-hidden">unread messages</span></span>
-                                            </a>
+                                        <div className="header-misc-icon tooltips">
+                                            <Link className="header-icon-notification " to="/event/create">
+                                                <i className="bi-calendar-plus-fill text-light text-opacity-75"></i>
+                                            </Link>
+                                            <span className="tooltiptext fs-6">Create Event</span>
                                         </div>
-                                        <div className="header-misc-icon">
-                                            <a href="#" className="header-icon-notification">
-                                                <i className="bi-sun-fill text-light text-opacity-75"></i>
-                                            </a>
+                                        <div className="header-misc-icon tooltips">
+                                            <Link className="header-icon-notification " to="/profile">
+                                                <i className="bi-person-bounding-box text-light text-opacity-75"></i>
+                                            </Link>
+                                            <span className="tooltiptext fs-6">Profile</span>
+                                        </div>
+                                        <div className="header-misc-icon tooltips">
+                                            <form onSubmit={handleLogout}>
+                                                <button id="logout" className="header-icon-notification">
+                                                    <i className="bi-door-open-fill text-light text-opacity-75"></i>
+                                                </button>
+                                            </form>
+                                            <span className="tooltiptext fs-6">Logout</span>
                                         </div>
                                     </div> :
                                     <form onSubmit={handleLogin}>
-                                            <button id="login" className="button border-0 bg-gradient rounded-6 button-small m-0 ms-lg-4 me-lg-3 d-none d-md-block">Sign In</button>
+                                        <button id="login" className="button border-0 bg-gradient rounded-6 button-small m-0 ms-lg-4 me-lg-3 d-none d-md-block">Sign In</button>
                                     </form>
                                 }
                             </div>
 
                         </div>
 
-                        <div className="primary-menu-trigger">
+                        {/* <div className="primary-menu-trigger">
                             <button className="cnvs-hamburger" type="button" title="Open Mobile Menu">
                                 <span className="cnvs-hamburger-box"><span className="cnvs-hamburger-inner"></span></span>
                             </button>
-                        </div>
-
-                        <nav className="primary-menu with-arrows">
-
-                            <ul className="menu-container">
-                                <li className="menu-item current"><a className="menu-link" href="#"><div>Headline</div></a></li>
-                                <li className="menu-item"><a className="menu-link" href="#"><div>Partners</div></a></li>
-                                <li className="menu-item"><a className="menu-link" href="#"><div>New Events</div></a></li>
-                                <li className="menu-item"><a className="menu-link" href="#"><div>How to Use</div></a></li>
-                                <li className="menu-item"><a className="menu-link" href="#"><div>Latest Events</div></a></li>
-                                <li className="menu-item"><a className="menu-link" href="#"><div>Wallet</div></a></li>
-                            </ul>
-
-                        </nav>
+                        </div> */}
 
                     </div>
                 </div>

@@ -112,6 +112,12 @@
 		height: 24px;
 		font-size: 20px;
 		line-height: 24px;
+	}.header-misc-icon>button {
+		width: 24px;
+		height: 24px;
+		font-size: 20px;
+		line-height: 24px;
+  		background-color: #000;
 	}
 
 	.profile-image > a {
@@ -178,6 +184,7 @@
 }
 
 .header-misc-icon.profile-image.show > a img { box-shadow: 0 0 0 3px var(--cnvs-themecolor); }
+.header-misc-icon.profile-image.show > button img { box-shadow: 0 0 0 3px var(--cnvs-themecolor); }
 
 .notification-badge::after {
 	content: '';
