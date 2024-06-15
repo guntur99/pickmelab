@@ -1,6 +1,5 @@
 
 
-// import Navbar from '../components/Navbar.jsx';
 import Headline from '../components/Headline.jsx';
 import BestEventsCategories from '../components/BestEventsCategories.jsx';
 import HowToGetTicket from '../components/HowToGetTicket.jsx';
