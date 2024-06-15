@@ -5008,7 +5008,7 @@ textarea.form-control-lg {
   color: var(--bs-progress-bar-color);
   text-align: center;
   white-space: nowrap;
-  background-color: var(--bs-progress-bar-bg);
+  background-color: #f26739;
   transition: var(--bs-progress-bar-transition);
 }
 @media (prefers-reduced-motion: reduce) {
@@ -8807,6 +8807,16 @@ textarea.form-control-lg {
 }
 
 /* rtl:end:remove */
+.text-primary-second {
+  --bs-text-opacity: 1;
+  color: #f26739 !important;
+}
+
+.bg-primary-second {
+  --bs-text-opacity: 1;
+  background-color: #f26739 !important;
+}
+
 .text-primary {
   --bs-text-opacity: 1;
   color: rgba(var(--bs-primary-rgb), var(--bs-text-opacity)) !important;

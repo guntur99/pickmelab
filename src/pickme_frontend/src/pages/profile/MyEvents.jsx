@@ -49,11 +49,6 @@ export default function MyEvents() {
                                         <div className="mb-4 position-relative">
                                             <img src={event.img} className="rounded-5 w-100 h-auto" alt="..."/>
                                             <div id="nft-counter1" className="nft-counter countdown countdown-inline customjs position-absolute start-0 top-0" data-year="2024" data-month="3" data-day="22" data-format="dHMS"></div>
-                                            <div className="bbp-author position-absolute start-0 bottom-0 w-100">
-                                                <a href="#"><img alt="User" src="../theme/images/authors/3.jpg"/></a>
-                                                <a href="#"><img alt="User" src="../theme/images/authors/2.jpg"/></a>
-                                                <a href="#"><img alt="User" src="../theme/images/authors/1.jpg"/></a>
-                                            </div>
                                         </div>
                                         <div className="row justify-content-between">
                                             <div className="col">
