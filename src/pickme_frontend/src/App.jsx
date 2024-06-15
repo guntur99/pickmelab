@@ -5,13 +5,8 @@ function App() {
 
   return (
     <>
-      <main>
-      <div className="stretched dark">
-        <Navbar/>
-        <div id="wrapper" className="noice-effect overflow-hidden"></div>
-      </div>
-    </main>
-    <Routes/>
+      <Navbar/>
+      <Routes/>
     </>
   );
 }

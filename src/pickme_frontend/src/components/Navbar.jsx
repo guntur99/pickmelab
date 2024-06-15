@@ -64,72 +64,62 @@ export default function Navbar() {
     }
 
     return (
-
-        <header id="header" className="dark header-size-md floating-nft-header floating-header" style={{ 
-            position: 'fixed',
-            overflow: 'hidden',
-            backgroundColor: '#333',
-            top: 0,
-            width: '100%',
-            zIndex: 999,
-         }} data-sticky-shrink="false">
-            <div id="header-wrap" className="border-0">
-                <div className="container">
-                    <div className="header-row">
-
-                        <div id="logo" className="me-5">
-                            <NavLink to="/"><img src={`theme/images/icons/pick-me-logo.svg`} alt="Pick Me" className="pick-me-navbar py-3"/></NavLink>
-                        </div>
-
-                        <div className="header-misc ms-auto">
-
-                            <div className="header-misc ms-0">
-
-                                {/* <nav className="header-misc ms-0">
-                                    <ul className="menu-container text-white">
-                                        <li className="menu-item current"><a className="menu-link" href="#"><div>Headline</div></a></li>
-                                        <li className="menu-item"><a className="menu-link" href="#"><div>Partners</div></a></li>
-                                        <li className="menu-item"><a className="menu-link" href="#"><div>New Events</div></a></li>
-                                        <li className="menu-item"><a className="menu-link" href="#"><div>How to Use</div></a></li>
-                                        <li className="menu-item"><a className="menu-link" href="#"><div>Latest Events</div></a></li>
-                                        <li className="menu-item"><a className="menu-link" href="#"><div>Wallet</div></a></li>
-                                    </ul>
-                                </nav> */}
-                                {principal ?
-                                    <div className="header-misc">
-                                        <div className="header-misc-icon tooltips">
-                                            <Link className="header-icon-notification " to="/event/create">
-                                                <i className="bi-calendar-plus-fill text-light text-opacity-75"></i>
-                                            </Link>
-                                            <span className="tooltiptext fs-6">Create Event</span>
+        <>
+            <main>
+                <div className="stretched dark">
+                    <header id="header" className="dark header-size-md floating-nft-header floating-header" style={{ 
+                        position: 'fixed',
+                        overflow: 'hidden',
+                        backgroundColor: '#333',
+                        top: 0,
+                        width: '100%',
+                        zIndex: 999,
+                    }} data-sticky-shrink="false">
+                        <div id="header-wrap" className="border-0">
+                            <div className="container">
+                                <div className="header-row">
+                                    <div id="logo" className="me-5">
+                                        <NavLink to="/"><img src={`theme/images/icons/pick-me-logo.svg`} alt="Pick Me" className="pick-me-navbar py-3"/></NavLink>
+                                    </div>
+                                    <div className="header-misc ms-auto">
+                                        <div className="header-misc ms-0">
+                                            {principal ?
+                                                <div className="header-misc">
+                                                    <div className="header-misc-icon tooltips">
+                                                        <Link className="header-icon-notification " to="/event/create">
+                                                            <i className="bi-calendar-plus-fill text-light text-opacity-75"></i>
+                                                        </Link>
+                                                        <span className="tooltiptext fs-6">Event</span>
+                                                    </div>
+                                                    <div className="header-misc-icon tooltips">
+                                                        <Link className="header-icon-notification " to="/profile">
+                                                            <i className="bi-person-bounding-box text-light text-opacity-75"></i>
+                                                        </Link>
+                                                        <span className="tooltiptext fs-6">Profile</span>
+                                                    </div>
+                                                    <div className="header-misc-icon tooltips">
+                                                        <form onSubmit={handleLogout}>
+                                                            <button id="logout" className="header-icon-notification">
+                                                                <i className="bi-door-open-fill text-light text-opacity-75"></i>
+                                                            </button>
+                                                        </form>
+                                                        <span className="tooltiptext fs-6">Logout</span>
+                                                    </div>
+                                                </div> :
+                                                <form onSubmit={handleLogin}>
+                                                    <button id="login" className="cnvs-hamburger button border-0 bg-gradient rounded-6 button-small m-0 ms-lg-4 me-lg-3">Sign In</button>
+                                                </form>
+                                            }
                                         </div>
-                                        <div className="header-misc-icon tooltips">
-                                            <Link className="header-icon-notification " to="/profile">
-                                                <i className="bi-person-bounding-box text-light text-opacity-75"></i>
-                                            </Link>
-                                            <span className="tooltiptext fs-6">Profile</span>
-                                        </div>
-                                        <div className="header-misc-icon tooltips">
-                                            <form onSubmit={handleLogout}>
-                                                <button id="logout" className="header-icon-notification">
-                                                    <i className="bi-door-open-fill text-light text-opacity-75"></i>
-                                                </button>
-                                            </form>
-                                            <span className="tooltiptext fs-6">Logout</span>
-                                        </div>
-                                    </div> :
-                                    <form onSubmit={handleLogin}>
-                                        <button id="login" className="cnvs-hamburger button border-0 bg-gradient rounded-6 button-small m-0 ms-lg-4 me-lg-3">Sign In</button>
-                                    </form>
-                                }
+                                    </div>
+                                </div>
                             </div>
-
                         </div>
-
-                    </div>
+                        <div className="header-wrap-clone"></div>
+                    </header>
+                    <div id="wrapper" className="noice-effect overflow-hidden"></div>
                 </div>
-            </div>
-            <div className="header-wrap-clone"></div>
-        </header>
+            </main>
+        </>
     );
 }
