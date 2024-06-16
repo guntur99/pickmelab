@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Navigate } from "react-router-dom";
 import Nav from 'react-bootstrap/Nav';
 import Tab from 'react-bootstrap/Tab';
@@ -12,11 +11,11 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 
 export default function Profile() {
 
-    const data = window.localStorage.getItem('auth');
+    const accountProgress = 70;
+    const data = window.localStorage.getItem('user');
     if ( data == null ) {
         return <Navigate to="/" />;
     };
-    const accountProgress = 70;
 
     return (
         <div className="container mt-3 pt-6">
@@ -52,7 +51,7 @@ export default function Profile() {
                     <div className="card rounded-6 card-bg-dark text-center my-3">
                         <div className="card-body p-5">
                             <Tab.Container id="left-tabs" defaultActiveKey="personal">
-                                <Nav variant="underline" defaultActiveKey="personal" className='fs-5'>
+                                <Nav variant="underline" defaultActiveKey="personal" className='fs-6'>
                                     <Nav.Item>
                                         <Nav.Link className="text-light px-2" eventKey="personal">Personal Detail</Nav.Link>
                                     </Nav.Item>

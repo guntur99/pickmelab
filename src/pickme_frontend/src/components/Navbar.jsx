@@ -9,7 +9,7 @@ export default function Navbar() {
     const [auth, setAuth] = useState('');
 
     useEffect(() => {
-        const data = window.localStorage.getItem('auth');
+        const data = window.localStorage.getItem('user');
         if ( data !== null ) {
             setPrincipal(JSON.parse(data))
         };
@@ -43,7 +43,7 @@ export default function Navbar() {
         const identity = await authClient.getIdentity();
         const userPrincipal = identity.getPrincipal().toString();
         // Now you can use the userPrincipal to interact with your backend
-        localStorage.setItem('auth', JSON.stringify(userPrincipal));
+        localStorage.setItem('user', JSON.stringify(userPrincipal));
     }
 
     const logout = async () => {
