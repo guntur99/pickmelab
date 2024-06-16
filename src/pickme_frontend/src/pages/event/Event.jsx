@@ -1,6 +1,14 @@
 import { Navigate } from "react-router-dom";
+import { useState } from 'react';
 import Nav from 'react-bootstrap/Nav';
 import Tab from 'react-bootstrap/Tab';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 export default function Event() {
 
@@ -8,6 +16,10 @@ export default function Event() {
     if ( data == null ) {
         return <Navigate to="/" />;
     };
+
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     return (
         
@@ -84,15 +96,18 @@ export default function Event() {
                                             <img src={`../theme/images/users/2.jpg`} className="square square-md rounded-6" alt="..."/>
                                         </div>
                                         <div className="col pt-1">
-                                            <h5 className="p-0 text-white-50">Publish by<br/>
-                                                <a className="text-light" href="#">@kendabdullah</a>
-                                            </h5>
+                                            <h6 className="p-0 text-white-50">Publish by<br/>
+                                                <a className="fs-5 text-light" href="#">@kendabdullah</a>
+                                            </h6>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="col-md-6">
                                     <div className="row g-3 mt-3">
-                                        <a href="#" className="button button-large button-large gradient-color rounded-5 border-0 mt-4">Payment</a>
+
+                                        <Button variant="outline-light" className="button button-large gradient-color rounded-5 border-0 mt-4" onClick={handleShow}>
+                                            Buy Ticket
+                                        </Button>
                                     </div>
                                 </div>
                             </div>
@@ -102,7 +117,7 @@ export default function Event() {
                 </div>
             </div>
 
-            <div className="card rounded-6 card-bg-dark text-center my-3">
+            <div className="card rounded-6 card-bg-dark text-center my-4">
                 <div className="card-body p-5">
                     <Tab.Container id="left-tabs" defaultActiveKey="activity">
                         <Nav variant="underline" defaultActiveKey="activity" className='fs-6'>
@@ -122,6 +137,44 @@ export default function Event() {
                     </Tab.Container>
                 </div>
             </div>
+
+            <Modal show={show} onHide={handleClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
+                <Modal.Header closeButton>
+                    <div className="mx-2 text-light fs-5 fw-bold">Ticket Payment</div>
+                </Modal.Header>
+                <Modal.Body>
+                    <Container className="my-1 text-light">
+                        <Row className="my-1">
+                            <Col className="pl-5 pr-3 text-start">
+                                <Form.Label className="fs-6">Total Ticket</Form.Label>
+                                <InputGroup>
+                                    <Form.Control className="text-light border" type="number" required min={1} max={10} style={{ 
+                                        maxWidth: "100%",
+                                        padding: "0.5em 1em",
+                                    }} />
+                                    <InputGroup.Text>ticket(s)</InputGroup.Text>
+                                </InputGroup>
+                            </Col>
+                            <Col className="pl-3 pr-5 text-start">
+                                <Form.Label className="fs-6">Price</Form.Label>
+                                <InputGroup>
+                                    <InputGroup.Text>$</InputGroup.Text>
+                                    <Form.Control className="text-light border" type="number" value={10} disabled aria-label="Amount (to the nearest dollar)" style={{ 
+                                        maxWidth: "100%",
+                                        padding: "0.5em 1em",
+                                    }}/>
+                                    <InputGroup.Text>.00</InputGroup.Text>
+                                </InputGroup>
+                            </Col>
+                        </Row>
+                    </Container>
+                </Modal.Body>
+                <Modal.Footer>
+                <Button variant="light" onClick={handleClose}>
+                    Buy Ticket
+                </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     )
 }

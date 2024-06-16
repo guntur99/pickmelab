@@ -59,9 +59,9 @@ export default function Create() {
                                             <Form.Label className="fs-6">Category</Form.Label>
                                             <Form.Select aria-label="Select Category" required>
                                                 <option disabled>Select Category</option>
-                                                <option value="1">One</option>
-                                                <option value="2">Two</option>
-                                                <option value="3">Three</option>
+                                                <option value="1">Concert</option>
+                                                <option value="2">Sport</option>
+                                                <option value="3">Tech</option>
                                             </Form.Select>
                                         </Col>
                                     </Row>
