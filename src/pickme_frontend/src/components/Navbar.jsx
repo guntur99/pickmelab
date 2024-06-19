@@ -2,16 +2,37 @@
 import { useEffect, useState } from 'react';
 import { AuthClient } from '@dfinity/auth-client';
 import { Link, NavLink } from "react-router-dom";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 export default function Navbar() {
     
     const [principal, setPrincipal] = useState('');
     const [auth, setAuth] = useState('');
 
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    const [out, setLogout] = useState(false);
+    const handleLogoutClose = () => setLogout(false);
+    const handleLogoutShow = () => setLogout(true);
+    const handleLogoutNow = () => {
+        setLogout(false);
+        logout();
+        
+        return <Navigate to="/" />;
+    };
+
     useEffect(() => {
         const data = window.localStorage.getItem('user');
         if ( data !== null ) {
-            setPrincipal(JSON.parse(data))
+            setPrincipal(JSON.parse(data));
+            // handleShow(); //check if profile data is not completed
         };
     }, []);
     
@@ -58,9 +79,7 @@ export default function Navbar() {
 
     function handleLogout(event) {
         event.preventDefault();
-        logout();
-        
-        return <Navigate to="/" />;
+        handleLogoutShow();
     }
 
     return (
@@ -120,6 +139,46 @@ export default function Navbar() {
                     <div id="wrapper" className="noice-effect overflow-hidden"></div>
                 </div>
             </main>
+
+            <Modal show={show} onHide={handleClose} size="" backdrop="static" keyboard={false} data-bs-theme="dark">
+                <Modal.Header>
+                    <div className="mx-2 text-light fs-5 fw-bold">Sign In</div>
+                </Modal.Header>
+                <Modal.Body>
+                    <Container className="my-1 text-light">
+                        <Row className="my-1">
+                            <Col className="pl-5 pr-3 text-start">
+                                <Form.Label className="fs-6">Username</Form.Label>
+                                <Form.Control className="text-light border" type="text" required style={{ 
+                                    maxWidth: "100%",
+                                    padding: "0.5em 1em",
+                                }} />
+                            </Col>
+                        </Row>
+                    </Container>
+                </Modal.Body>
+                <Modal.Footer>
+                <Button variant="light" onClick={handleClose}>
+                    Submit
+                </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={out} onHide={handleLogoutClose} size="" backdrop="static" keyboard={false} data-bs-theme="dark">
+                <Modal.Body>
+                    <Container className="my-1 text-light">
+                        <Form.Label className="fs-5">Are you sure to Logout?</Form.Label>
+                    </Container>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="dark" onClick={handleLogoutClose}>
+                        No
+                    </Button>
+                    <Button variant="light" onClick={handleLogoutNow}>
+                        Yes, logout!
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 }
