@@ -20,13 +20,11 @@ let listEvent = [
 export default function MyEvents() {
 
     const [categories, setCategories] = useState(listCategory);
-    const [events, setEvents] = useState(listEvent);
-    const [allEvent, setAllEvent] = useState([]);
+    const [events, setEvents] = useState([]);
 
     useEffect(() => {
-        pickme_backend.readAllEvent().then((res) => {
-        console.log(res.ok);
-        setAllEvent(res.ok);
+        pickme_backend.getAllEvent().then((res) => {
+            setEvents(res.ok);
         });
     },[]);
 
@@ -51,8 +49,8 @@ export default function MyEvents() {
 
                 <div className="col-12">
                     <div className="row g-4">
-                        {allEvent.map(event => (
-                            <article key={event.category} className="col-xl-4 col-lg-4 col-sm-6 col-12 nft-media nft-graphics">
+                        {events.map(event => (
+                            <article key={event.uuid} className="col-xl-4 col-lg-4 col-sm-6 col-12 nft-media nft-graphics">
                                 <div className="card rounded-6 overflow-hidden card-bg-dark">
                                     <div className="card-body p-4">
                                         <div className="mb-4 position-relative">
@@ -80,7 +78,7 @@ export default function MyEvents() {
                                         </div>
                                     </div>
 
-                                    <Link className="menu-link card-footer-btn text-center gradient-color fw-medium text-light py-4 h-op-09" to="/event">Buy Ticket</Link>
+                                    <Link className="menu-link card-footer-btn text-center gradient-color fw-medium text-light py-4 h-op-09" to={`/event/${event.uuid}`}>Buy Ticket</Link>
                                 </div>
                             </article>
                         ))}

@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from "react-router-dom";
+import { pickme_backend } from 'declarations/pickme_backend';
 
 let listEvent = [
     { id: 0, img: '../theme/images/users/1.jpg', title: 'Chasseur', icpCurrency: 2.643 },
@@ -21,8 +23,14 @@ let listTime = [
 
 export default function TopEvents() {
 
-    const [events, setEvents] = useState(listEvent);
     const [times, setTimes] = useState(listTime);
+    const [events, setEvents] = useState([]);
+
+    useEffect(() => {
+        pickme_backend.getAllEvent().then((res) => {
+            setEvents(res.ok);
+        });
+    },[]);
     
     return (
         <div>
@@ -52,14 +60,16 @@ export default function TopEvents() {
                                     <div className="row g-3 align-items-center">
                                         <div className="col-auto user-rank">#1</div>
                                         <div className="col-auto">
-                                            <img src={event.img} className="square square-md rounded-6" alt="..."/>
+                                            <img src={event.poster} className="square square-md rounded-6" alt="..."/>
                                                 <span className="position-absolute top-0 mt-1 translate-middle p-2 bg-color border-0 rounded-circle"><span className="visually-hidden">Online</span></span>
                                         </div>
                                         <div className="col">
-                                            <h4 className="mb-0"><a className="text-white" href="#">{event.title}</a></h4>
-                                            <h6 className="card-subtitle m-2 text-white-50">{event.icpCurrency} ICP</h6>
+                                            <h4 className="mb-0">
+                                                <Link className="text-white" to={`/event/${event.uuid}`}>{event.title}</Link>
+                                            </h4>
+                                            <h6 className="card-subtitle m-2 text-white-50">{event.icp_price} ICP / ${event.price}</h6>
                                         </div>
-                                        <div className="col-auto">
+                                        {/* <div className="col-auto">
                                             <div className="dropdown">
                                                 <button className="btn btn-secondary btn-sm rounded-circle bg-transparent" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                                     <i className="bi-three-dots text-light text-opacity-50"></i>
@@ -70,7 +80,7 @@ export default function TopEvents() {
                                                     <li><a className="dropdown-item" href="#">Email</a></li>
                                                 </ul>
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             </div>

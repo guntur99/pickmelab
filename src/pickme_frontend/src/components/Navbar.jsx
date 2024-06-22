@@ -65,7 +65,7 @@ export default function Navbar() {
                 setAuth(authClient);
                 const isAuthenticated = authClient.isAuthenticated();
                 setIsAuthenticated(isAuthenticated);
-                // window.location.reload();
+                window.location.reload();
             }
         });
         }

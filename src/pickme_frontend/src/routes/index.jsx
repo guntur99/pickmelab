@@ -9,7 +9,7 @@ function RoutesIndex() {
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/event/create" element={<EventCreate />} />
-            <Route path="/event" element={<Event />} />
+            <Route path="/event/:eventId" element={<Event />} />
             <Route path="/profile" element={<Profile />} />
         </Routes>
     )

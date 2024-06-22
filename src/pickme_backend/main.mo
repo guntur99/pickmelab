@@ -2,7 +2,7 @@
 import Principal "mo:base/Principal";
 import Text "mo:base/Text";
 import Nat32 "mo:base/Nat32";
-import Iter "mo:base/Iter";
+// import Iter "mo:base/Iter";
 // import Option "mo:base/Option";
 import Time "mo:base/Time";
 import TrieMap "mo:base/TrieMap";
@@ -172,7 +172,19 @@ actor {
     };
   };
 
-  public query func readAllEvent() : async Result.Result<[Events], Text> {
+  public query func getHeadlineEvent() : async Result.Result<[Events], Text> {
+    var hEvent = Vector.Vector<Events>();
+    
+    for (event in events.vals()) {
+      if (event.price <= 10) {
+        hEvent.add(event);
+      }
+    };
+
+    return #ok(Vector.toArray(hEvent));
+  };
+
+  public query func getAllEvent() : async Result.Result<[Events], Text> {
     var allEvent = Vector.Vector<Events>();
 
       for (event in events.vals()) {
