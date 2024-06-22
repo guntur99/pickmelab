@@ -8,17 +8,36 @@ import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { pickme_backend } from 'declarations/pickme_backend';
 import { canisterId as internetIdentityCanisterId } from "declarations/internet_identity";
 
 export default function Navbar() {
     
-    const [principal, setPrincipal] = useState('');
+    const [principal, setPrincipal] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [auth, setAuth] = useState('');
-    const [isAuthenticated, setIsAuthenticated] = useState('');
+    const [username, setUsername] = useState('');
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const handleSubmit = (e) => {
+        const data = {
+            internet_identity: principal,
+            username: username,
+            fullname: "-",
+            avatar: "-",
+            dob: "-",
+            domicile: "-",
+            address: "-",
+            user_type: "Member",
+        }
+            console.log('data:', data);
+        pickme_backend.register(data).then((result) => {
+            console.log('result:', result);
+            setIsAuthenticated(JSON.parse(result))
+        })
+    };
 
     const [out, setLogout] = useState(false);
     const handleLogoutClose = () => setLogout(false);
@@ -30,13 +49,49 @@ export default function Navbar() {
         return <Navigate to="/" />;
     };
 
+    const options = {
+        createOptions: {
+            idleOptions: {
+            // Set to true if you do not want idle functionality
+            disableIdle: true,
+            },
+        }
+    };
+
     useEffect(() => {
-        const data = window.localStorage.getItem('user');
-        if ( data !== null ) {
-            setPrincipal(JSON.parse(data));
-            // handleShow(); //check if profile data is not completed
-        };
+        const id = window.localStorage.getItem('user');
+        console.log(id);
+        AuthClient.create(options.createOptions).then(async (client) => {
+            updateClient(client);
+        });
+        
+        // const checkUser = pickme_backend.checkUserById(id);
+        // console.log('checkUser:',checkUser);
+
+        // pickme_backend.whoami().then((res) => {
+        
+        //     console.log("res:",res);
+        // });;
     }, []);
+
+  const [authClient, setAuthClient] = useState(null);
+  const [identity, setIdentity] = useState(null);
+    
+  async function updateClient(client) {
+    const isAuthenticated = await client.isAuthenticated();
+    setIsAuthenticated(isAuthenticated);
+    console.log("isAuthenticated:",isAuthenticated);
+
+    const identity = client.getIdentity();
+    setIdentity(identity);
+    // console.log("isAuthenticated:",isAuthenticated);
+
+    const principal = identity.getPrincipal();
+    setPrincipal(principal);
+    // console.log("principal:",principal);
+
+    // setAuthClient(client);
+  }
     
     function handleLogin(event) {
         event.preventDefault();
@@ -47,14 +102,9 @@ export default function Navbar() {
 
     const init = async () => {
         const authClient = await AuthClient.create();
-    
-        const isAuthenticated = await authClient.isAuthenticated();
-        // console.log(isAuthenticated);
         if (auth && authClient.isAuthenticated()) { //You have already logged in
             handleAuthenticated(authClient);
             setAuth(authClient);
-            setIsAuthenticated(isAuthenticated);
-                
         } else {
         await authClient.login({
             identityProvider: process.env.DFX_NETWORK === "local"
@@ -63,9 +113,7 @@ export default function Navbar() {
             onSuccess: () => {
                 handleAuthenticated(authClient);
                 setAuth(authClient);
-                const isAuthenticated = authClient.isAuthenticated();
-                setIsAuthenticated(isAuthenticated);
-                // window.location.reload();
+                window.location.reload();
             }
         });
         }
@@ -73,9 +121,10 @@ export default function Navbar() {
 
     async function handleAuthenticated(authClient) {
         const identity = await authClient.getIdentity();
-        const userPrincipal = identity.getPrincipal().toString();
+        const userPrincipal = identity.getPrincipal();
         // Now you can use the userPrincipal to interact with your backend
-        localStorage.setItem('user', JSON.stringify(userPrincipal));
+        console.log('userPrincipal:',userPrincipal);
+        localStorage.setItem('user', userPrincipal);
     }
 
     const logout = async () => {
@@ -84,7 +133,9 @@ export default function Navbar() {
             sessionStorage.clear();
             setAuth(null);
             setPrincipal(null);
-            window.location.reload();
+            // window.location.reload();
+            setIsAuthenticated(false);
+            console.log("authenticated:", isAuthenticated);
         }
     };
 
@@ -153,14 +204,16 @@ export default function Navbar() {
 
             <Modal show={show} onHide={handleClose} size="" backdrop="static" keyboard={false} data-bs-theme="dark">
                 <Modal.Header>
-                    <div className="mx-2 text-light fs-5 fw-bold">Sign In</div>
+                    <div className="mx-2 text-light fs-5 fw-bold">What's your nickname?</div>
                 </Modal.Header>
                 <Modal.Body>
                     <Container className="my-1 text-light">
                         <Row className="my-1">
                             <Col className="pl-5 pr-3 text-start">
                                 <Form.Label className="fs-6">Username</Form.Label>
-                                <Form.Control className="text-light border" type="text" required style={{ 
+                                <Form.Control className="text-light border" type="text" required 
+                                onChange={(e) => setUsername(e.target.value) }
+                                style={{ 
                                     maxWidth: "100%",
                                     padding: "0.5em 1em",
                                 }} />
@@ -169,7 +222,7 @@ export default function Navbar() {
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
-                <Button variant="light" onClick={handleClose}>
+                <Button variant="light" onClick={handleSubmit}>
                     Submit
                 </Button>
                 </Modal.Footer>
