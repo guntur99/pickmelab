@@ -25,8 +25,8 @@ export default function MyEvents() {
 
     useEffect(() => {
         pickme_backend.readAllEvent().then((res) => {
-        console.log(res);
-        setAllEvent(res);
+        console.log(res.ok);
+        setAllEvent(res.ok);
         });
     },[]);
 
@@ -52,18 +52,18 @@ export default function MyEvents() {
                 <div className="col-12">
                     <div className="row g-4">
                         {allEvent.map(event => (
-                            <article key={event[0]} className="col-xl-4 col-lg-4 col-sm-6 col-12 nft-media nft-graphics">
+                            <article key={event.category} className="col-xl-4 col-lg-4 col-sm-6 col-12 nft-media nft-graphics">
                                 <div className="card rounded-6 overflow-hidden card-bg-dark">
                                     <div className="card-body p-4">
                                         <div className="mb-4 position-relative">
-                                            <img src={event[1].poster} className="rounded-5 w-100 h-auto" alt="..."/>
+                                            <img src={event.poster} className="rounded-5 w-100 h-auto" alt="..."/>
                                             <div id="nft-counter1" className="nft-counter countdown countdown-inline customjs position-absolute start-0 top-0" data-year="2024" data-month="3" data-day="22" data-format="dHMS"></div>
                                         </div>
                                         <div className="row justify-content-between">
                                             <div className="col">
-                                                <h4 className="text-white mb-2">{event[1].title}</h4>
-                                                <h6 className="card-subtitle mb-2 text-white-50">{event[1].published_by}</h6>
-                                                <div className="color fw-bold">{event[1].icp_price} ICP <span className="text-light text-opacity-50">/ ${event[1].price}</span></div>
+                                                <h4 className="text-white mb-2">{event.title}</h4>
+                                                <h6 className="card-subtitle mb-2 text-white-50">{event.published_by}</h6>
+                                                <div className="color fw-bold">{event.icp_price} ICP <span className="text-light text-opacity-50">/ ${event.price}</span></div>
                                             </div>
                                             <div className="col-auto">
                                                 <div className="dropdown">

@@ -37,26 +37,11 @@ export default function Create() {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const handleSubmit = (e) => {
-        const data = {
-            title : title,
-            poster : poster,
-            category : category,
-            total_ticket : parseInt(totalTicket),
-            price : parseInt(price),
-            icp_price : parseInt(Math.ceil(price/5)),
-            date : date,
-            time : time,
-            country : country,
-            city : city,
-            location : location,
-            description : description,
-            committee_id : committeeId,
-            published_by : "@kenabdullah",
-        }
-        console.log("data",data);
-        pickme_backend.createEvent(data).then((res) => {
+        pickme_backend.createEvent(
+            title, poster, category, parseInt(totalTicket), parseInt(price), parseInt(Math.ceil(price/5)),
+            date, time, country, city, location, description, committeeId, "@kenabdullah"
+        ).then((res) => {
             console.log(res);
-            alert('success');
             setShow(false);
             window.location.reload();
         });
