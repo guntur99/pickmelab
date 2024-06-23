@@ -1,4 +1,5 @@
 import { Navigate } from "react-router-dom";
+import { useState, useEffect } from 'react';
 import Nav from 'react-bootstrap/Nav';
 import Tab from 'react-bootstrap/Tab';
 import Button from 'react-bootstrap/Button';
@@ -7,14 +8,62 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProgressBar from 'react-bootstrap/ProgressBar';
+import { pickme_backend } from 'declarations/pickme_backend';
 
 
 export default function Profile() {
+    const [principal, setPrincipal] = useState('');
+    const [progress, setProgress] = useState(0);
+    const [fullname, setFullname] = useState('');
+    const [username, setUsername] = useState('');
+    const [avatar, setAvatar] = useState('');
+    const [dob, setDob] = useState('');
+    const [domicile, setDomicile] = useState('');
+    const [address, setAddress] = useState('');
 
-    const accountProgress = 70;
-    const data = window.localStorage.getItem('user');
-    if ( data == null ) {
-        return <Navigate to="/" />;
+    useEffect(() => {
+        const data = window.localStorage.getItem('user');
+        setPrincipal(data.replace(/"/g, ''));
+        if ( data == null ) {
+            return <Navigate to="/" />;
+        };
+        var count = 0;
+        pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
+            if (res.ok) {
+                const resProfile = res.ok;
+                setFullname(resProfile.fullname);
+                setUsername(resProfile.username);
+                setAvatar(resProfile.avatar);
+                setDob(resProfile.dob);
+                setDomicile(resProfile.domicile);
+                setAddress(resProfile.address);
+            }
+        });
+        
+        count += fullname == "" ? 1 : 0;
+        count += username == "" ? 1 : 0;
+        count += avatar == "" ? 1 : 0;
+        count += dob == "" ? 1 : 0;
+        count += domicile == "" ? 1 : 0;
+        count += address == "" ? 1 : 0;
+        setProgress(count*10);
+    },[]);
+
+    const handleUpdate = (e) => {
+        e.preventDefault();
+        pickme_backend.updateProfile(principal, username, fullname, dob, domicile, address, "Member", avatar).then((res) => {
+            if (res) {
+                alert('successfuly updated profile!')
+            }
+        });
+    };
+    
+    const handleAvatar = (e) => {
+        const data = new FileReader();
+        data.addEventListener('load', () => {
+            setAvatar(data.result);
+        })
+        data.readAsDataURL(e.target.files[0]);
     };
 
     return (
@@ -24,9 +73,8 @@ export default function Profile() {
                     <div className="card rounded-6 card-bg-dark text-center">
                         <div className="card-body p-4">
                             <h5 className=" text-light">Profile</h5>
-                            <img src={`../theme/images/products/3.jpg`} alt="..." className="rounded-circle mb-4 w-50"/>
-                            <h4 className="text-light">Ken Abdullah<p className="fs-6 text-primary-second">@kenabdullah</p></h4>
-                            
+                            <img src={avatar} alt="..." className="rounded-circle mb-4 w-50 object-fit-cover" />
+                            <h4 className="text-light">{fullname}<p className="fs-6 text-primary-second">@{username}</p></h4>
                         </div>
                     </div>
                     <div className="card rounded-6 card-bg-dark text-center mt-4">
@@ -45,7 +93,7 @@ export default function Profile() {
                             <p className="fs-6 text-white-50">Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
                                 sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
                                 quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                            <ProgressBar now={accountProgress} label={`${accountProgress}%`} />
+                            <ProgressBar now={progress} label={`${progress}%`} />
                         </div>
                     </div>
                     <div className="card rounded-6 card-bg-dark text-center my-3">
@@ -65,7 +113,9 @@ export default function Profile() {
                                             <Row className="my-1">
                                                 <Col className="pl-5 pr-3 text-start">
                                                     <Form.Label className="fs-6">Full Name</Form.Label>
-                                                    <Form.Control className="text-light border" type="text" placeholder="Fullname" style={{ 
+                                                    <Form.Control className="text-light border" type="text" value={fullname} placeholder="Fullname" 
+                                                    onChange={(e) => setFullname(e.target.value)}
+                                                    style={{ 
                                                         maxWidth: "100%",
                                                         padding: "0.5em 1em",
                                                     }} />
@@ -74,14 +124,18 @@ export default function Profile() {
                                             <Row className="my-1">
                                                 <Col className="pl-5 pr-3 text-start">
                                                     <Form.Label className="fs-6">Photo</Form.Label>
-                                                    <Form.Control className="text-light border" type="file" style={{ 
+                                                    <Form.Control className="text-light border" type="file"
+                                                    onChange={handleAvatar}
+                                                    style={{ 
                                                         maxWidth: "100%",
                                                         padding: "0.5em 1em",
                                                     }} />
                                                 </Col>
                                                 <Col className="pl-5 pr-3 text-start">
                                                     <Form.Label className="fs-6">Username</Form.Label>
-                                                    <Form.Control className="text-light border" type="text" placeholder="Username" style={{ 
+                                                    <Form.Control className="text-light border" type="text" value={username} placeholder="Username" 
+                                                    onChange={(e) => setUsername(e.target.value)}
+                                                    style={{ 
                                                         maxWidth: "100%",
                                                         padding: "0.5em 1em",
                                                     }} />
@@ -90,14 +144,18 @@ export default function Profile() {
                                             <Row className="my-1">
                                                 <Col className="pl-5 pr-3 text-start">
                                                     <Form.Label className="fs-6">Date of Birth</Form.Label>
-                                                    <Form.Control className="text-light border" type="date" placeholder="Date of Birth" style={{ 
+                                                    <Form.Control className="text-light border" type="date" value={dob} placeholder="Date of Birth" 
+                                                    onChange={(e) => setDob(e.target.value)}
+                                                    style={{ 
                                                         maxWidth: "100%",
                                                         padding: "0.5em 1em",
                                                     }} />
                                                 </Col>
                                                 <Col className="pl-3 pr-5 text-start">
                                                     <Form.Label className="fs-6">Domicile</Form.Label>
-                                                    <Form.Control className="text-light border" type="text" placeholder="Domicile" style={{ 
+                                                    <Form.Control className="text-light border" type="text" value={domicile} placeholder="Domicile" 
+                                                    onChange={(e) => setDomicile(e.target.value)}
+                                                    style={{ 
                                                         maxWidth: "100%",
                                                         padding: "0.5em 1em",
                                                     }} />
@@ -106,7 +164,9 @@ export default function Profile() {
                                             <Row className="my-1">
                                                 <Col className="pl-3 pr-5 text-start">
                                                     <Form.Label className="fs-6">Address</Form.Label>
-                                                    <Form.Control className="text-light border" as="textarea" rows={3} style={{ 
+                                                    <Form.Control className="text-light border" as="textarea" value={address} rows={3} 
+                                                    onChange={(e) => setAddress(e.target.value)}
+                                                    style={{ 
                                                         maxWidth: "100%",
                                                         padding: "0.5em 1em",
                                                     }} />
@@ -114,7 +174,7 @@ export default function Profile() {
                                             </Row>
                                             <Row className='mt-3 text-end'>
                                                 <Col>
-                                                <Button variant="light">
+                                                <Button variant="light" onClick={handleUpdate}>
                                                     Save Changes
                                                 </Button>
                                                 </Col>

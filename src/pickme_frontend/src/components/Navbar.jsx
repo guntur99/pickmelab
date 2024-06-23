@@ -9,11 +9,14 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { canisterId as internetIdentityCanisterId } from "declarations/internet_identity";
+import { pickme_backend } from 'declarations/pickme_backend';
 
 export default function Navbar() {
     
     const [principal, setPrincipal] = useState('');
     const [auth, setAuth] = useState('');
+    const [username, setUsername] = useState('');
+    const [isRegistered, setIsRegistered] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState('');
 
     const [show, setShow] = useState(false);
@@ -32,14 +35,32 @@ export default function Navbar() {
 
     useEffect(() => {
         const data = window.localStorage.getItem('user');
-        if ( data !== null ) {
-            setPrincipal(JSON.parse(data));
-            // handleShow(); //check if profile data is not completed
-        };
+        pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
+            if ( data !== null ) {
+                if (res.ok) {
+                    setIsRegistered(true);
+                }else{
+                    setPrincipal(data.replace(/"/g, ''));
+                    if (!isRegistered) {
+                        handleShow(); //check if profile data is not completed
+                    }
+                }
+            };
+        });
     }, []);
+
+    function handleSignIn(e) {
+        e.preventDefault();
+        pickme_backend.register(principal, username, "", "", "", "", "", "").then((res) => {
+            if (res) {
+                setShow(false);
+                window.location.reload();
+            }
+        });
+    }
     
-    function handleLogin(event) {
-        event.preventDefault();
+    function handleLogin(e) {
+        e.preventDefault();
         init();
 
         return false;
@@ -88,8 +109,8 @@ export default function Navbar() {
         }
     };
 
-    function handleLogout(event) {
-        event.preventDefault();
+    function handleLogout(e) {
+        e.preventDefault();
         handleLogoutShow();
     }
 
@@ -113,7 +134,7 @@ export default function Navbar() {
                                     </div>
                                     <div className="header-misc ms-auto">
                                         <div className="header-misc ms-0">
-                                            {principal ?
+                                            {isRegistered ?
                                                 <div className="header-misc">
                                                     <div className="header-misc-icon tooltips">
                                                         <Link className="header-icon-notification " to="/event/create">
@@ -160,7 +181,9 @@ export default function Navbar() {
                         <Row className="my-1">
                             <Col className="pl-5 pr-3 text-start">
                                 <Form.Label className="fs-6">Username</Form.Label>
-                                <Form.Control className="text-light border" type="text" required style={{ 
+                                <Form.Control className="text-light border" type="text" required 
+                                onChange={(e) => setUsername(e.target.value)}
+                                style={{ 
                                     maxWidth: "100%",
                                     padding: "0.5em 1em",
                                 }} />
@@ -169,7 +192,7 @@ export default function Navbar() {
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
-                <Button variant="light" onClick={handleClose}>
+                <Button variant="light" onClick={handleSignIn}>
                     Submit
                 </Button>
                 </Modal.Footer>

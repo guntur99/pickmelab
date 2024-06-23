@@ -14,10 +14,12 @@ import Source "mo:uuid/async/SourceV4";
 
 actor {
 
-  public type EventId = Nat32;
+  // let usersIi = TrieMap.TrieMap<Principal, User>(Principal.equal, Principal.hash);
+  let usersIi = TrieMap.TrieMap<Text, User>(Text.equal, Text.hash);
+  let events = TrieMap.TrieMap<Text, Events>(Text.equal, Text.hash);
 
   type User = {
-    internet_identity : Principal;
+    internet_identity : Text;
     username : Text;
     fullname : Text;
     avatar : Text;
@@ -27,9 +29,6 @@ actor {
     user_type : Text;
   };
   
-  let usersIi = TrieMap.TrieMap<Principal, User>(Principal.equal, Principal.hash);
-  let events = TrieMap.TrieMap<Text, Events>(Text.equal, Text.hash);
-
   public type Events = {
       uuid : Text;
       title : Text;
@@ -49,10 +48,7 @@ actor {
       timestamp : Time.Time;
   };
   
-  // private stable var eId : EventId = 0;
-  // private stable var events : Trie.Trie<EventId, Events> = Trie.empty();
-
-  public func updateUser(userId : Principal, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, avatar : Text) : async Bool {
+  public func updateProfile(userId : Text, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, avatar : Text) : async Bool {
     let user = usersIi.get(userId);
     switch (user) {
         case (?user) {
@@ -65,7 +61,7 @@ actor {
             address = address;
             user_type = user_type;
             avatar = avatar;
-            // timestamp = user.timestamp;
+            timestamp = Time.now();
           };
           usersIi.put(userId, newUser);
           return true;
@@ -77,14 +73,15 @@ actor {
 
   };
 
-  public func register(userId : Principal, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, avatar : Text) : async Bool {
-    let user_id = userId;
-
-    if (usersIi.get(user_id) != null) {
+  public func register(userId : Text, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, avatar : Text) : async Bool {
+    let uuid = await generateUUID();
+    
+    if (usersIi.get(userId) != null) {
       return false;
     };
     let user : User = {
-      internet_identity = user_id;
+      uuid = uuid;
+      internet_identity = userId;
       username = username;
       fullname = fullname;
       dob = dob;
@@ -104,10 +101,9 @@ actor {
     msg.caller;
   };
 
-  public query func checkUserById(userId : Principal) : async Result.Result<User, Text> {
+  public query func checkUserById(userId : Text) : async Result.Result<User, Text> {
     let user = usersIi.get(userId);
     
-    Debug.print(debug_show(userId));
     switch (user) {
       case (?user) {
         return #ok(user);
@@ -116,6 +112,16 @@ actor {
         return #err("User not found!");
       };
     };
+  };
+
+  public query func getAllUser() : async Result.Result<[User], Text> {
+    var allUser = Vector.Vector<User>();
+    
+    for (user in usersIi.vals()) {
+        allUser.add(user);
+    };
+
+    return #ok(Vector.toArray(allUser));
   };
 
   // public query func getUsernameById(userId : Principal) : async Result.Result<Text, Text> {
@@ -193,50 +199,10 @@ actor {
 
       return #ok(Vector.toArray(allEvent));
   };
-
   
-  // generate UUID
   public shared func generateUUID() : async Text {
       let g = Source.Source();
       return UUID.toText(await g.new());
   };
-
-  // public func updateEvent(event_id : EventId, event_input : Events) : async Bool {
-
-  //   let result = Trie.find(events, eKey(event_id), Nat32.equal);
-  //   let data = Option.isSome(result);
-
-  //   if(data) {
-  //     events := Trie.replace(
-  //       events,
-  //       eKey(event_id),
-  //       Nat32.equal,
-  //       ?event_input,
-  //     ).0;
-  //   };
-
-  //   return data;
-  // };
-
-  // public func deleteEvent(event_id : EventId) : async Bool {
-
-  //   let result = Trie.find(events, eKey(event_id), Nat32.equal);
-  //   let data = Option.isSome(result);
-
-  //   if(data) {
-  //     events := Trie.replace(
-  //       events,
-  //       eKey(event_id),
-  //       Nat32.equal,
-  //       null,
-  //     ).0;
-  //   };
-
-  //   return data;
-  // };
-
-  // private func eKey(x : EventId) : Trie.Key<EventId> {
-  //   return { hash = x; key = x };
-  // };
 
 };
