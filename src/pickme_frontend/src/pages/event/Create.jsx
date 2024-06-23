@@ -10,8 +10,16 @@ import MyEvents from '../profile/MyEvents.jsx';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { pickme_backend } from 'declarations/pickme_backend';
 
+let listPackage = [
+    { id: 0, name: 'Bronze', desc: '3 Events and max 100 tickets/event', price: '20' },
+    { id: 1, name: 'Silver', desc: '5 Events and max 500 tickets/event', price: '50' },
+    { id: 2, name: 'Gold', desc: '7 Events and max 5000 tickets/event', price: '100' },
+    { id: 3, name: 'Diamond', desc: '10 Events and max 10.000 tickets/event', price: '500' },
+];
+
 export default function Create() {
 
+    const [principal, setPrincipal] = useState('');
     const [title, setTitle] = useState('');
     const [poster, setPoster] = useState('');
     const [category, setCategory] = useState('Concert');
@@ -24,26 +32,50 @@ export default function Create() {
     const [location, setLocation] = useState('');
     const [description, setDescription] = useState('');
     const [committeeId, setCommitteeId] = useState('');
+    const [publishedBy, setPublishedBy] = useState('');
+    const [profile, setProfile] = useState('');
     const [show, setShow] = useState(false);
+    const [showPackage, setShowPackage] = useState(false);
+    const [packages] = useState(listPackage);
 
     useEffect(() => {
-        const auth = window.localStorage.getItem('user');
-        if ( auth == null ) {
+        const data = window.localStorage.getItem('user');
+        setPrincipal(data.replace(/"/g, ''));
+        if (data) {
+            setCommitteeId(data);
+
+            pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
+                if (res.ok) {
+                    const profile = res.ok;
+                    setPublishedBy(profile.username);
+                    setProfile(profile);
+                }
+            });
+        }else{
             return <Navigate to="/" />;
-        };
-        setCommitteeId(auth);
+        }
     },[]);
+
+    const handlePackageClose = () => setShowPackage(false);
+    const handlePackageShow = () => setShowPackage(true);
+    const handleBuyPackage = (e) => {
+        pickme_backend.updateProfile(principal.replace(/"/g, ''), profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, profile.avatar, profile.progress).then((res) => {
+            if (res) {
+                setShowPackage(false);
+                alert(`successfuly buy ${selectedPackage} package profile!`)
+            }
+        });
+    };
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const handleSubmit = (e) => {
         pickme_backend.createEvent(
             title, poster, category, parseInt(totalTicket), parseInt(price), parseInt(Math.ceil(price/5)),
-            date, time, country, city, location, description, committeeId, "@kenabdullah"
+            date, time, country, city, location, description, committeeId, publishedBy
         ).then((res) => {
-            console.log(res);
             setShow(false);
-            window.location.reload();
+            // window.location.reload();
         });
     };
 
@@ -67,6 +99,18 @@ export default function Create() {
         setCity(e.target.value)
     };
 
+    const [item, setItem] = useState({ selectedPackage: "Bronze" });
+    const { selectedPackage } = item;
+
+    const handleChange = e => {
+        e.persist();
+
+        setItem(prevState => ({
+        ...prevState,
+        selectedPackage: e.target.value
+        }));
+    };
+
     return (
         <>
         <div className="container mt-3 pt-6">
@@ -74,7 +118,7 @@ export default function Create() {
                 <div className="col-md-12">
                     <div className=" card rounded-6 card-bg-dark text-center">
                         <div className=" card-body p-">
-                            <Button variant="outline-light" className="m-4 text-start" onClick={handleShow}>
+                            <Button variant="outline-light" className="m-4 text-start" onClick={profile.user_type !== 'Member' ? handleShow : handlePackageShow}>
                                 <i className="bi-calendar-plus-fill text-opacity-50"></i> Create New Event
                             </Button>
                             <MyEvents/>
@@ -215,6 +259,39 @@ export default function Create() {
                             </Button>
                             <Button variant="light" onClick={handleSubmit}>
                                 Submit
+                            </Button>
+                            </Modal.Footer>
+                        </Modal>
+                        
+                        <Modal show={showPackage} onHide={handlePackageClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
+                            <Modal.Header closeButton>
+                                <div className="mx-2 text-light fs-5 fw-bold">Committee Package</div>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <Container className="my-1 text-light">
+                                    <Row className="my-1">
+                                        <Col className="pl-5 pr-3 text-start">
+                                            <Form.Group controlId="selectedPackage">
+                                                {packages.map(item => (
+                                                    <Form.Check
+                                                    key={item.id}
+                                                    value={item.name}
+                                                    type="radio"
+                                                    aria-label={`radio ${item.id}`}
+                                                    label={`[`+item.name+`] $`+item.price+` for `+item.desc}
+                                                    onChange={handleChange}
+                                                    checked={selectedPackage === item.name}
+                                                    style={{ fontSize: 16 }}
+                                                    />
+                                                ))}
+                                            </Form.Group>
+                                        </Col>
+                                    </Row>
+                                </Container>
+                            </Modal.Body>
+                            <Modal.Footer>
+                            <Button variant="light" onClick={handleBuyPackage}>
+                                Buy Package
                             </Button>
                             </Modal.Footer>
                         </Modal>

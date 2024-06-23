@@ -7,7 +7,6 @@ import Nat32 "mo:base/Nat32";
 import Time "mo:base/Time";
 import TrieMap "mo:base/TrieMap";
 import Result "mo:base/Result";
-import Debug "mo:base/Debug";
 import Vector "mo:vector/Class";
 import UUID "mo:uuid/UUID";
 import Source "mo:uuid/async/SourceV4";
@@ -27,6 +26,8 @@ actor {
     domicile : Text;
     address : Text;
     user_type : Text;
+    progress : Nat32;
+    timestamp : Time.Time;
   };
   
   public type Events = {
@@ -35,6 +36,7 @@ actor {
       poster : Text;
       category : Text;
       total_ticket : Nat32;
+      available_ticket : Nat32;
       price : Nat32;
       icp_price : Nat32;
       date : Text;
@@ -48,7 +50,7 @@ actor {
       timestamp : Time.Time;
   };
   
-  public func updateProfile(userId : Text, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, avatar : Text) : async Bool {
+  public func updateProfile(userId : Text, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, avatar : Text, progress : Nat32) : async Bool {
     let user = usersIi.get(userId);
     switch (user) {
         case (?user) {
@@ -61,6 +63,7 @@ actor {
             address = address;
             user_type = user_type;
             avatar = avatar;
+            progress = progress;
             timestamp = Time.now();
           };
           usersIi.put(userId, newUser);
@@ -73,7 +76,7 @@ actor {
 
   };
 
-  public func register(userId : Text, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, avatar : Text) : async Bool {
+  public func register(userId : Text, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, avatar : Text, progress : Nat32) : async Bool {
     let uuid = await generateUUID();
     
     if (usersIi.get(userId) != null) {
@@ -89,6 +92,7 @@ actor {
       address = address;
       user_type = user_type;
       avatar = avatar;
+      progress = progress;
       timestamp = Time.now();
     };
 
@@ -114,6 +118,19 @@ actor {
     };
   };
 
+  public query func getUsername(userId : Text) : async Result.Result<Text, Text> {
+    let user = usersIi.get(userId);
+
+    switch (user) {
+        case (?user) {
+          return #ok(user.username);
+        };
+        case (null) {
+          return #err("User not found!");
+        };
+    };
+  };
+
   public query func getAllUser() : async Result.Result<[User], Text> {
     var allUser = Vector.Vector<User>();
     
@@ -123,19 +140,6 @@ actor {
 
     return #ok(Vector.toArray(allUser));
   };
-
-  // public query func getUsernameById(userId : Principal) : async Result.Result<Text, Text> {
-  //   let user = usersIi.get(userId);
-    
-  //   switch (user) {
-  //       case (?user) {
-  //         return #ok(user.username);
-  //       };
-  //       case (null) {
-  //         return #err("User not found!");
-  //       };
-  //   };
-  // };
 
   public func createEvent(title : Text, poster : Text, category : Text, total_ticket : Nat32, 
     price : Nat32, icp_price : Nat32, date : Text, time : Text, country : Text, city : Text, 
@@ -148,6 +152,7 @@ actor {
       poster = poster;
       category = category;
       total_ticket = total_ticket;
+      available_ticket = total_ticket;
       price = price;
       icp_price = icp_price;
       date = date;

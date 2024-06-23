@@ -2,6 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import Nav from 'react-bootstrap/Nav';
 import Tab from 'react-bootstrap/Tab';
+import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
@@ -10,6 +11,17 @@ import Col from 'react-bootstrap/Col';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { pickme_backend } from 'declarations/pickme_backend';
 
+let packageMember = { id: 0, name: 'Member', desc: '0 Events and max 0 tickets/event', price: '0' };
+let packageBronze = { id: 1, name: 'Bronze', desc: '3 Events and max 100 tickets/event', price: '20' };
+let packageSilver = { id: 2, name: 'Silver', desc: '5 Events and max 500 tickets/event', price: '50' };
+let packageGold = { id: 3, name: 'Gold', desc: '7 Events and max 5000 tickets/event', price: '100' };
+let packageDiamond = { id: 4, name: 'Diamond', desc: '10 Events and max 10.000 tickets/event', price: '500' };
+let listPackage = [
+    { id: 0, name: 'Bronze', desc: '3 Events and max 100 tickets/event', price: '20' },
+    { id: 1, name: 'Silver', desc: '5 Events and max 500 tickets/event', price: '50' },
+    { id: 2, name: 'Gold', desc: '7 Events and max 5000 tickets/event', price: '100' },
+    { id: 3, name: 'Diamond', desc: '10 Events and max 10.000 tickets/event', price: '500' },
+];
 
 export default function Profile() {
     const [principal, setPrincipal] = useState('');
@@ -20,6 +32,11 @@ export default function Profile() {
     const [dob, setDob] = useState('');
     const [domicile, setDomicile] = useState('');
     const [address, setAddress] = useState('');
+    const [userType, setUserType] = useState('');
+    const [profile, setProfile] = useState('');
+    const [itemPackage, setItemPackage] = useState({});
+    const [showPackage, setShowPackage] = useState(false);
+    const [packages] = useState(listPackage);
 
     useEffect(() => {
         const data = window.localStorage.getItem('user');
@@ -27,19 +44,42 @@ export default function Profile() {
         if ( data == null ) {
             return <Navigate to="/" />;
         };
-        var count = 0;
         pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
             if (res.ok) {
-                const resProfile = res.ok;
-                setFullname(resProfile.fullname);
-                setUsername(resProfile.username);
-                setAvatar(resProfile.avatar);
-                setDob(resProfile.dob);
-                setDomicile(resProfile.domicile);
-                setAddress(resProfile.address);
+                const profile = res.ok;
+                setProfile(profile);
+                setFullname(profile.fullname);
+                setUsername(profile.username);
+                setAvatar(profile.avatar);
+                setDob(profile.dob);
+                setDomicile(profile.domicile);
+                setAddress(profile.address);
+                setProgress(profile.progress);
+                setUserType(profile.user_type);
+                switch (profile.user_type) {
+                    case "Bronze":
+                        setItemPackage(packageBronze);
+                        break;
+                    case "Silver":
+                        setItemPackage(packageSilver);
+                        break;
+                    case "Gold":
+                        setItemPackage(packageGold);
+                        break;
+                    case "Diamond":
+                        setItemPackage(packageDiamond);
+                        break;
+                    default:
+                        setItemPackage(packageMember);
+                        break;
+                }
             }
         });
-        
+    },[]);
+
+    const handleUpdate = (e) => {
+        e.preventDefault();
+        var count = 0;
         count += fullname == "" ? 1 : 0;
         count += username == "" ? 1 : 0;
         count += avatar == "" ? 1 : 0;
@@ -47,11 +87,7 @@ export default function Profile() {
         count += domicile == "" ? 1 : 0;
         count += address == "" ? 1 : 0;
         setProgress(count*10);
-    },[]);
-
-    const handleUpdate = (e) => {
-        e.preventDefault();
-        pickme_backend.updateProfile(principal, username, fullname, dob, domicile, address, "Member", avatar).then((res) => {
+        pickme_backend.updateProfile(principal, username, fullname, dob, domicile, address, "Member", avatar, progress).then((res) => {
             if (res) {
                 alert('successfuly updated profile!')
             }
@@ -66,14 +102,38 @@ export default function Profile() {
         data.readAsDataURL(e.target.files[0]);
     };
 
+    const [item, setItem] = useState({ selectedPackage: "Bronze" });
+    const { selectedPackage } = item;
+
+    const handleChange = e => {
+        e.persist();
+
+        setItem(prevState => ({
+        ...prevState,
+        selectedPackage: e.target.value
+        }));
+    };
+
+    const handlePackageClose = () => setShowPackage(false);
+    const handlePackageShow = () => setShowPackage(true);
+    const handleUpgradePackage = (e) => {
+        pickme_backend.updateProfile(principal.replace(/"/g, ''), profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, profile.avatar, profile.progress).then((res) => {
+            if (res) {
+                setShowPackage(false);
+                alert(`successfuly buy ${selectedPackage} package profile!`);
+                window.location.reload();;
+            }
+        });
+    };
+
     return (
         <div className="container mt-3 pt-6">
             <div className="row pt-6">
                 <div className="col-md-3">
                     <div className="card rounded-6 card-bg-dark text-center">
                         <div className="card-body p-4">
-                            <h5 className=" text-light">Profile</h5>
-                            <img src={avatar} alt="..." className="rounded-circle mb-4 w-50 object-fit-cover" />
+                            <span className="fs-5 fw-bold text-primary-second">{userType} <i className="bi-check-circle-fill"></i></span>
+                            <img src={avatar} alt="..." className="rounded-circle my-4 w-50 object-fit-cover" />
                             <h4 className="text-light">{fullname}<p className="fs-6 text-primary-second">@{username}</p></h4>
                         </div>
                     </div>
@@ -181,11 +241,52 @@ export default function Profile() {
                                             </Row>
                                         </Container>
                                     </Tab.Pane>
-                                    <Tab.Pane eventKey="setting"><h5 className='text-light'>Setting not found</h5></Tab.Pane>
+                                    <Tab.Pane eventKey="setting">
+                                        <h5 className='text-light'>You are <b className="text-primary-second">{userType}</b> Member now! You can create <b className="text-primary-second">{itemPackage.desc}</b>. 
+                                            Upgrade for more frexibility!
+                                        </h5>
+
+                                        <Button variant="light" onClick={handlePackageShow}>
+                                            Upgrade Package
+                                        </Button>
+                                    </Tab.Pane>
                                 </Tab.Content>
                             </Tab.Container>
                         </div>
                     </div>
+
+                    <Modal show={showPackage} onHide={handlePackageClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
+                        <Modal.Header closeButton>
+                            <div className="mx-2 text-light fs-5 fw-bold">Committee Package</div>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Container className="my-1 text-light">
+                                <Row className="my-1">
+                                    <Col className="pl-5 pr-3 text-start">
+                                        <Form.Group controlId="selectedPackage">
+                                            {packages.map(item => (
+                                                <Form.Check
+                                                key={item.id}
+                                                value={item.name}
+                                                type="radio"
+                                                aria-label={`radio ${item.id}`}
+                                                label={`[`+item.name+`] $`+item.price+` for `+item.desc}
+                                                onChange={handleChange}
+                                                checked={selectedPackage === item.name}
+                                                style={{ fontSize: 16 }}
+                                                />
+                                            ))}
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </Modal.Body>
+                        <Modal.Footer>
+                        <Button variant="light" onClick={handleUpgradePackage}>
+                            Upgrade Package
+                        </Button>
+                        </Modal.Footer>
+                    </Modal>
                 </div>
             </div>
         </div>

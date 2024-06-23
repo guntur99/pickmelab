@@ -35,23 +35,25 @@ export default function Navbar() {
 
     useEffect(() => {
         const data = window.localStorage.getItem('user');
-        pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
-            if ( data !== null ) {
-                if (res.ok) {
-                    setIsRegistered(true);
-                }else{
-                    setPrincipal(data.replace(/"/g, ''));
-                    if (!isRegistered) {
-                        handleShow(); //check if profile data is not completed
+        if (data) {
+            pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
+                if ( data !== null ) {
+                    if (res.ok) {
+                        setIsRegistered(true);
+                    }else{
+                        setPrincipal(data.replace(/"/g, ''));
+                        if (!isRegistered) {
+                            handleShow(); //check if profile data is not completed
+                        }
                     }
-                }
-            };
-        });
+                };
+            });
+        }
     }, []);
 
     function handleSignIn(e) {
         e.preventDefault();
-        pickme_backend.register(principal, username, "", "", "", "", "", "").then((res) => {
+        pickme_backend.register(principal, username, "", "", "", "", "Member", "", 50).then((res) => {
             if (res) {
                 setShow(false);
                 window.location.reload();
