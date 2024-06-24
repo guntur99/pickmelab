@@ -39,15 +39,13 @@ export default function Event() {
     const [totalTicket, setTotalTicket] = useState(0);
     const [ticketPrice, setTicketPrice] = useState(0);
     const [ticketIcpPrice, setTicketIcpPrice] = useState(0);
-    // const [showPayment, setShowPayment] = useState(false);
-    // const handlePaymentClose = () => setShowPayment(false);
-    // const handlePaymentShow = () => setShowPayment(true);
+
     const handlePayment = (e) => {
         pickme_backend.buyTicket(principal, eventId, parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-"
         ).then((res) => {
             console.log(res);
             setShow(false);
-            // window.location.reload();
+            window.location.reload();
         });
     };
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from "react-router-dom";
 import { pickme_backend } from 'declarations/pickme_backend';
 
@@ -24,14 +24,32 @@ let listEvent = [
 
 export default function BestEventsCategories() {
 
+    const [activeRecent, setActiveRecent] = useState('Show All');
     const [categories, setCategories] = useState(listCategory);
     const [events, setEvents] = useState([]);
+    const [eventsFiltered, setEventsFiltered] = useState([]);
 
     useEffect(() => {
         pickme_backend.getAllEvent().then((res) => {
             setEvents(res.ok);
         });
     },[]);
+
+    const handleActiveRecent = (e) => {
+        e.preventDefault();
+
+        const eventFilter = [];
+        setActiveRecent(e.target.text)
+        if (e.target.text === "Show All") {
+            setEventsFiltered(events);
+        }else{
+            const newEvent = events.filter((event) => event.category === e.target.text);
+            if (newEvent) {
+                eventFilter.push(newEvent);
+                return setEventsFiltered(eventFilter[0]);
+            }
+        }
+    }
 
     return (
 
@@ -42,13 +60,12 @@ export default function BestEventsCategories() {
                     <div className="text-uppercase color ls-3 fw-bold mb-2">Our Best Event</div>
                     <h2 className="display-5 fw-bold text-white">Popular Available Drops</h2>
                 </div>
-
                 <div className="col-12">
                     <div className="grid-filter-wrap">
 
                         <ul className="grid-filter style-2 mx-auto mb-0" data-container="#nft-products">
                             {categories.map(category => (
-                                <li key={category.id} className={category.status} ><a href="#" className={ category.status == 'activeFilter' ? "button-gradient gradient-color button rounded-6 mx-1" : 'button text-white rounded-6 mx-1' } data-filter={category.filter}>{category.name}</a></li>
+                                <li onClick={handleActiveRecent} key={category.id} className="text-light" ><a href='#' className={ category.name == activeRecent ? "button-gradient gradient-color text-light rounded-6 mx-1" : 'text-light rounded-6 mx-1' } data-filter={category.filter}>{category.name}</a></li>
                             ))}
                         </ul>
 
@@ -58,7 +75,9 @@ export default function BestEventsCategories() {
 
                 <div className="col-12">
                     <div className="row g-4">
-                        {events.map(event => (
+                        {/* {activeRecent === "Show All" ?
+                        }eventsFiltered */}
+                        {eventsFiltered.map(event => (
                             <article key={event.uuid} className="col-xl-3 col-lg-4 col-sm-6 col-12 nft-media nft-graphics">
                                 <div className="card rounded-6 overflow-hidden card-bg-dark">
                                     <div className="card-body p-4">

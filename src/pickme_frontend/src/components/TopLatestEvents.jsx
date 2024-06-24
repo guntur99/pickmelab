@@ -30,7 +30,7 @@ export default function TopEvents() {
         pickme_backend.getAllEvent().then((res) => {
             setEvents(res.ok);
         });
-    },[]);
+    },[events]);
     
     return (
         <div>
