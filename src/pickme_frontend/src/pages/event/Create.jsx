@@ -18,6 +18,10 @@ let listPackage = [
 ];
 
 export default function Create() {
+    const data = window.localStorage.getItem('user');
+    if ( data == null ) {
+        return <Navigate to="/" />;
+    };
 
     const [principal, setPrincipal] = useState('');
     const [title, setTitle] = useState('');
@@ -39,7 +43,6 @@ export default function Create() {
     const [packages] = useState(listPackage);
 
     useEffect(() => {
-        const data = window.localStorage.getItem('user');
         setPrincipal(data.replace(/"/g, ''));
         if (data) {
             setCommitteeId(data);
@@ -51,8 +54,6 @@ export default function Create() {
                     setProfile(profile);
                 }
             });
-        }else{
-            return <Navigate to="/" />;
         }
     },[]);
 
@@ -62,7 +63,8 @@ export default function Create() {
         pickme_backend.updateProfile(principal.replace(/"/g, ''), profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, profile.avatar, profile.progress).then((res) => {
             if (res) {
                 setShowPackage(false);
-                alert(`successfuly buy ${selectedPackage} package profile!`)
+                alert(`successfuly buy ${selectedPackage} package profile!`);
+                window.location.reload();
             }
         });
     };
@@ -74,8 +76,8 @@ export default function Create() {
             title, poster, category, parseInt(totalTicket), parseInt(price), parseInt(Math.ceil(price/5)),
             date, time, country, city, location, description, committeeId, publishedBy
         ).then((res) => {
+            window.location.reload();
             setShow(false);
-            // window.location.reload();
         });
     };
 
@@ -118,7 +120,7 @@ export default function Create() {
                 <div className="col-md-12">
                     <div className=" card rounded-6 card-bg-dark text-center">
                         <div className=" card-body p-">
-                            <Button variant="outline-light" className="m-4 text-start" onClick={profile.user_type !== 'Member' ? handleShow : handlePackageShow}>
+                            <Button variant="outline-light" className="m-4 text-start" onClick={profile.user_type !== 'Basic' ? handleShow : handlePackageShow}>
                                 <i className="bi-calendar-plus-fill text-opacity-50"></i> Create New Event
                             </Button>
                             <MyEvents/>

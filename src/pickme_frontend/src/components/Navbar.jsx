@@ -1,4 +1,4 @@
-
+import { Navigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { AuthClient } from '@dfinity/auth-client';
 import { Link, NavLink } from "react-router-dom";
@@ -28,8 +28,13 @@ export default function Navbar() {
     const handleLogoutShow = () => setLogout(true);
     const handleLogoutNow = () => {
         setLogout(false);
-        logout();
-        
+        localStorage.removeItem('user');
+        setAuth(null);
+        setPrincipal(null);
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.reload();
+
         return <Navigate to="/" />;
     };
 
@@ -53,7 +58,7 @@ export default function Navbar() {
 
     function handleSignIn(e) {
         e.preventDefault();
-        pickme_backend.register(principal, username, "", "", "", "", "Member", "", 50).then((res) => {
+        pickme_backend.register(principal, username, "", "", "", "", "Basic", "", 50).then((res) => {
             if (res) {
                 setShow(false);
                 window.location.reload();
@@ -100,16 +105,6 @@ export default function Navbar() {
         // Now you can use the userPrincipal to interact with your backend
         localStorage.setItem('user', JSON.stringify(userPrincipal));
     }
-
-    const logout = async () => {
-        if (principal) {
-            localStorage.clear();
-            sessionStorage.clear();
-            setAuth(null);
-            setPrincipal(null);
-            window.location.reload();
-        }
-    };
 
     function handleLogout(e) {
         e.preventDefault();

@@ -15,6 +15,7 @@ actor {
 
   // let usersIi = TrieMap.TrieMap<Principal, User>(Principal.equal, Principal.hash);
   let usersIi = TrieMap.TrieMap<Text, User>(Text.equal, Text.hash);
+  let tickets = TrieMap.TrieMap<Text, Tickets>(Text.equal, Text.hash);
   let events = TrieMap.TrieMap<Text, Events>(Text.equal, Text.hash);
 
   type User = {
@@ -48,6 +49,16 @@ actor {
       committee_id : Text;
       published_by : Text;
       timestamp : Time.Time;
+  };
+  
+  public type Tickets = {
+    uuid : Text;
+    userId : Text;
+    eventId : Text;
+    price : Nat32;
+    icp_price : Nat32;
+    discount : Text;
+    timestamp : Time.Time;
   };
   
   public func updateProfile(userId : Text, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, avatar : Text, progress : Nat32) : async Bool {
@@ -169,6 +180,70 @@ actor {
     events.put(event.uuid, event);
 
     return true;
+  };
+
+  public func updateEvent(eventId : Text, title : Text, poster : Text, category : Text, total_ticket : Nat32, 
+    price : Nat32, icp_price : Nat32, date : Text, time : Text, country : Text, city : Text, 
+    location : Text, description : Text, committee_id : Text, published_by : Text) : async Bool 
+  {
+    let event = events.get(eventId);
+    switch (event) {
+        case (?event) {
+          let event : Events = {
+            uuid = eventId;
+            title = title;
+            poster = poster;
+            category = category;
+            total_ticket = total_ticket;
+            available_ticket = total_ticket;
+            price = price;
+            icp_price = icp_price;
+            date = date;
+            time = time;
+            country = country;
+            city = city;
+            location = location;
+            description = description;
+            committee_id = committee_id;
+            published_by = published_by;
+            timestamp = Time.now();
+          };
+          events.put(event.uuid, event);
+          return true;
+        };
+        case (null) {
+          return false;
+        };
+    };
+  };
+
+  public func buyTicket(userId : Text, eventId : Text, total_ticket : Nat32, price : Nat32, icp_price : Nat32, discount : Text) : async Bool 
+  {
+    let ticketId = await generateUUID();
+    let ticket : Tickets = {
+      uuid = ticketId;
+      userId = userId;
+      eventId = eventId;
+      total_ticket = total_ticket;
+      price = price;
+      icp_price = icp_price;
+      discount = discount;
+      timestamp = Time.now();
+    };
+
+    tickets.put(ticket.uuid, ticket);
+
+    return true;
+  };
+
+  public query func getAllTicket() : async Result.Result<[Tickets], Text> {
+    var allTicket = Vector.Vector<Tickets>();
+
+      for (ticket in tickets.vals()) {
+        allTicket.add(ticket);
+      };
+
+      return #ok(Vector.toArray(allTicket));
   };
 
   public query func getEventById(eventId : Text) : async Result.Result<Events, Text> {

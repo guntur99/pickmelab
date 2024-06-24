@@ -13,6 +13,7 @@ import { pickme_backend } from 'declarations/pickme_backend';
 
 export default function Event() {
 
+    const [principal, setPrincipal] = useState('');
     const data = window.localStorage.getItem('user');
     if ( data == null ) {
         return <Navigate to="/" />;
@@ -22,14 +23,33 @@ export default function Event() {
     const [event, setEvent] = useState('');
 
     useEffect(() => {
+        setPrincipal(data.replace(/"/g, ''));
         pickme_backend.getEventById(eventId).then((res) => {
-        setEvent(res.ok);
+            setEvent(res.ok);
+            setPrice(res.ok.price);
+        // console.log(res.ok);
         });
     },[]);
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const [price, setPrice] = useState(0);
+    const [totalTicket, setTotalTicket] = useState(0);
+    const [ticketPrice, setTicketPrice] = useState(0);
+    const [ticketIcpPrice, setTicketIcpPrice] = useState(0);
+    // const [showPayment, setShowPayment] = useState(false);
+    // const handlePaymentClose = () => setShowPayment(false);
+    // const handlePaymentShow = () => setShowPayment(true);
+    const handlePayment = (e) => {
+        pickme_backend.buyTicket(principal, eventId, parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-"
+        ).then((res) => {
+            console.log(res);
+            setShow(false);
+            // window.location.reload();
+        });
+    };
 
     return (
         
@@ -65,7 +85,7 @@ export default function Event() {
                                     <div className="row g-3 align-items-center">
                                         <div className="col pt-3">
                                             <h6 className="p-0 text-white-50">Ticket available<br/>
-                                                <a className="fs-4 text-light" >55 / {event.total_ticket} </a>
+                                                <a className="fs-4 text-light" >{event.available_ticket} / {event.total_ticket} </a>
                                             </h6>
                                         </div>
                                     </div>
@@ -149,7 +169,14 @@ export default function Event() {
                             <Col className="pl-5 pr-3 text-start">
                                 <Form.Label className="fs-6">Total Ticket</Form.Label>
                                 <InputGroup>
-                                    <Form.Control className="text-light border" type="number" required min={1} max={10} style={{ 
+                                    <Form.Control className="text-light border" type="number" required min={1} max={10} 
+                                    onChange={(e) => { 
+                                        setTotalTicket(e.target.value); 
+                                        setTicketPrice(e.target.value*event.price); 
+                                        setPrice(e.target.value*event.price); 
+                                        setTicketIcpPrice(e.target.value*event.icp_price); 
+                                    }}
+                                    style={{ 
                                         maxWidth: "100%",
                                         padding: "0.5em 1em",
                                     }} />
@@ -160,7 +187,7 @@ export default function Event() {
                                 <Form.Label className="fs-6">Price</Form.Label>
                                 <InputGroup>
                                     <InputGroup.Text>$</InputGroup.Text>
-                                    <Form.Control className="text-light border" type="number" value={10} disabled aria-label="Amount (to the nearest dollar)" style={{ 
+                                    <Form.Control className="text-light border" type="number" value={price} disabled aria-label="Amount (to the nearest dollar)" style={{ 
                                         maxWidth: "100%",
                                         padding: "0.5em 1em",
                                     }}/>
@@ -171,7 +198,7 @@ export default function Event() {
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
-                <Button variant="light" onClick={handleClose}>
+                <Button variant="light" onClick={handlePayment}>
                     Buy Ticket
                 </Button>
                 </Modal.Footer>
