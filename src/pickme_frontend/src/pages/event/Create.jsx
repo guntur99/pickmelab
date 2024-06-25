@@ -9,6 +9,7 @@ import Col from 'react-bootstrap/Col';
 import MyEvents from '../profile/MyEvents.jsx';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { pickme_backend } from 'declarations/pickme_backend';
+import Spinner from 'react-bootstrap/Spinner';
 
 let listPackage = [
     { id: 0, name: 'Bronze', desc: '3 Events and max 100 tickets/event', price: '20' },
@@ -41,12 +42,14 @@ export default function Create() {
     const [show, setShow] = useState(false);
     const [showPackage, setShowPackage] = useState(false);
     const [packages] = useState(listPackage);
+    const [events, setEvents] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
+        getEvents();
         setPrincipal(data.replace(/"/g, ''));
         if (data) {
             setCommitteeId(data);
-
             pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
                 if (res.ok) {
                     const profile = res.ok;
@@ -72,14 +75,22 @@ export default function Create() {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const handleSubmit = (e) => {
+        setIsLoading(true);
         pickme_backend.createEvent(
             title, poster, category, parseInt(totalTicket), parseInt(price), parseInt(Math.ceil(price/5)),
             date, time, country, city, location, description, committeeId, publishedBy
         ).then((res) => {
-            window.location.reload();
+            setIsLoading(false);
             setShow(false);
+            getEvents();
         });
     };
+
+    const getEvents = () => {
+        pickme_backend.getAllEvent().then((res) => {
+            setEvents(res.ok);
+        });
+    }
 
     const handlePoster = (e) => {
         const data = new FileReader();
@@ -123,7 +134,7 @@ export default function Create() {
                             <Button variant="outline-light" className="m-4 text-start" onClick={profile.user_type !== 'Basic' ? handleShow : handlePackageShow}>
                                 <i className="bi-calendar-plus-fill text-opacity-50"></i> Create New Event
                             </Button>
-                            <MyEvents/>
+                            <MyEvents events={events}/>
                         </div>
                         <Modal show={show} onHide={handleClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
                             <Modal.Header closeButton>
@@ -259,8 +270,22 @@ export default function Create() {
                             <Button variant="secondary" onClick={handleClose}>
                                 Close
                             </Button>
-                            <Button variant="light" onClick={handleSubmit}>
-                                Submit
+                            <Button variant="light" onClick={handleSubmit} disabled={isLoading}>
+                                {isLoading ? (
+                                    <>
+                                        <Spinner
+                                            as="span"
+                                            animation="grow"
+                                            size="sm"
+                                            role="status"
+                                            aria-hidden="true"
+                                        />Loading...
+                                    </>
+                                    
+                                ):
+                                    "Submit"
+                                }
+
                             </Button>
                             </Modal.Footer>
                         </Modal>

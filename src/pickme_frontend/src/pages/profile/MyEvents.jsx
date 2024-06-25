@@ -17,16 +17,9 @@ let listEvent = [
     { id: 4, img: '../theme/images/products/5.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
 ];
 
-export default function MyEvents() {
+export default function MyEvents({events}) {
 
     const [categories, setCategories] = useState(listCategory);
-    const [events, setEvents] = useState([]);
-
-    useEffect(() => {
-        pickme_backend.getAllEvent().then((res) => {
-            setEvents(res.ok);
-        });
-    },[]);
 
     return (
 
