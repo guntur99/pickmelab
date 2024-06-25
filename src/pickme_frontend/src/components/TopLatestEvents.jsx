@@ -1,18 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
+import { format } from 'date-fns';
 import { pickme_backend } from 'declarations/pickme_backend';
-
-let listEvent = [
-    { id: 0, img: '../theme/images/users/1.jpg', title: 'Chasseur', icpCurrency: 2.643 },
-    { id: 1, img: '../theme/images/users/2.jpg', title: 'Hoydenism_', icpCurrency: 643 },
-    { id: 2, img: '../theme/images/users/3.jpg', title: 'Raconteur_y', icpCurrency: 1.643 },
-    { id: 3, img: '../theme/images/users/4.jpg', title: 'Kumquat', icpCurrency: 2.001 },
-    { id: 4, img: '../theme/images/users/5.jpg', title: 'Razzmatazz_z', icpCurrency: 2.243 },
-    { id: 5, img: '../theme/images/users/6.jpg', title: 'Zeugma', icpCurrency: 3.643 },
-    { id: 6, img: '../theme/images/users/7.jpg', title: 'Sanguine', icpCurrency: 5.643 },
-    { id: 7, img: '../theme/images/users/8.jpg', title: 'Portico', icpCurrency: 643 },
-    { id: 8, img: '../theme/images/users/9.jpg', title: 'Humbug', icpCurrency: 243 },
-];
 
 let listTime = [
     { id: 0, val: 'Week' },
@@ -25,12 +14,17 @@ export default function TopEvents() {
 
     const [times, setTimes] = useState(listTime);
     const [events, setEvents] = useState([]);
+    const [latestEvent, setLatestEvent] = useState([]);
 
     useEffect(() => {
         pickme_backend.getAllEvent().then((res) => {
-            setEvents(res.ok);
+            const data = res.ok;
+            const maxDate = format(new Date(), 'yyyy-MM-dd');
+            const latestEvent = data.filter((event) => event.date < maxDate );
+            setEvents(latestEvent);
+            setLatestEvent(latestEvent);
         });
-    },[events]);
+    },[]);
     
     return (
         <div>

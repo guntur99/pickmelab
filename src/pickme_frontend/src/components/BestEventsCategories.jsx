@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
+import { format } from 'date-fns';
 import { pickme_backend } from 'declarations/pickme_backend';
 
 let listCategory = [
@@ -11,17 +12,6 @@ let listCategory = [
     { id: 5, name: 'Mars', filter: '.event-mars', status: '' },
 ];
 
-let listEvent = [
-    { id: 0, img: '../theme/images/products/1.jpg', title: 'Live with U in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
-    { id: 1, img: '../theme/images/products/2.jpg', title: 'Hipster portrait animal', account: '@alexPoint', icpCurrency: 9.33, dollarCurrency: 19.88 },
-    { id: 2, img: '../theme/images/products/3.jpg', title: 'Hipster portrait man', account: '@alexPoint', icpCurrency: 12.33, dollarCurrency: 23.33 },
-    { id: 3, img: '../theme/images/products/4.jpg', title: 'Portrait of a woman', account: '@steavejosh', icpCurrency: 3.33, dollarCurrency: 14.33 },
-    { id: 4, img: '../theme/images/products/5.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
-    { id: 5, img: '../theme/images/products/6.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
-    { id: 6, img: '../theme/images/products/7.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
-    { id: 7, img: '../theme/images/products/8.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
-];
-
 export default function BestEventsCategories() {
 
     const [activeRecent, setActiveRecent] = useState('Show All');
@@ -31,7 +21,11 @@ export default function BestEventsCategories() {
 
     useEffect(() => {
         pickme_backend.getAllEvent().then((res) => {
-            setEvents(res.ok);
+            const data = res.ok;
+            const maxDate = format(new Date(), 'yyyy-MM-dd');
+            const newEvent = data.filter((event) => event.date > maxDate );
+            setEvents(newEvent);
+            setEventsFiltered(newEvent);
         });
     },[]);
 
@@ -43,7 +37,9 @@ export default function BestEventsCategories() {
         if (e.target.text === "Show All") {
             setEventsFiltered(events);
         }else{
-            const newEvent = events.filter((event) => event.category === e.target.text);
+            const maxDate = format(new Date(), 'yyyy-MM-dd');
+            const newEvent = events.filter((event) => event.category === e.target.text && event.date > maxDate );
+            console.log(maxDate, newEvent, maxDate<"2024-08-16");
             if (newEvent) {
                 eventFilter.push(newEvent);
                 return setEventsFiltered(eventFilter[0]);

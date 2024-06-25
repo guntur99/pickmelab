@@ -1,5 +1,6 @@
 import { Navigate, useParams } from "react-router-dom";
 import { useState, useEffect } from 'react';
+import { format } from 'date-fns';
 import Nav from 'react-bootstrap/Nav';
 import Tab from 'react-bootstrap/Tab';
 import Button from 'react-bootstrap/Button';
@@ -21,13 +22,16 @@ export default function Event() {
 
     const {eventId} = useParams();
     const [event, setEvent] = useState('');
+    const [date, setDate] = useState('');
+    const [tFormat, setTFormat] = useState('');
 
     useEffect(() => {
         setPrincipal(data.replace(/"/g, ''));
         pickme_backend.getEventById(eventId).then((res) => {
             setEvent(res.ok);
             setPrice(res.ok.price);
-        // console.log(res.ok);
+            setDate(format(res.ok.date, 'EEEE, MMMM do yyyy'));
+            setTFormat(res.ok.time < "12:00" ? "AM" : "PM");
         });
     },[]);
 
@@ -92,7 +96,7 @@ export default function Event() {
                                     <div className="row g-3 align-items-center">
                                         <div className="col pt-3">
                                             <h6 className="p-0 text-white-50">Held on date<br/>
-                                                <a className="fs-6 text-light">Sunday, 12 September 2024 at 8PM</a>
+                                                <a className="fs-6 text-light">{date} at {event.time} {tFormat}</a>
                                             </h6>
                                         </div>
                                     </div>
