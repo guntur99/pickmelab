@@ -10,6 +10,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { canisterId as internetIdentityCanisterId } from "declarations/internet_identity";
 import { pickme_backend } from 'declarations/pickme_backend';
+import Spinner from 'react-bootstrap/Spinner';
 
 export default function Navbar() {
     
@@ -18,6 +19,7 @@ export default function Navbar() {
     const [username, setUsername] = useState('');
     const [isRegistered, setIsRegistered] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -58,8 +60,10 @@ export default function Navbar() {
 
     function handleSignIn(e) {
         e.preventDefault();
+        setIsLoading(true);
         pickme_backend.register(principal, username, "", "", "", "", "Basic", "", 50).then((res) => {
             if (res) {
+                setIsLoading(false);
                 setShow(false);
                 window.location.reload();
             }
@@ -178,7 +182,7 @@ export default function Navbar() {
                         <Row className="my-1">
                             <Col className="pl-5 pr-3 text-start">
                                 <Form.Label className="fs-6">Username</Form.Label>
-                                <Form.Control className="text-light border" type="text" required 
+                                <Form.Control className="text-light border" type="text" required disabled={isLoading}
                                 onChange={(e) => setUsername(e.target.value)}
                                 style={{ 
                                     maxWidth: "100%",
@@ -189,8 +193,21 @@ export default function Navbar() {
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
-                <Button variant="light" onClick={handleSignIn}>
-                    Submit
+                <Button variant="light" onClick={handleSignIn} disabled={isLoading}>
+                {isLoading ? (
+                    <>
+                        <Spinner
+                            as="span"
+                            animation="grow"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                        /> Loading...
+                    </>
+                    
+                ):
+                    "Continue"
+                }
                 </Button>
                 </Modal.Footer>
             </Modal>

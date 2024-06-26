@@ -11,10 +11,12 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { pickme_backend } from 'declarations/pickme_backend';
+import Spinner from 'react-bootstrap/Spinner';
 
 export default function Event() {
 
     const [principal, setPrincipal] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const data = window.localStorage.getItem('user');
     if ( data == null ) {
         return <Navigate to="/" />;
@@ -24,34 +26,62 @@ export default function Event() {
     const [event, setEvent] = useState('');
     const [date, setDate] = useState('');
     const [tFormat, setTFormat] = useState('');
+    const [price, setPrice] = useState(0);
+    const [totalTicket, setTotalTicket] = useState(0);
+    const [ticketPrice, setTicketPrice] = useState(0);
+    const [ticketIcpPrice, setTicketIcpPrice] = useState(0);
+    const [myTicket, setMyTicket] = useState([]);
+    const [tickets, setTickets] = useState([]);
+    const [show, setShow] = useState(false);
 
     useEffect(() => {
         setPrincipal(data.replace(/"/g, ''));
+        getEvent();
+        getTicket();
+        getAllTicket();
+    },[]);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    const handlePayment = (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        pickme_backend.buyTicket(principal, eventId, parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-"
+        ).then((res) => {
+            pickme_backend.updateEvent(eventId, event.title, event.poster, event.category, parseInt(event.total_ticket), 
+                parseInt(event.available_ticket-totalTicket), parseInt(event.price), parseInt(Math.ceil(event.price/5)), event.date, 
+                event.time, event.country, event.city, event.location, event.description, event.committee_id, event.published_by
+            ).then((res) => {
+                setIsLoading(false);
+                setShow(false);
+                getEvent();
+            });
+        });
+    };
+
+    const getTicket = async () =>  {
+        await pickme_backend.getTicketsByUId(data.replace(/"/g, ''),eventId).then((res) => {
+            console.log("ticket:",res.ok);
+            setMyTicket(res.ok);
+        });
+    }
+
+    const getAllTicket = () => {
+        pickme_backend.getAllTicket().then((res) => {
+            console.log("all ticket:",res.ok);
+            setTickets(res.ok);
+        });
+    }
+
+    const getEvent = () => {
         pickme_backend.getEventById(eventId).then((res) => {
             setEvent(res.ok);
             setPrice(res.ok.price);
             setDate(format(res.ok.date, 'EEEE, MMMM do yyyy'));
             setTFormat(res.ok.time < "12:00" ? "AM" : "PM");
         });
-    },[]);
-
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
-    const [price, setPrice] = useState(0);
-    const [totalTicket, setTotalTicket] = useState(0);
-    const [ticketPrice, setTicketPrice] = useState(0);
-    const [ticketIcpPrice, setTicketIcpPrice] = useState(0);
-
-    const handlePayment = (e) => {
-        pickme_backend.buyTicket(principal, eventId, parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-"
-        ).then((res) => {
-            console.log(res);
-            setShow(false);
-            window.location.reload();
-        });
-    };
+    }
 
     return (
         
@@ -127,10 +157,15 @@ export default function Event() {
                                 </div>
                                 <div className="col-md-6">
                                     <div className="row g-3 mt-3">
-
+                                        {myTicket ? 
+                                        <Button variant="outline-light" className="button button-large text-bg-dark rounded-5 border-0 mt-4" disabled="true">
+                                            Paid
+                                        </Button>
+                                        :
                                         <Button variant="outline-light" className="button button-large gradient-color rounded-5 border-0 mt-4" onClick={handleShow}>
                                             Buy Ticket
                                         </Button>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -200,8 +235,21 @@ export default function Event() {
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
-                <Button variant="light" onClick={handlePayment}>
-                    Buy Ticket
+                <Button variant="light" onClick={handlePayment} disabled={isLoading}>
+                    {isLoading ? (
+                        <>
+                            <Spinner
+                                as="span"
+                                animation="grow"
+                                size="sm"
+                                role="status"
+                                aria-hidden="true"
+                            /> Loading...
+                        </>
+                        
+                    ):
+                        "Buy Ticket"
+                    }
                 </Button>
                 </Modal.Footer>
             </Modal>

@@ -53,8 +53,8 @@ actor {
   
   public type Tickets = {
     uuid : Text;
-    userId : Text;
-    eventId : Text;
+    user_id : Text;
+    event_id : Text;
     price : Nat32;
     icp_price : Nat32;
     discount : Text;
@@ -183,7 +183,7 @@ actor {
   };
 
   public func updateEvent(eventId : Text, title : Text, poster : Text, category : Text, total_ticket : Nat32, 
-    price : Nat32, icp_price : Nat32, date : Text, time : Text, country : Text, city : Text, 
+    available_ticket : Nat32, price : Nat32, icp_price : Nat32, date : Text, time : Text, country : Text, city : Text, 
     location : Text, description : Text, committee_id : Text, published_by : Text) : async Bool 
   {
     let event = events.get(eventId);
@@ -195,7 +195,7 @@ actor {
             poster = poster;
             category = category;
             total_ticket = total_ticket;
-            available_ticket = total_ticket;
+            available_ticket = available_ticket;
             price = price;
             icp_price = icp_price;
             date = date;
@@ -222,8 +222,8 @@ actor {
     let ticketId = await generateUUID();
     let ticket : Tickets = {
       uuid = ticketId;
-      userId = userId;
-      eventId = eventId;
+      user_id = userId;
+      event_id = eventId;
       total_ticket = total_ticket;
       price = price;
       icp_price = icp_price;
@@ -234,6 +234,18 @@ actor {
     tickets.put(ticket.uuid, ticket);
 
     return true;
+  };
+
+  public query func getTicketsByUId(userId : Text, eventId : Text) : async Result.Result<[Tickets], Text> {
+    var allTicket = Vector.Vector<Tickets>();
+
+    for (ticket in tickets.vals()) {
+      if(ticket.user_id == userId and ticket.event_id == eventId){
+        allTicket.add(ticket);
+      }
+    };
+
+    return #ok(Vector.toArray(allTicket));
   };
 
   public query func getAllTicket() : async Result.Result<[Tickets], Text> {

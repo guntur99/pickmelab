@@ -63,11 +63,14 @@ export default function Create() {
     const handlePackageClose = () => setShowPackage(false);
     const handlePackageShow = () => setShowPackage(true);
     const handleBuyPackage = (e) => {
+        e.preventDefault();
+        setIsLoading(true);
         pickme_backend.updateProfile(principal.replace(/"/g, ''), profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, profile.avatar, profile.progress).then((res) => {
             if (res) {
+                setIsLoading(false);
                 setShowPackage(false);
-                alert(`successfuly buy ${selectedPackage} package profile!`);
                 window.location.reload();
+                // alert(`successfuly buy ${selectedPackage} package profile!`);
             }
         });
     };
@@ -75,6 +78,7 @@ export default function Create() {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const handleSubmit = (e) => {
+        e.preventDefault();
         setIsLoading(true);
         pickme_backend.createEvent(
             title, poster, category, parseInt(totalTicket), parseInt(price), parseInt(Math.ceil(price/5)),
@@ -145,7 +149,7 @@ export default function Create() {
                                     <Row className="my-1">
                                         <Col className="pl-5 pr-3 text-start">
                                             <Form.Label className="fs-6">Title</Form.Label>
-                                            <Form.Control className="text-light border" type="text" placeholder="Title" required 
+                                            <Form.Control className="text-light border" type="text" placeholder="Title" required disabled={isLoading}
                                             onChange={(e) => setTitle(e.target.value)}
                                             style={{ 
                                                 maxWidth: "100%",
@@ -156,7 +160,7 @@ export default function Create() {
                                     <Row className="my-1">
                                         <Col className="pl-5 pr-3 text-start">
                                             <Form.Label className="fs-6">Poster</Form.Label>
-                                            <Form.Control className="text-light border" type="file" name="poster" required 
+                                            <Form.Control className="text-light border" type="file" name="poster" required disabled={isLoading}
                                             onChange={handlePoster}
                                             style={{ 
                                                 maxWidth: "100%",
@@ -165,7 +169,7 @@ export default function Create() {
                                         </Col>
                                         <Col className="pl-3 pr-5 text-start">
                                             <Form.Label className="fs-6">Category</Form.Label>
-                                            <Form.Select aria-label="Select Category" required value={category}
+                                            <Form.Select aria-label="Select Category" required value={category} disabled={isLoading}
                                             onChange={handleCategory}>
                                                 <option disabled>Select Category</option>
                                                 <option value="Concert">Concert</option>
@@ -178,7 +182,7 @@ export default function Create() {
                                         <Col className="pl-5 pr-3 text-start">
                                             <Form.Label className="fs-6">Total Ticket</Form.Label>
                                             <InputGroup>
-                                                <Form.Control className="text-light border" type="number" required min={10} 
+                                                <Form.Control className="text-light border" type="number" required min={10} disabled={isLoading}
                                                 onChange={(e) => setTotalTicket(e.target.value)}
                                                 style={{ 
                                                     maxWidth: "100%",
@@ -191,7 +195,7 @@ export default function Create() {
                                             <Form.Label className="fs-6">Price</Form.Label>
                                             <InputGroup>
                                                 <InputGroup.Text>$</InputGroup.Text>
-                                                <Form.Control className="text-light border" type="number" min={0} required aria-label="Amount (to the nearest dollar)" 
+                                                <Form.Control className="text-light border" type="number" min={0} required aria-label="Amount (to the nearest dollar)" disabled={isLoading}
                                                 onChange={(e) => setPrice(e.target.value)}
                                                 style={{ 
                                                     maxWidth: "100%",
@@ -204,7 +208,7 @@ export default function Create() {
                                     <Row className="my-1">
                                         <Col className="pl-5 pr-3 text-start">
                                             <Form.Label className="fs-6">Date</Form.Label>
-                                            <Form.Control className="text-light border" type="date" placeholder="Date" required 
+                                            <Form.Control className="text-light border" type="date" placeholder="Date" required disabled={isLoading}
                                             onChange={(e) => setDate(e.target.value)}
                                             style={{ 
                                                 maxWidth: "100%",
@@ -213,7 +217,7 @@ export default function Create() {
                                         </Col>
                                         <Col className="pl-3 pr-5 text-start">
                                             <Form.Label className="fs-6">Time</Form.Label>
-                                            <Form.Control className="text-light border" type="time" placeholder="Time" required 
+                                            <Form.Control className="text-light border" type="time" placeholder="Time" required disabled={isLoading}
                                             onChange={(e) => setTime(e.target.value)}
                                             style={{ 
                                                 maxWidth: "100%",
@@ -224,7 +228,7 @@ export default function Create() {
                                     <Row className="my-1">
                                         <Col className="pl-5 pr-3 text-start">
                                             <Form.Label className="fs-6">Country</Form.Label>
-                                            <Form.Select aria-label="Select Country" required value={country}
+                                            <Form.Select aria-label="Select Country" required value={country} disabled={isLoading}
                                             onChange={handleCountry}>
                                                 <option disabled>Select Country</option>
                                                 <option value="Indonesia">Indonesia</option>
@@ -234,7 +238,7 @@ export default function Create() {
                                         </Col>
                                         <Col className="pl-3 pr-5 text-start">
                                             <Form.Label className="fs-6">City</Form.Label>
-                                            <Form.Select aria-label="Select City" required value={city}
+                                            <Form.Select aria-label="Select City" required value={city} disabled={isLoading}
                                             onChange={handleCity}>
                                                 <option disabled>Select City</option>
                                                 <option value="Jakarta">Jakarta</option>
@@ -246,7 +250,7 @@ export default function Create() {
                                     <Row className="my-1">
                                         <Col className="pl-3 pr-5 text-start">
                                             <Form.Label className="fs-6">Location</Form.Label>
-                                            <Form.Control className="text-light border" type="text" placeholder="Location" required 
+                                            <Form.Control className="text-light border" type="text" placeholder="Location" required disabled={isLoading}
                                             onChange={(e) => setLocation(e.target.value)}
                                             style={{ 
                                                 maxWidth: "100%",
@@ -257,7 +261,7 @@ export default function Create() {
                                     <Row className="my-1">
                                         <Col className="pl-3 pr-5 text-start">
                                             <Form.Label className="fs-6">Description</Form.Label>
-                                            <Form.Control className="text-light border" as="textarea" rows={3} required 
+                                            <Form.Control className="text-light border" as="textarea" rows={3} required disabled={isLoading}
                                             onChange={(e) => setDescription(e.target.value)}style={{ 
                                                 maxWidth: "100%",
                                                 padding: "0.5em 1em",
@@ -267,7 +271,7 @@ export default function Create() {
                                 </Container>
                             </Modal.Body>
                             <Modal.Footer>
-                            <Button variant="secondary" onClick={handleClose}>
+                            <Button variant="secondary" onClick={handleClose} disabled={isLoading}>
                                 Close
                             </Button>
                             <Button variant="light" onClick={handleSubmit} disabled={isLoading}>
@@ -279,13 +283,12 @@ export default function Create() {
                                             size="sm"
                                             role="status"
                                             aria-hidden="true"
-                                        />Loading...
+                                        /> Loading...
                                     </>
                                     
                                 ):
                                     "Submit"
                                 }
-
                             </Button>
                             </Modal.Footer>
                         </Modal>
@@ -309,6 +312,7 @@ export default function Create() {
                                                     onChange={handleChange}
                                                     checked={selectedPackage === item.name}
                                                     style={{ fontSize: 16 }}
+                                                    disabled={isLoading}
                                                     />
                                                 ))}
                                             </Form.Group>
@@ -317,8 +321,21 @@ export default function Create() {
                                 </Container>
                             </Modal.Body>
                             <Modal.Footer>
-                            <Button variant="light" onClick={handleBuyPackage}>
-                                Buy Package
+                            <Button variant="light" onClick={handleBuyPackage} disabled={isLoading}>
+                                {isLoading ? (
+                                    <>
+                                        <Spinner
+                                            as="span"
+                                            animation="grow"
+                                            size="sm"
+                                            role="status"
+                                            aria-hidden="true"
+                                        /> Loading...
+                                    </>
+                                    
+                                ):
+                                    "Buy Package"
+                                }
                             </Button>
                             </Modal.Footer>
                         </Modal>
