@@ -79,7 +79,12 @@ export default function Profile() {
         });
         pickme_backend.getAllTicket().then((res) => {
             if (res.ok) {
-                setTickets(res.ok);
+                const tickets = res.ok;
+                const selectedTicket = tickets.filter((ticket) => ticket.user_id === data.replace(/"/g, ''));
+                if (selectedTicket) {
+                    console.log('selectedTicket',selectedTicket);
+                    setTickets(selectedTicket);
+                }
             }
         });
     },[]);

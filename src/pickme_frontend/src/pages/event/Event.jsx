@@ -62,7 +62,7 @@ export default function Event() {
 
     const getTicket = async () =>  {
         await pickme_backend.getTicketsByUId(data.replace(/"/g, ''),eventId).then((res) => {
-            console.log("ticket:",res.ok);
+            console.log("setMyTicket:",res.ok, !res.ok);
             setMyTicket(res.ok);
         });
     }
@@ -157,7 +157,7 @@ export default function Event() {
                                 </div>
                                 <div className="col-md-6">
                                     <div className="row g-3 mt-3">
-                                        {myTicket ? 
+                                        {myTicket.length > 0 ? 
                                         <Button variant="outline-light" className="button button-large text-bg-dark rounded-5 border-0 mt-4" disabled="true">
                                             Paid
                                         </Button>

@@ -31,18 +31,14 @@ export default function BestEventsCategories() {
 
     const handleActiveRecent = (e) => {
         e.preventDefault();
-
-        const eventFilter = [];
         setActiveRecent(e.target.text)
         if (e.target.text === "Show All") {
             setEventsFiltered(events);
         }else{
             const maxDate = format(new Date(), 'yyyy-MM-dd');
-            const newEvent = events.filter((event) => event.category === e.target.text && event.date > maxDate );
-            console.log(maxDate, newEvent, maxDate<"2024-08-16");
-            if (newEvent) {
-                eventFilter.push(newEvent);
-                return setEventsFiltered(eventFilter[0]);
+            const eventFilter = events.filter((event) => event.category === e.target.text && event.date > maxDate );
+            if (eventFilter) {
+                setEventsFiltered(eventFilter);
             }
         }
     }
