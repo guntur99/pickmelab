@@ -56,20 +56,21 @@ export default function Event() {
                 setIsLoading(false);
                 setShow(false);
                 getEvent();
+                window.location.reload();
             });
         });
     };
 
     const getTicket = async () =>  {
         await pickme_backend.getTicketsByUId(data.replace(/"/g, ''),eventId).then((res) => {
-            console.log("setMyTicket:",res.ok, !res.ok);
+            // console.log("setMyTicket:",res.ok, !res.ok);
             setMyTicket(res.ok);
         });
     }
 
     const getAllTicket = () => {
         pickme_backend.getAllTicket().then((res) => {
-            console.log("all ticket:",res.ok);
+            // console.log("all ticket:",res.ok);
             setTickets(res.ok);
         });
     }
@@ -206,7 +207,7 @@ export default function Event() {
                             <Col className="pl-5 pr-3 text-start">
                                 <Form.Label className="fs-6">Total Ticket</Form.Label>
                                 <InputGroup>
-                                    <Form.Control className="text-light border" type="number" required min={1} max={10} 
+                                    <Form.Control className="text-light border" type="number" required min={1} max={10} disabled={isLoading}
                                     onChange={(e) => { 
                                         setTotalTicket(e.target.value); 
                                         setTicketPrice(e.target.value*event.price); 

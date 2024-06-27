@@ -56,6 +56,7 @@ export default function Navbar() {
                 };
             });
         }
+        // console.log(isRegistered);
     }, []);
 
     function handleSignIn(e) {
@@ -159,7 +160,7 @@ export default function Navbar() {
                                                     </div>
                                                 </div> :
                                                 <form onSubmit={handleLogin}>
-                                                    <button id="login" className="cnvs-hamburger button border-0 bg-gradient rounded-6 button-small m-0 ms-lg-4 me-lg-3">Sign In</button>
+                                                    <button id="login" className="cnvs-hamburger button border-0 bg-gradient rounded-6 button-small m-0 ms-lg-4 me-lg-3" disabled={isRegistered}>Sign In</button>
                                                 </form>
                                             }
                                         </div>

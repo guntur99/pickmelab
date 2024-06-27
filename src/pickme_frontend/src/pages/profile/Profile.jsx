@@ -11,6 +11,7 @@ import Col from 'react-bootstrap/Col';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { pickme_backend } from 'declarations/pickme_backend';
 import Spinner from 'react-bootstrap/Spinner';
+import Ticket from "./Ticket";
 
 let packageBasic = { id: 0, name: 'Basic', desc: '0 Events and max 0 tickets/event', price: '0' };
 let packageBronze = { id: 1, name: 'Bronze', desc: '3 Events and max 100 tickets/event', price: '20' };
@@ -36,8 +37,12 @@ export default function Profile() {
     const [userType, setUserType] = useState('');
     const [profile, setProfile] = useState('');
     const [tickets, setTickets] = useState([]);
+    const [events, setEvents] = useState([]);
     const [itemPackage, setItemPackage] = useState({});
     const [showPackage, setShowPackage] = useState(false);
+    const [showTicket, setShowTicket] = useState(false);
+    const [modalTicket, setModalTicket] = useState({});
+    const [modalTicketEvent, setModalTicketEvent] = useState({});
     const [packages] = useState(listPackage);
         const data = window.localStorage.getItem('user');
         if ( data == null ) {
@@ -82,7 +87,7 @@ export default function Profile() {
                 const tickets = res.ok;
                 const selectedTicket = tickets.filter((ticket) => ticket.user_id === data.replace(/"/g, ''));
                 if (selectedTicket) {
-                    console.log('selectedTicket',selectedTicket);
+                    // console.log('selectedTicket',selectedTicket);
                     setTickets(selectedTicket);
                 }
             }
@@ -139,6 +144,19 @@ export default function Profile() {
                 window.location.reload();;
             }
         });
+    };
+
+    const handleTicketClose = () => setShowTicket(false);
+    const handleTicketShow = (data) => {
+        console.log('tickets',tickets);
+        const selectedTicket = tickets.filter((ticket) => ticket.uuid === data.uuid);
+        if (selectedTicket) {
+            pickme_backend.getEventById(selectedTicket[0].event_id).then((res) => {
+                setModalTicketEvent(res.ok);
+            });
+        }
+        setModalTicket(data)
+        setShowTicket(true)
     };
 
     return (
@@ -274,17 +292,18 @@ export default function Profile() {
                                                                 </div>
                                                                 <div className="row justify-content-between">
                                                                     <div className="col">
-                                                                        {/* <h4 className="text-white mb-2">{event.title}</h4>
-                                                                        <h6 className="card-subtitle mb-2 text-white-50">{event.published_by}</h6>
-                                                                        <div className="color fw-bold">{event.icp_price} ICP <span className="text-light text-opacity-50">/ ${event.price}</span></div> */}
+                                                                        <h4 className="text-white mb-2">{ticket.event_id}</h4>
+                                                                        <h6 className="card-subtitle mb-2 text-white-50">{ticket.user_id}</h6>
+                                                                        <div className="color fw-bold">{ticket.icp_price} ICP <span className="text-light text-opacity-50">/ ${ticket.price}</span></div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-
-                                                            <Button variant="light" onClick={handlePackageShow}>Show Ticket</Button>
+                                                            
+                                                            <Button variant="light" onClick={() => handleTicketShow(ticket)}>Show Ticket</Button>
                                                         </div>
                                                     </article>
                                                 ))}
+                                                <Ticket ticket={modalTicket} event={modalTicketEvent} showTicket={showTicket} handleTicketClose={handleTicketClose}/>
                                             </div>
                                         </div>
                                     </Tab.Pane>
@@ -334,6 +353,29 @@ export default function Profile() {
                         </Button>
                         </Modal.Footer>
                     </Modal>
+
+                    {/* <Modal show={showTicket} onHide={handleTicketClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
+                        <Modal.Header closeButton>
+                            <div className="mx-2 text-light fs-5 fw-bold">Your Ticket</div>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Container className="my-1 text-light">
+                                <div style={{ height: "auto", margin: "0 auto", maxWidth: 64, width: "100%" }}>
+                                <QRCode
+                                    size={256}
+                                    style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                                    value={'alskdjfl'}
+                                    viewBox={`0 0 256 256`}
+                                />
+                                </div>
+                            </Container>
+                        </Modal.Body>
+                        <Modal.Footer>
+                        <Button variant="light" onClick={handleDownloadTicket}>
+                            Download
+                        </Button>
+                        </Modal.Footer>
+                    </Modal> */}
                 </div>
             </div>
         </div>

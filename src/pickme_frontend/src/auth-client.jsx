@@ -38,7 +38,7 @@ export const useAuthClient = (options = defaultOptions) => {
     }, []);
 
     const login = () => {
-        console.log(internetIdentityCanisterId);
+        // console.log(internetIdentityCanisterId);
         authClient.login({
         ...options.loginOptions,
         onSuccess: () => {

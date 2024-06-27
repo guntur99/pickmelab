@@ -32,9 +32,9 @@ export default function Navbar() {
             address: "-",
             user_type: "Member",
         }
-            console.log('data:', data);
+            // console.log('data:', data);
         pickme_backend.register(data).then((result) => {
-            console.log('result:', result);
+            // console.log('result:', result);
             setIsAuthenticated(JSON.parse(result))
         })
     };
@@ -60,7 +60,7 @@ export default function Navbar() {
 
     useEffect(() => {
         const id = window.localStorage.getItem('user');
-        console.log(id);
+        // console.log(id);
         AuthClient.create(options.createOptions).then(async (client) => {
             updateClient(client);
         });
@@ -80,7 +80,7 @@ export default function Navbar() {
   async function updateClient(client) {
     const isAuthenticated = await client.isAuthenticated();
     setIsAuthenticated(isAuthenticated);
-    console.log("isAuthenticated:",isAuthenticated);
+    // console.log("isAuthenticated:",isAuthenticated);
 
     const identity = client.getIdentity();
     setIdentity(identity);
@@ -123,7 +123,7 @@ export default function Navbar() {
         const identity = await authClient.getIdentity();
         const userPrincipal = identity.getPrincipal();
         // Now you can use the userPrincipal to interact with your backend
-        console.log('userPrincipal:',userPrincipal);
+        // console.log('userPrincipal:',userPrincipal);
         localStorage.setItem('user', userPrincipal);
     }
 
@@ -135,7 +135,7 @@ export default function Navbar() {
             setPrincipal(null);
             // window.location.reload();
             setIsAuthenticated(false);
-            console.log("authenticated:", isAuthenticated);
+            // console.log("authenticated:", isAuthenticated);
         }
     };
 
