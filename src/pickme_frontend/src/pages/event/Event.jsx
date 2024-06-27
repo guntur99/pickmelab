@@ -47,7 +47,7 @@ export default function Event() {
     const handlePayment = (e) => {
         e.preventDefault();
         setIsLoading(true);
-        pickme_backend.buyTicket(principal, eventId, parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-"
+        pickme_backend.buyTicket(principal, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-"
         ).then((res) => {
             pickme_backend.updateEvent(eventId, event.title, event.poster, event.category, parseInt(event.total_ticket), 
                 parseInt(event.available_ticket-totalTicket), parseInt(event.price), parseInt(Math.ceil(event.price/5)), event.date, 
@@ -61,8 +61,8 @@ export default function Event() {
         });
     };
 
-    const getTicket = async () =>  {
-        await pickme_backend.getTicketsByUId(data.replace(/"/g, ''),eventId).then((res) => {
+    const getTicket = () =>  {
+        pickme_backend.getTicketsByUId(data.replace(/"/g, ''),eventId).then((res) => {
             // console.log("setMyTicket:",res.ok, !res.ok);
             setMyTicket(res.ok);
         });

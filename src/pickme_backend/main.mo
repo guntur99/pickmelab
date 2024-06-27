@@ -55,6 +55,8 @@ actor {
     uuid : Text;
     user_id : Text;
     event_id : Text;
+    event_title : Text;
+    category : Text;
     price : Nat32;
     icp_price : Nat32;
     discount : Text;
@@ -217,16 +219,18 @@ actor {
     };
   };
 
-  public func buyTicket(userId : Text, eventId : Text, total_ticket : Nat32, price : Nat32, icp_price : Nat32, discount : Text) : async Bool 
+  public func buyTicket(userId : Text, eventId : Text, eventTitle : Text, ticketCategory : Text, totalTicket : Nat32, price : Nat32, icpPrice : Nat32, discount : Text) : async Bool 
   {
     let ticketId = await generateUUID();
     let ticket : Tickets = {
       uuid = ticketId;
       user_id = userId;
       event_id = eventId;
-      total_ticket = total_ticket;
+      event_title = eventTitle;
+      category = ticketCategory;
+      total_ticket = totalTicket;
       price = price;
-      icp_price = icp_price;
+      icp_price = icpPrice;
       discount = discount;
       timestamp = Time.now();
     };

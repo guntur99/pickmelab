@@ -44,10 +44,12 @@ export default function Profile() {
     const [modalTicket, setModalTicket] = useState({});
     const [modalTicketEvent, setModalTicketEvent] = useState({});
     const [packages] = useState(listPackage);
-        const data = window.localStorage.getItem('user');
-        if ( data == null ) {
-            return <Navigate to="/" />;
-        };
+    const [item, setItem] = useState({ selectedPackage: "Bronze" });
+    const { selectedPackage } = item;
+    const data = window.localStorage.getItem('user');
+    if ( data == null ) {
+        return <Navigate to="/" />;
+    };
 
     useEffect(() => {
         setPrincipal(data.replace(/"/g, ''));
@@ -122,9 +124,6 @@ export default function Profile() {
         data.readAsDataURL(e.target.files[0]);
     };
 
-    const [item, setItem] = useState({ selectedPackage: "Bronze" });
-    const { selectedPackage } = item;
-
     const handleChange = e => {
         e.persist();
 
@@ -148,7 +147,7 @@ export default function Profile() {
 
     const handleTicketClose = () => setShowTicket(false);
     const handleTicketShow = (data) => {
-        console.log('tickets',tickets);
+        // console.log('tickets',tickets);
         const selectedTicket = tickets.filter((ticket) => ticket.uuid === data.uuid);
         if (selectedTicket) {
             pickme_backend.getEventById(selectedTicket[0].event_id).then((res) => {
@@ -287,14 +286,13 @@ export default function Profile() {
                                                         <div className="card rounded-6 overflow-hidden card-bg-dark">
                                                             <div className="card-body p-4">
                                                                 <div className="m-0 position-relative">
-                                                                    <img src={`../theme/images/icons/ticket-logo.svg`} className="rounded-5 w-100 h-auto" alt="..."/>
+                                                                    <img src={`../theme/images/events/event-ticket.png`} className="rounded-5 w-100 h-auto" alt="..."/>
                                                                     <div id="nft-counter1" className="nft-counter countdown countdown-inline customjs position-absolute start-0 top-0" data-year="2024" data-month="3" data-day="22" data-format="dHMS"></div>
                                                                 </div>
                                                                 <div className="row justify-content-between">
                                                                     <div className="col">
-                                                                        <h4 className="text-white mb-2">{ticket.event_id}</h4>
-                                                                        <h6 className="card-subtitle mb-2 text-white-50">{ticket.user_id}</h6>
-                                                                        <div className="color fw-bold">{ticket.icp_price} ICP <span className="text-light text-opacity-50">/ ${ticket.price}</span></div>
+                                                                        <h4 className="text-white mb-2">{ticket.event_title}</h4>
+                                                                        <h6 className="card-subtitle mb-2 text-white-50 color">{ticket.category} <i className="bi-check-circle-fill"></i></h6>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -354,28 +352,6 @@ export default function Profile() {
                         </Modal.Footer>
                     </Modal>
 
-                    {/* <Modal show={showTicket} onHide={handleTicketClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
-                        <Modal.Header closeButton>
-                            <div className="mx-2 text-light fs-5 fw-bold">Your Ticket</div>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <Container className="my-1 text-light">
-                                <div style={{ height: "auto", margin: "0 auto", maxWidth: 64, width: "100%" }}>
-                                <QRCode
-                                    size={256}
-                                    style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                                    value={'alskdjfl'}
-                                    viewBox={`0 0 256 256`}
-                                />
-                                </div>
-                            </Container>
-                        </Modal.Body>
-                        <Modal.Footer>
-                        <Button variant="light" onClick={handleDownloadTicket}>
-                            Download
-                        </Button>
-                        </Modal.Footer>
-                    </Modal> */}
                 </div>
             </div>
         </div>
