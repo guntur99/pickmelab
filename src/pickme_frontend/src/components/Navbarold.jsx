@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+
 import { useEffect, useState } from 'react';
 import { AuthClient } from '@dfinity/auth-client';
 import { Link, NavLink } from "react-router-dom";
@@ -8,71 +8,93 @@ import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { canisterId as internetIdentityCanisterId } from "declarations/internet_identity";
 import { pickme_backend } from 'declarations/pickme_backend';
-import Spinner from 'react-bootstrap/Spinner';
+import { canisterId as internetIdentityCanisterId } from "declarations/internet_identity";
 
 export default function Navbar() {
     
-    const [principal, setPrincipal] = useState('');
+    const [principal, setPrincipal] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [auth, setAuth] = useState('');
     const [username, setUsername] = useState('');
-    const [isRegistered, setIsRegistered] = useState('');
-    const [isAuthenticated, setIsAuthenticated] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const handleSubmit = (e) => {
+        const data = {
+            internet_identity: principal,
+            username: username,
+            fullname: "-",
+            avatar: "-",
+            dob: "-",
+            domicile: "-",
+            address: "-",
+            user_type: "Member",
+        }
+            // console.log('data:', data);
+        pickme_backend.register(data).then((result) => {
+            // console.log('result:', result);
+            setIsAuthenticated(JSON.parse(result))
+        })
+    };
 
     const [out, setLogout] = useState(false);
     const handleLogoutClose = () => setLogout(false);
     const handleLogoutShow = () => setLogout(true);
     const handleLogoutNow = () => {
         setLogout(false);
-        localStorage.removeItem('user');
-        setAuth(null);
-        setPrincipal(null);
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.reload();
-
+        logout();
+        
         return <Navigate to="/" />;
     };
 
-    useEffect(() => {
-        const data = window.localStorage.getItem('user');
-        if (data) {
-            pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
-                if ( data !== null ) {
-                    if (res.ok) {
-                        setIsRegistered(true);
-                    }else{
-                        setPrincipal(data.replace(/"/g, ''));
-                        if (!isRegistered) {
-                            handleShow(); //check if profile data is not completed
-                        }
-                    }
-                };
-            });
+    const options = {
+        createOptions: {
+            idleOptions: {
+            // Set to true if you do not want idle functionality
+            disableIdle: true,
+            },
         }
-        // console.log(isRegistered);
+    };
+
+    useEffect(() => {
+        const id = window.localStorage.getItem('user');
+        // console.log(id);
+        AuthClient.create(options.createOptions).then(async (client) => {
+            updateClient(client);
+        });
+        
+        // const checkUser = pickme_backend.checkUserById(id);
+        // console.log('checkUser:',checkUser);
+
+        // pickme_backend.whoami().then((res) => {
+        
+        //     console.log("res:",res);
+        // });;
     }, []);
 
-    function handleSignIn(e) {
-        e.preventDefault();
-        setIsLoading(true);
-        pickme_backend.register(principal, username, "", "", "", "", "Basic", "", 50).then((res) => {
-            if (res) {
-                setIsLoading(false);
-                setShow(false);
-                window.location.reload();
-            }
-        });
-    }
+  const [authClient, setAuthClient] = useState(null);
+  const [identity, setIdentity] = useState(null);
     
-    function handleLogin(e) {
-        e.preventDefault();
+  async function updateClient(client) {
+    const isAuthenticated = await client.isAuthenticated();
+    setIsAuthenticated(isAuthenticated);
+    // console.log("isAuthenticated:",isAuthenticated);
+
+    const identity = client.getIdentity();
+    setIdentity(identity);
+    // console.log("isAuthenticated:",isAuthenticated);
+
+    const principal = identity.getPrincipal();
+    setPrincipal(principal);
+    // console.log("principal:",principal);
+
+    // setAuthClient(client);
+  }
+    
+    function handleLogin(event) {
+        event.preventDefault();
         init();
 
         return false;
@@ -80,14 +102,9 @@ export default function Navbar() {
 
     const init = async () => {
         const authClient = await AuthClient.create();
-    
-        const isAuthenticated = await authClient.isAuthenticated();
-        // console.log(isAuthenticated);
         if (auth && authClient.isAuthenticated()) { //You have already logged in
             handleAuthenticated(authClient);
             setAuth(authClient);
-            setIsAuthenticated(isAuthenticated);
-                
         } else {
         await authClient.login({
             identityProvider: process.env.DFX_NETWORK === "local"
@@ -96,8 +113,6 @@ export default function Navbar() {
             onSuccess: () => {
                 handleAuthenticated(authClient);
                 setAuth(authClient);
-                const isAuthenticated = authClient.isAuthenticated();
-                setIsAuthenticated(isAuthenticated);
                 window.location.reload();
             }
         });
@@ -106,13 +121,26 @@ export default function Navbar() {
 
     async function handleAuthenticated(authClient) {
         const identity = await authClient.getIdentity();
-        const userPrincipal = identity.getPrincipal().toString();
+        const userPrincipal = identity.getPrincipal();
         // Now you can use the userPrincipal to interact with your backend
-        localStorage.setItem('user', JSON.stringify(userPrincipal));
+        // console.log('userPrincipal:',userPrincipal);
+        localStorage.setItem('user', userPrincipal);
     }
 
-    function handleLogout(e) {
-        e.preventDefault();
+    const logout = async () => {
+        if (principal) {
+            localStorage.clear();
+            sessionStorage.clear();
+            setAuth(null);
+            setPrincipal(null);
+            // window.location.reload();
+            setIsAuthenticated(false);
+            // console.log("authenticated:", isAuthenticated);
+        }
+    };
+
+    function handleLogout(event) {
+        event.preventDefault();
         handleLogoutShow();
     }
 
@@ -136,7 +164,7 @@ export default function Navbar() {
                                     </div>
                                     <div className="header-misc ms-auto">
                                         <div className="header-misc ms-0">
-                                            {isRegistered ?
+                                            {principal ?
                                                 <div className="header-misc">
                                                     <div className="header-misc-icon tooltips">
                                                         <Link className="header-icon-notification " to="/event/create">
@@ -160,7 +188,7 @@ export default function Navbar() {
                                                     </div>
                                                 </div> :
                                                 <form onSubmit={handleLogin}>
-                                                    <button id="login" className="cnvs-hamburger button border-0 bg-gradient rounded-6 button-small m-0 ms-lg-4 me-lg-3" disabled={isRegistered}>Sign In</button>
+                                                    <button id="login" className="cnvs-hamburger button border-0 bg-gradient rounded-6 button-small m-0 ms-lg-4 me-lg-3">Sign In</button>
                                                 </form>
                                             }
                                         </div>
@@ -176,15 +204,15 @@ export default function Navbar() {
 
             <Modal show={show} onHide={handleClose} size="" backdrop="static" keyboard={false} data-bs-theme="dark">
                 <Modal.Header>
-                    <div className="mx-2 text-light fs-5 fw-bold">Sign In</div>
+                    <div className="mx-2 text-light fs-5 fw-bold">What's your nickname?</div>
                 </Modal.Header>
                 <Modal.Body>
                     <Container className="my-1 text-light">
                         <Row className="my-1">
                             <Col className="pl-5 pr-3 text-start">
                                 <Form.Label className="fs-6">Username</Form.Label>
-                                <Form.Control className="text-light border" type="text" required disabled={isLoading}
-                                onChange={(e) => setUsername(e.target.value)}
+                                <Form.Control className="text-light border" type="text" required 
+                                onChange={(e) => setUsername(e.target.value) }
                                 style={{ 
                                     maxWidth: "100%",
                                     padding: "0.5em 1em",
@@ -194,21 +222,8 @@ export default function Navbar() {
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
-                <Button variant="light" onClick={handleSignIn} disabled={isLoading}>
-                {isLoading ? (
-                    <>
-                        <Spinner
-                            as="span"
-                            animation="grow"
-                            size="sm"
-                            role="status"
-                            aria-hidden="true"
-                        /> Loading...
-                    </>
-                    
-                ):
-                    "Continue"
-                }
+                <Button variant="light" onClick={handleSubmit}>
+                    Submit
                 </Button>
                 </Modal.Footer>
             </Modal>

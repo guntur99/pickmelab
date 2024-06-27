@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
@@ -8,17 +8,125 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import MyEvents from '../profile/MyEvents.jsx';
 import InputGroup from 'react-bootstrap/InputGroup';
+import { pickme_backend } from 'declarations/pickme_backend';
+import Spinner from 'react-bootstrap/Spinner';
+
+let listPackage = [
+    { id: 0, name: 'Bronze', desc: '3 Events and max 100 tickets/event', price: '20' },
+    { id: 1, name: 'Silver', desc: '5 Events and max 500 tickets/event', price: '50' },
+    { id: 2, name: 'Gold', desc: '7 Events and max 5000 tickets/event', price: '100' },
+    { id: 3, name: 'Diamond', desc: '10 Events and max 10.000 tickets/event', price: '500' },
+];
 
 export default function Create() {
-
     const data = window.localStorage.getItem('user');
     if ( data == null ) {
         return <Navigate to="/" />;
     };
 
+    const [principal, setPrincipal] = useState('');
+    const [title, setTitle] = useState('');
+    const [poster, setPoster] = useState('');
+    const [category, setCategory] = useState('Concert');
+    const [totalTicket, setTotalTicket] = useState(10);
+    const [price, setPrice] = useState(1);
+    const [date, setDate] = useState('');
+    const [time, setTime] = useState('');
+    const [country, setCountry] = useState('Indonesia');
+    const [city, setCity] = useState('Jakarta');
+    const [location, setLocation] = useState('');
+    const [description, setDescription] = useState('');
+    const [committeeId, setCommitteeId] = useState('');
+    const [publishedBy, setPublishedBy] = useState('');
+    const [profile, setProfile] = useState('');
     const [show, setShow] = useState(false);
+    const [showPackage, setShowPackage] = useState(false);
+    const [packages] = useState(listPackage);
+    const [events, setEvents] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        getEvents();
+        setPrincipal(data.replace(/"/g, ''));
+        if (data) {
+            setCommitteeId(data);
+            pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
+                if (res.ok) {
+                    const profile = res.ok;
+                    setPublishedBy(profile.username);
+                    setProfile(profile);
+                }
+            });
+        }
+    },[]);
+
+    const handlePackageClose = () => setShowPackage(false);
+    const handlePackageShow = () => setShowPackage(true);
+    const handleBuyPackage = (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        pickme_backend.updateProfile(principal.replace(/"/g, ''), profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, profile.avatar, profile.progress).then((res) => {
+            if (res) {
+                setIsLoading(false);
+                setShowPackage(false);
+                window.location.reload();
+                // alert(`successfuly buy ${selectedPackage} package profile!`);
+            }
+        });
+    };
+
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        pickme_backend.createEvent(
+            title, poster, category, parseInt(totalTicket), parseInt(price), parseInt(Math.ceil(price/5)),
+            date, time, country, city, location, description, committeeId, publishedBy
+        ).then((res) => {
+            setIsLoading(false);
+            setShow(false);
+            getEvents();
+        });
+    };
+
+    const getEvents = () => {
+        pickme_backend.getAllEvent().then((res) => {
+            setEvents(res.ok);
+        });
+    }
+
+    const handlePoster = (e) => {
+        const data = new FileReader();
+        data.addEventListener('load', () => {
+            setPoster(data.result);
+        })
+        data.readAsDataURL(e.target.files[0]);
+    };
+
+    const handleCategory = (e) => {
+        setCategory(e.target.value)
+    };
+
+    const handleCountry = (e) => {
+        setCountry(e.target.value)
+    };
+
+    const handleCity = (e) => {
+        setCity(e.target.value)
+    };
+
+    const [item, setItem] = useState({ selectedPackage: "Bronze" });
+    const { selectedPackage } = item;
+
+    const handleChange = e => {
+        e.persist();
+
+        setItem(prevState => ({
+        ...prevState,
+        selectedPackage: e.target.value
+        }));
+    };
 
     return (
         <>
@@ -27,10 +135,10 @@ export default function Create() {
                 <div className="col-md-12">
                     <div className=" card rounded-6 card-bg-dark text-center">
                         <div className=" card-body p-">
-                            <Button variant="outline-light" className="m-4 text-start" onClick={handleShow}>
+                            <Button variant="outline-light" className="m-4 text-start" onClick={profile.user_type !== 'Basic' ? handleShow : handlePackageShow}>
                                 <i className="bi-calendar-plus-fill text-opacity-50"></i> Create New Event
                             </Button>
-                            <MyEvents/>
+                            <MyEvents events={events}/>
                         </div>
                         <Modal show={show} onHide={handleClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
                             <Modal.Header closeButton>
@@ -41,7 +149,9 @@ export default function Create() {
                                     <Row className="my-1">
                                         <Col className="pl-5 pr-3 text-start">
                                             <Form.Label className="fs-6">Title</Form.Label>
-                                            <Form.Control className="text-light border" type="text" placeholder="Title" required style={{ 
+                                            <Form.Control className="text-light border" type="text" placeholder="Title" required disabled={isLoading}
+                                            onChange={(e) => setTitle(e.target.value)}
+                                            style={{ 
                                                 maxWidth: "100%",
                                                 padding: "0.5em 1em",
                                             }} />
@@ -50,18 +160,21 @@ export default function Create() {
                                     <Row className="my-1">
                                         <Col className="pl-5 pr-3 text-start">
                                             <Form.Label className="fs-6">Poster</Form.Label>
-                                            <Form.Control className="text-light border" type="file" required style={{ 
+                                            <Form.Control className="text-light border" type="file" name="poster" required disabled={isLoading}
+                                            onChange={handlePoster}
+                                            style={{ 
                                                 maxWidth: "100%",
                                                 padding: "0.5em 1em",
                                             }} />
                                         </Col>
                                         <Col className="pl-3 pr-5 text-start">
                                             <Form.Label className="fs-6">Category</Form.Label>
-                                            <Form.Select aria-label="Select Category" required>
+                                            <Form.Select aria-label="Select Category" required value={category} disabled={isLoading}
+                                            onChange={handleCategory}>
                                                 <option disabled>Select Category</option>
-                                                <option value="1">Concert</option>
-                                                <option value="2">Sport</option>
-                                                <option value="3">Tech</option>
+                                                <option value="Concert">Concert</option>
+                                                <option value="Sport">Sport</option>
+                                                <option value="Tech">Tech</option>
                                             </Form.Select>
                                         </Col>
                                     </Row>
@@ -69,7 +182,9 @@ export default function Create() {
                                         <Col className="pl-5 pr-3 text-start">
                                             <Form.Label className="fs-6">Total Ticket</Form.Label>
                                             <InputGroup>
-                                                <Form.Control className="text-light border" type="number" required min={10} style={{ 
+                                                <Form.Control className="text-light border" type="number" required min={10} disabled={isLoading}
+                                                onChange={(e) => setTotalTicket(e.target.value)}
+                                                style={{ 
                                                     maxWidth: "100%",
                                                     padding: "0.5em 1em",
                                                 }} />
@@ -80,7 +195,9 @@ export default function Create() {
                                             <Form.Label className="fs-6">Price</Form.Label>
                                             <InputGroup>
                                                 <InputGroup.Text>$</InputGroup.Text>
-                                                <Form.Control className="text-light border" type="number" min={0} required aria-label="Amount (to the nearest dollar)" style={{ 
+                                                <Form.Control className="text-light border" type="number" min={0} required aria-label="Amount (to the nearest dollar)" disabled={isLoading}
+                                                onChange={(e) => setPrice(e.target.value)}
+                                                style={{ 
                                                     maxWidth: "100%",
                                                     padding: "0.5em 1em",
                                                 }}/>
@@ -91,14 +208,18 @@ export default function Create() {
                                     <Row className="my-1">
                                         <Col className="pl-5 pr-3 text-start">
                                             <Form.Label className="fs-6">Date</Form.Label>
-                                            <Form.Control className="text-light border" type="date" placeholder="Date" required style={{ 
+                                            <Form.Control className="text-light border" type="date" placeholder="Date" required disabled={isLoading}
+                                            onChange={(e) => setDate(e.target.value)}
+                                            style={{ 
                                                 maxWidth: "100%",
                                                 padding: "0.5em 1em",
                                             }} />
                                         </Col>
                                         <Col className="pl-3 pr-5 text-start">
                                             <Form.Label className="fs-6">Time</Form.Label>
-                                            <Form.Control className="text-light border" type="time" placeholder="Time" required style={{ 
+                                            <Form.Control className="text-light border" type="time" placeholder="Time" required disabled={isLoading}
+                                            onChange={(e) => setTime(e.target.value)}
+                                            style={{ 
                                                 maxWidth: "100%",
                                                 padding: "0.5em 1em",
                                             }} />
@@ -107,27 +228,31 @@ export default function Create() {
                                     <Row className="my-1">
                                         <Col className="pl-5 pr-3 text-start">
                                             <Form.Label className="fs-6">Country</Form.Label>
-                                            <Form.Select aria-label="Select Country" required>
+                                            <Form.Select aria-label="Select Country" required value={country} disabled={isLoading}
+                                            onChange={handleCountry}>
                                                 <option disabled>Select Country</option>
-                                                <option value="1">Indonesia</option>
-                                                <option value="2">Singapore</option>
-                                                <option value="3">Japan</option>
+                                                <option value="Indonesia">Indonesia</option>
+                                                <option value="Singapore">Singapore</option>
+                                                <option value="Japan">Japan</option>
                                             </Form.Select>
                                         </Col>
                                         <Col className="pl-3 pr-5 text-start">
                                             <Form.Label className="fs-6">City</Form.Label>
-                                            <Form.Select aria-label="Select City" required>
+                                            <Form.Select aria-label="Select City" required value={city} disabled={isLoading}
+                                            onChange={handleCity}>
                                                 <option disabled>Select City</option>
-                                                <option value="1">Jakarta</option>
-                                                <option value="2">Bandung</option>
-                                                <option value="3">Surabaya</option>
+                                                <option value="Jakarta">Jakarta</option>
+                                                <option value="Bandung">Bandung</option>
+                                                <option value="Surabaya">Surabaya</option>
                                             </Form.Select>
                                         </Col>
                                     </Row>
                                     <Row className="my-1">
                                         <Col className="pl-3 pr-5 text-start">
                                             <Form.Label className="fs-6">Location</Form.Label>
-                                            <Form.Control className="text-light border" type="text" placeholder="Location" required style={{ 
+                                            <Form.Control className="text-light border" type="text" placeholder="Location" required disabled={isLoading}
+                                            onChange={(e) => setLocation(e.target.value)}
+                                            style={{ 
                                                 maxWidth: "100%",
                                                 padding: "0.5em 1em",
                                             }} />
@@ -136,7 +261,8 @@ export default function Create() {
                                     <Row className="my-1">
                                         <Col className="pl-3 pr-5 text-start">
                                             <Form.Label className="fs-6">Description</Form.Label>
-                                            <Form.Control className="text-light border" as="textarea" rows={3} required style={{ 
+                                            <Form.Control className="text-light border" as="textarea" rows={3} required disabled={isLoading}
+                                            onChange={(e) => setDescription(e.target.value)}style={{ 
                                                 maxWidth: "100%",
                                                 padding: "0.5em 1em",
                                             }} />
@@ -145,11 +271,71 @@ export default function Create() {
                                 </Container>
                             </Modal.Body>
                             <Modal.Footer>
-                            <Button variant="secondary" onClick={handleClose}>
+                            <Button variant="secondary" onClick={handleClose} disabled={isLoading}>
                                 Close
                             </Button>
-                            <Button variant="light" onClick={handleClose}>
-                                Submit
+                            <Button variant="light" onClick={handleSubmit} disabled={isLoading}>
+                                {isLoading ? (
+                                    <>
+                                        <Spinner
+                                            as="span"
+                                            animation="grow"
+                                            size="sm"
+                                            role="status"
+                                            aria-hidden="true"
+                                        /> Loading...
+                                    </>
+                                    
+                                ):
+                                    "Submit"
+                                }
+                            </Button>
+                            </Modal.Footer>
+                        </Modal>
+                        
+                        <Modal show={showPackage} onHide={handlePackageClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
+                            <Modal.Header closeButton>
+                                <div className="mx-2 text-light fs-5 fw-bold">Committee Package</div>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <Container className="my-1 text-light">
+                                    <Row className="my-1">
+                                        <Col className="pl-5 pr-3 text-start">
+                                            <Form.Group controlId="selectedPackage">
+                                                {packages.map(item => (
+                                                    <Form.Check
+                                                    key={item.id}
+                                                    value={item.name}
+                                                    type="radio"
+                                                    aria-label={`radio ${item.id}`}
+                                                    label={`[`+item.name+`] $`+item.price+` for `+item.desc}
+                                                    onChange={handleChange}
+                                                    checked={selectedPackage === item.name}
+                                                    style={{ fontSize: 16 }}
+                                                    disabled={isLoading}
+                                                    />
+                                                ))}
+                                            </Form.Group>
+                                        </Col>
+                                    </Row>
+                                </Container>
+                            </Modal.Body>
+                            <Modal.Footer>
+                            <Button variant="light" onClick={handleBuyPackage} disabled={isLoading}>
+                                {isLoading ? (
+                                    <>
+                                        <Spinner
+                                            as="span"
+                                            animation="grow"
+                                            size="sm"
+                                            role="status"
+                                            aria-hidden="true"
+                                        /> Loading...
+                                    </>
+                                    
+                                ):
+                                    "Buy Package"
+                                }
                             </Button>
                             </Modal.Footer>
                         </Modal>
