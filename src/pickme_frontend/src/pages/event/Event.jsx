@@ -160,7 +160,7 @@ export default function Event() {
                                     <div className="row g-3 mt-3">
                                         {myTicket.length > 0 ? 
                                         <Button variant="outline-light" className="button button-large text-bg-dark rounded-5 border-0 mt-4" disabled="true">
-                                            Paid
+                                            {event.available_ticket === 0 ? <b className="text-primary-second">Sold Out</b> : <b className="text-">Paid</b>}
                                         </Button>
                                         :
                                         <Button variant="outline-light" className="button button-large gradient-color rounded-5 border-0 mt-4" onClick={handleShow}>
@@ -207,7 +207,7 @@ export default function Event() {
                             <Col className="pl-5 pr-3 text-start">
                                 <Form.Label className="fs-6">Total Ticket</Form.Label>
                                 <InputGroup>
-                                    <Form.Control className="text-light border" type="number" required min={1} max={10} disabled={isLoading}
+                                    <Form.Control className="text-light border" type="number" required min={1} max={1} disabled={isLoading}
                                     onChange={(e) => { 
                                         setTotalTicket(e.target.value); 
                                         setTicketPrice(e.target.value*event.price); 
@@ -218,7 +218,7 @@ export default function Event() {
                                         maxWidth: "100%",
                                         padding: "0.5em 1em",
                                     }} />
-                                    <InputGroup.Text>ticket(s)</InputGroup.Text>
+                                    <InputGroup.Text>ticket</InputGroup.Text>
                                 </InputGroup>
                             </Col>
                             <Col className="pl-3 pr-5 text-start">

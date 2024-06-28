@@ -10,13 +10,13 @@ let listCategory = [
     // { id: 3, name: 'Your Attendance Events', filter: '.your-attendance-events', status: '' },
 ];
 
-let listEvent = [
-    { id: 0, img: '../theme/images/products/1.jpg', title: 'Live with U in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
-    { id: 1, img: '../theme/images/products/2.jpg', title: 'Hipster portrait animal', account: '@alexPoint', icpCurrency: 9.33, dollarCurrency: 19.88 },
-    { id: 2, img: '../theme/images/products/3.jpg', title: 'Hipster portrait man', account: '@alexPoint', icpCurrency: 12.33, dollarCurrency: 23.33 },
-    { id: 3, img: '../theme/images/products/4.jpg', title: 'Portrait of a woman', account: '@steavejosh', icpCurrency: 3.33, dollarCurrency: 14.33 },
-    { id: 4, img: '../theme/images/products/5.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
-];
+// let listEvent = [
+//     { id: 0, img: '../theme/images/products/1.jpg', title: 'Live with U in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
+//     { id: 1, img: '../theme/images/products/2.jpg', title: 'Hipster portrait animal', account: '@alexPoint', icpCurrency: 9.33, dollarCurrency: 19.88 },
+//     { id: 2, img: '../theme/images/products/3.jpg', title: 'Hipster portrait man', account: '@alexPoint', icpCurrency: 12.33, dollarCurrency: 23.33 },
+//     { id: 3, img: '../theme/images/products/4.jpg', title: 'Portrait of a woman', account: '@steavejosh', icpCurrency: 3.33, dollarCurrency: 14.33 },
+//     { id: 4, img: '../theme/images/products/5.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
+// ];
 
 export default function MyEvents({events}) {
 
@@ -28,10 +28,11 @@ export default function MyEvents({events}) {
 
     useEffect(() => {
         pickme_backend.getAllEvent().then((res) => {
-            const data = res.ok;
+            const resData = res.ok;
             const maxDate = format(new Date(), 'yyyy-MM-dd');
-            const newEvent = data.filter((event) => event.date > maxDate );
-            setEventsFiltered(newEvent);
+            const newEvent = resData.filter((event) => event.date >= maxDate);
+            const iFilterEvent = newEvent.filter((event) => event.committee_id === data.replace(/"/g, ''));
+            setEventsFiltered(iFilterEvent);
         });
         
         pickme_backend.getAllTicket().then((res) => {
@@ -49,7 +50,6 @@ export default function MyEvents({events}) {
                 }
             }
         });
-
     },[]);
 
     const handleActiveRecent = (e) => {
@@ -58,10 +58,13 @@ export default function MyEvents({events}) {
         const maxDate = format(new Date(), 'yyyy-MM-dd');
         if (e.target.text === "Your Upcoming Events") {
             const incomingEvent = events.filter((event) => event.date >= maxDate );
-            setEventsFiltered(incomingEvent);
+            const iFilterEvent = incomingEvent.filter((event) => event.committee_id === data.replace(/"/g, ''));
+            console.log(iFilterEvent);
+            setEventsFiltered(iFilterEvent);
         }else if(e.target.text === "Your Past Events"){
             const latestEvent = events.filter((event) => event.date < maxDate );
-            setEventsFiltered(latestEvent);
+            const lFilterEvent = latestEvent.filter((event) => event.committee_id === data.replace(/"/g, ''));
+            setEventsFiltered(lFilterEvent);
         }else{
             setEventsFiltered(tickets);
         }

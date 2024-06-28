@@ -11,21 +11,25 @@ import Col from 'react-bootstrap/Col';
 import { canisterId as internetIdentityCanisterId } from "declarations/internet_identity";
 import { pickme_backend } from 'declarations/pickme_backend';
 import Spinner from 'react-bootstrap/Spinner';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 export default function Navbar() {
     
     const [principal, setPrincipal] = useState('');
     const [auth, setAuth] = useState('');
     const [username, setUsername] = useState('');
+    const [uname, setUname] = useState('');
     const [isRegistered, setIsRegistered] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-
     const [show, setShow] = useState(false);
+    const [out, setLogout] = useState(false);
+    const [existUsername, setExistUsername] = useState(false);
+    const data = window.localStorage.getItem('user');
+
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const [out, setLogout] = useState(false);
     const handleLogoutClose = () => setLogout(false);
     const handleLogoutShow = () => setLogout(true);
     const handleLogoutNow = () => {
@@ -46,8 +50,9 @@ export default function Navbar() {
             pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
                 if ( data !== null ) {
                     if (res.ok) {
-                        console.log(res.ok);
+                        // console.log('cekc',res.ok);
                         setIsRegistered(true);
+                        setUname(res.ok.username);
                     }else{
                         setPrincipal(data.replace(/"/g, ''));
                         if (!isRegistered) {
@@ -61,13 +66,32 @@ export default function Navbar() {
     }, []);
 
     function handleSignIn(e) {
+        const form = e.currentTarget;
+        if (form.checkValidity() === false) {
         e.preventDefault();
-        setIsLoading(true);
-        pickme_backend.register(principal, username, "", "", "", "", "Basic", "", 50).then((res) => {
-            if (res) {
-                setIsLoading(false);
-                setShow(false);
-                window.location.reload();
+            e.stopPropagation();
+        }
+
+        // setIsLoading(true);
+        pickme_backend.checkUsername(username).then((res) => {
+            // console.log('checkUsername',res.ok);
+            // console.log('checkUsername',res.ok.length);
+            const available = res.ok;
+            if (available.length === 0) {
+                setExistUsername(false);
+                // console.log(existUsername);
+                // console.log('register');
+                pickme_backend.register(data.replace(/"/g, ''), username, "", "", "", "", "Basic", "", 50).then((res) => {
+                    if (res) {
+                        setIsLoading(false);
+                        setShow(false);
+                        window.location.reload();
+                    }
+                });
+            }else{
+                setExistUsername(true);
+                // console.log('existing user');
+                // console.log(existUsername);
             }
         });
     }
@@ -182,15 +206,29 @@ export default function Navbar() {
                 <Modal.Body>
                     <Container className="my-1 text-light">
                         <Row className="my-1">
-                            <Col className="pl-5 pr-3 text-start">
-                                <Form.Label className="fs-6">Username</Form.Label>
-                                <Form.Control className="text-light border" type="text" required disabled={isLoading}
-                                onChange={(e) => setUsername(e.target.value)}
-                                style={{ 
-                                    maxWidth: "100%",
-                                    padding: "0.5em 1em",
-                                }} />
-                            </Col>
+                            <Form.Label className="fs-6">Username</Form.Label>
+                            <InputGroup hasValidation>
+                                <InputGroup.Text>@</InputGroup.Text>
+                                <Form.Control 
+                                    type="text" 
+                                    required 
+                                    isInvalid 
+                                    className="text-light border" 
+                                    minLength={7} 
+                                    disabled={isLoading}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    style={{ 
+                                        maxWidth: "100%",
+                                        padding: "0.5em 1em",
+                                    }} />
+                                    {existUsername === true ? 
+                                    <Form.Control.Feedback className="fs-6" type="invalid">
+                                        Please pick another username.
+                                    </Form.Control.Feedback> 
+                                    : 
+                                    <></> 
+                                    }
+                            </InputGroup>
                         </Row>
                     </Container>
                 </Modal.Body>

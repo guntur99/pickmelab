@@ -10,6 +10,7 @@ import MyEvents from '../profile/MyEvents.jsx';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { pickme_backend } from 'declarations/pickme_backend';
 import Spinner from 'react-bootstrap/Spinner';
+import { format } from 'date-fns';
 
 let listPackage = [
     { id: 0, name: 'Bronze', desc: '3 Events and max 100 tickets/event', price: '20' },
@@ -45,9 +46,14 @@ export default function Create() {
     const [packages] = useState(listPackage);
     const [events, setEvents] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [item, setItem] = useState({ selectedPackage: "Bronze" });
+    const { selectedPackage } = item;
+    const [eventsFiltered, setEventsFiltered] = useState([]);
+    const [eventLimit, setEventLimit] = useState(0);
 
     useEffect(() => {
         getEvents();
+        getEventLimit();
         setPrincipal(data.replace(/"/g, ''));
         if (data) {
             setCommitteeId(data);
@@ -83,23 +89,47 @@ export default function Create() {
     };
 
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow = () => {
+        setShow(true);
+        getEventLimit();
+    };
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsLoading(true);
         pickme_backend.createEvent(
             title, poster, category, parseInt(totalTicket), parseInt(price), parseInt(Math.ceil(price/5)),
-            date, time, country, city, location, description, committeeId, publishedBy
+            date, time, country, city, location, description, committeeId.replace(/"/g, ''), publishedBy
         ).then((res) => {
             setIsLoading(false);
             setShow(false);
             getEvents();
+            window.location.reload();
         });
     };
+    
+    const getEventLimit = () => {
+        switch (profile.user_type) {
+            case "Bronze":
+                setEventLimit(3-eventsFiltered.length);
+                break;
+            case "Silver":
+                setEventLimit(5-eventsFiltered.length);
+                break;
+            case "Gold":
+                setEventLimit(7-eventsFiltered.length);
+                break;
+            default:
+                setEventLimit(10-eventsFiltered.length);
+                break;
+        }
+    }
 
     const getEvents = () => {
         pickme_backend.getAllEvent().then((res) => {
-            setEvents(res.ok);
+            const resData = res.ok;
+            const iFilterEvent = resData.filter((event) => event.committee_id === data.replace(/"/g, ''));
+            setEvents(resData);
+            setEventsFiltered(iFilterEvent);
         });
     }
 
@@ -123,9 +153,6 @@ export default function Create() {
         setCity(e.target.value)
     };
 
-    const [item, setItem] = useState({ selectedPackage: "Bronze" });
-    const { selectedPackage } = item;
-
     const handleChange = e => {
         e.persist();
 
@@ -142,14 +169,20 @@ export default function Create() {
                 <div className="col-md-12">
                     <div className=" card rounded-6 card-bg-dark text-center">
                         <div className=" card-body p-">
+                            {eventLimit > 0 ?
                             <Button variant="outline-light" className="m-4 text-start" onClick={profile.user_type !== 'Basic' ? handleShow : handlePackageShow}>
                                 <i className="bi-calendar-plus-fill text-opacity-50"></i> Create New Event
                             </Button>
+                            : 
+                            <Button variant="outline-light" className="m-4 text-start" onClick={handlePackageShow}>
+                                <i className="bi-calendar-plus-fill text-opacity-50"></i> Upgrade Package
+                            </Button>
+                            }
                             <MyEvents events={events}/>
                         </div>
                         <Modal show={show} onHide={handleClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
                             <Modal.Header closeButton>
-                                <div className="mx-2 text-light fs-5 fw-bold">Create Event</div>
+                                <div className="mx-2 text-light fs-5 fw-bold">Create Event - [{eventLimit} Events Left]</div>
                             </Modal.Header>
                             <Modal.Body>
                                 <Container className="my-1 text-light">
