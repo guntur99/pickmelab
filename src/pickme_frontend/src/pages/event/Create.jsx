@@ -25,6 +25,7 @@ export default function Create() {
     };
 
     const [principal, setPrincipal] = useState('');
+    const [isRegistered, setIsRegistered] = useState(false);
     const [title, setTitle] = useState('');
     const [poster, setPoster] = useState('');
     const [category, setCategory] = useState('Concert');
@@ -55,6 +56,12 @@ export default function Create() {
                     const profile = res.ok;
                     setPublishedBy(profile.username);
                     setProfile(profile);
+                    setIsRegistered(true);
+                }else{
+                    setPrincipal(data.replace(/"/g, ''));
+                    if (!isRegistered) {
+                        handleShow(); //check if profile data is not completed
+                    }
                 }
             });
         }
@@ -175,6 +182,7 @@ export default function Create() {
                                                 <option value="Concert">Concert</option>
                                                 <option value="Sport">Sport</option>
                                                 <option value="Tech">Tech</option>
+                                                <option value="Social">Social</option>
                                             </Form.Select>
                                         </Col>
                                     </Row>

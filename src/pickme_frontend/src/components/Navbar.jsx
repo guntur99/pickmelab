@@ -46,6 +46,7 @@ export default function Navbar() {
             pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
                 if ( data !== null ) {
                     if (res.ok) {
+                        console.log(res.ok);
                         setIsRegistered(true);
                     }else{
                         setPrincipal(data.replace(/"/g, ''));

@@ -42,10 +42,10 @@ export default function Headline() {
                                             <div className="row justify-content-between">
                                                 <div className="col">
                                                     <h4 className="mb-2 text-white">{event.title}</h4>
-                                                    <h6 className="card-subtitle mb-2 text-white-50">{event.published_by}</h6>
+                                                    <h6 className="card-subtitle mb-2 text-white-50">@{event.published_by}</h6>
                                                     <div className="color fw-bold">{event.icp_price} ICP <span className="text-light text-opacity-50">/ ${event.price}</span></div>
                                                 </div>
-                                                <div className="col-auto">
+                                                {/* <div className="col-auto">
                                                     <div className="dropdown">
                                                         <button className="btn btn-secondary btn-sm rounded-circle bg-transparent" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                                             <i className="bi-share text-light text-opacity-50"></i>
@@ -56,7 +56,7 @@ export default function Headline() {
                                                             <li><a className="dropdown-item" href="#">Email</a></li>
                                                         </ul>
                                                     </div>
-                                                </div>
+                                                </div> */}
                                             </div>
                                         </div>
                                         <Link className="menu-link card-footer-btn text-center gradient-color fw-medium py-4 text-light" to={`/event/${event.uuid}`}>Buy Ticket</Link>

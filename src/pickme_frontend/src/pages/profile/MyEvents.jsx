@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
+import { format } from 'date-fns';
 import { pickme_backend } from 'declarations/pickme_backend';
 
 let listCategory = [
     { id: 0, name: 'Your Upcoming Events', filter: '.your-upcoming-events', status: 'activeFilter' },
     { id: 1, name: 'Your Past Events', filter: '.your-past-events', status: '' },
     { id: 2, name: 'Your Purchased Events', filter: '.your-purchased-events', status: '' },
-    { id: 3, name: 'Your Attendance Events', filter: '.your-attendance-events', status: '' },
+    // { id: 3, name: 'Your Attendance Events', filter: '.your-attendance-events', status: '' },
 ];
 
 let listEvent = [
@@ -20,6 +21,52 @@ let listEvent = [
 export default function MyEvents({events}) {
 
     const [categories, setCategories] = useState(listCategory);
+    const [tickets, setTickets] = useState([]);
+    const [eventsFiltered, setEventsFiltered] = useState([]);
+    const [activeRecent, setActiveRecent] = useState('Your Upcoming Events');
+    const data = window.localStorage.getItem('user');
+
+    useEffect(() => {
+        pickme_backend.getAllEvent().then((res) => {
+            const data = res.ok;
+            const maxDate = format(new Date(), 'yyyy-MM-dd');
+            const newEvent = data.filter((event) => event.date > maxDate );
+            setEventsFiltered(newEvent);
+        });
+        
+        pickme_backend.getAllTicket().then((res) => {
+            if (res.ok) {
+                const tickets = res.ok;
+                const selectedTicket = tickets.filter((ticket) => ticket.user_id === data.replace(/"/g, ''));
+                if (selectedTicket) {
+                    var events = [];
+                    selectedTicket.forEach(el => {
+                        pickme_backend.getEventById(el.event_id).then((res) => {
+                            events.push(res.ok);
+                        });
+                    });
+                    setTickets(events);
+                }
+            }
+        });
+
+    },[]);
+
+    const handleActiveRecent = (e) => {
+        e.preventDefault();
+        setActiveRecent(e.target.text)
+        const maxDate = format(new Date(), 'yyyy-MM-dd');
+        if (e.target.text === "Your Upcoming Events") {
+            const incomingEvent = events.filter((event) => event.date >= maxDate );
+            setEventsFiltered(incomingEvent);
+        }else if(e.target.text === "Your Past Events"){
+            const latestEvent = events.filter((event) => event.date < maxDate );
+            setEventsFiltered(latestEvent);
+        }else{
+            setEventsFiltered(tickets);
+        }
+    }
+    
 
     return (
 
@@ -32,7 +79,8 @@ export default function MyEvents({events}) {
 
                         <ul className="grid-filter style-2 mx-auto mb-0" data-container="#nft-products">
                             {categories.map(category => (
-                                <li key={category.id} className={category.status} ><a href="#" className={ category.status == 'activeFilter' ? "button-gradient gradient-color button rounded-6 mx-1" : 'button text-white rounded-6 mx-1' } data-filter={category.filter}>{category.name}</a></li>
+                                // <li onClick={handleActiveRecent} key={category.id} className={category.status} ><a href="#" className={ category.status == 'activeFilter' ? "button-gradient gradient-color button rounded-6 mx-1" : 'button text-white rounded-6 mx-1' } data-filter={category.filter}>{category.name}</a></li>
+                                <li onClick={handleActiveRecent} key={category.id} className="text-light" ><a href='#' className={ category.name == activeRecent ? "button-gradient gradient-color text-light rounded-6 mx-1" : 'text-light rounded-6 mx-1' } data-filter={category.filter}>{category.name}</a></li>
                             ))}
                         </ul>
 
@@ -42,7 +90,7 @@ export default function MyEvents({events}) {
 
                 <div className="col-12">
                     <div className="row g-4">
-                        {events.map(event => (
+                        {eventsFiltered.map(event => (
                             <article key={event.uuid} className="col-xl-4 col-lg-4 col-sm-6 col-12 nft-media nft-graphics">
                                 <div className="card rounded-6 overflow-hidden card-bg-dark">
                                     <div className="card-body p-4">
@@ -53,10 +101,10 @@ export default function MyEvents({events}) {
                                         <div className="row justify-content-between">
                                             <div className="col">
                                                 <h4 className="text-white mb-2">{event.title}</h4>
-                                                <h6 className="card-subtitle mb-2 text-white-50">{event.published_by}</h6>
+                                                <h6 className="card-subtitle mb-2 text-white-50">@{event.published_by}</h6>
                                                 <div className="color fw-bold">{event.icp_price} ICP <span className="text-light text-opacity-50">/ ${event.price}</span></div>
                                             </div>
-                                            <div className="col-auto">
+                                            {/* <div className="col-auto">
                                                 <div className="dropdown">
                                                     <button className="btn btn-secondary btn-sm rounded-circle bg-transparent" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                                         <i className="bi-share text-light text-opacity-50"></i>
@@ -67,11 +115,11 @@ export default function MyEvents({events}) {
                                                         <li><a className="dropdown-item" href="#">Email</a></li>
                                                     </ul>
                                                 </div>
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </div>
 
-                                    <Link className="menu-link card-footer-btn text-center gradient-color fw-medium text-light py-4 h-op-09" to={`/event/${event.uuid}`}>Buy Ticket</Link>
+                                    <Link className="menu-link card-footer-btn text-center gradient-color fw-medium text-light py-4 h-op-09" to={`/event/${event.uuid}`}>See Detail</Link>
                                 </div>
                             </article>
                         ))}

@@ -9,7 +9,7 @@ let listCategory = [
     { id: 2, name: 'Sport', filter: '.event-sport', status: '' },
     { id: 3, name: 'Tech', filter: '.event-tech', status: '' },
     { id: 4, name: 'Social', filter: '.event-social', status: '' },
-    { id: 5, name: 'Mars', filter: '.event-mars', status: '' },
+    // { id: 5, name: 'Mars', filter: '.event-mars', status: '' },
 ];
 
 export default function BestEventsCategories() {
@@ -67,8 +67,6 @@ export default function BestEventsCategories() {
 
                 <div className="col-12">
                     <div className="row g-4">
-                        {/* {activeRecent === "Show All" ?
-                        }eventsFiltered */}
                         {eventsFiltered.map(event => (
                             <article key={event.uuid} className="col-xl-3 col-lg-4 col-sm-6 col-12 nft-media nft-graphics">
                                 <div className="card rounded-6 overflow-hidden card-bg-dark">
@@ -77,15 +75,15 @@ export default function BestEventsCategories() {
                                             <img src={event.poster} className="rounded-5 w-100 h-auto" alt="..."/>
                                             <div id="nft-counter1" className="nft-counter countdown countdown-inline customjs position-absolute start-0 top-0" data-year="2024" data-month="3" data-day="22" data-format="dHMS"></div>
                                             <div className="bbp-author position-absolute start-0 bottom-0 w-100">
-                                                <a href="#"><img alt="User" src="../theme/images/authors/3.jpg"/></a>
-                                                <a href="#"><img alt="User" src="../theme/images/authors/2.jpg"/></a>
-                                                <a href="#"><img alt="User" src="../theme/images/authors/1.jpg"/></a>
+                                                <a><img alt="User" src="../theme/images/authors/3.jpg"/></a>
+                                                <a><img alt="User" src="../theme/images/authors/2.jpg"/></a>
+                                                <a><img alt="User" src="../theme/images/authors/1.jpg"/></a>
                                             </div>
                                         </div>
                                         <div className="row justify-content-between">
                                             <div className="col">
                                                 <h4 className="text-white mb-2">{event.title}</h4>
-                                                <h6 className="card-subtitle mb-2 text-white-50">{event.published_by}</h6>
+                                                <h6 className="card-subtitle mb-2 text-white-50">@{event.published_by}</h6>
                                                 <div className="color fw-bold">{event.icp_price} ICP <span className="text-light text-opacity-50">/ ${event.price}</span></div>
                                             </div>
                                             {/* <div className="col-auto">

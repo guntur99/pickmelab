@@ -15,13 +15,13 @@ import Spinner from 'react-bootstrap/Spinner';
 
 export default function Event() {
 
-    const [principal, setPrincipal] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
     const data = window.localStorage.getItem('user');
     if ( data == null ) {
         return <Navigate to="/" />;
     };
 
+    const [principal, setPrincipal] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const {eventId} = useParams();
     const [event, setEvent] = useState('');
     const [date, setDate] = useState('');
