@@ -27,6 +27,7 @@ actor {
     domicile : Text;
     address : Text;
     user_type : Text;
+    reseller_type : Text;
     progress : Nat32;
     timestamp : Time.Time;
   };
@@ -63,7 +64,7 @@ actor {
     timestamp : Time.Time;
   };
   
-  public func updateProfile(userId : Text, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, avatar : Text, progress : Nat32) : async Bool {
+  public func updateProfile(userId : Text, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, reseller_type : Text, avatar : Text, progress : Nat32) : async Bool {
     let user = usersIi.get(userId);
     switch (user) {
         case (?user) {
@@ -75,6 +76,7 @@ actor {
             domicile = domicile;
             address = address;
             user_type = user_type;
+            reseller_type = reseller_type;
             avatar = avatar;
             progress = progress;
             timestamp = Time.now();
@@ -89,7 +91,7 @@ actor {
 
   };
 
-  public func register(userId : Text, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, avatar : Text, progress : Nat32) : async Bool {
+  public func register(userId : Text, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, reseller_type : Text, avatar : Text, progress : Nat32) : async Bool {
     let uuid = await generateUUID();
     
     if (usersIi.get(userId) != null) {
@@ -104,6 +106,7 @@ actor {
       domicile = domicile;
       address = address;
       user_type = user_type;
+      reseller_type = reseller_type;
       avatar = avatar;
       progress = progress;
       timestamp = Time.now();
@@ -129,6 +132,18 @@ actor {
         return #err("User not found!");
       };
     };
+  };
+
+  public query func checkUsername(username : Text) : async Result.Result<[User], Text> {
+    var allUser = Vector.Vector<User>();
+
+    for (user in usersIi.vals()) {
+      if(user.username == username){
+        allUser.add(user);
+      }
+    };
+
+    return #ok(Vector.toArray(allUser));
   };
 
   public query func getUsername(userId : Text) : async Result.Result<Text, Text> {
@@ -250,6 +265,32 @@ actor {
     };
 
     return #ok(Vector.toArray(allTicket));
+  };
+
+public func transferTicket(receiverId : Text, eventId : Text, eventTitle : Text, ticketCategory : Text, totalTicket : Nat32, price : Nat32, icpPrice : Nat32, discount : Text, ticketId : Text) : async Bool 
+  {
+    let ticket = tickets.get(ticketId);
+    switch (ticket) {
+        case (?ticket) {
+          let ticket : Tickets = {
+            uuid = ticketId;
+            user_id = receiverId;
+            event_id = eventId;
+            event_title = eventTitle;
+            category = ticketCategory;
+            total_ticket = totalTicket;
+            price = price;
+            icp_price = icpPrice;
+            discount = discount;
+            timestamp = Time.now();
+          };
+          tickets.put(ticket.uuid, ticket);
+          return true;
+        };
+        case (null) {
+          return false;
+        };
+    };
   };
 
   public query func getAllTicket() : async Result.Result<[Tickets], Text> {

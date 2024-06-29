@@ -12,30 +12,43 @@ import Col from 'react-bootstrap/Col';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { pickme_backend } from 'declarations/pickme_backend';
 import Spinner from 'react-bootstrap/Spinner';
+import BuyMoreTicket from './BuyMoreTicket';
 
 export default function Event() {
 
-    const [principal, setPrincipal] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
     const data = window.localStorage.getItem('user');
     if ( data == null ) {
         return <Navigate to="/" />;
     };
 
+    const [principal, setPrincipal] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const {eventId} = useParams();
+    const [profile, setProfile] = useState('');
     const [event, setEvent] = useState('');
     const [date, setDate] = useState('');
     const [tFormat, setTFormat] = useState('');
     const [price, setPrice] = useState(0);
+    const [otherPrice, setOtherPrice] = useState(0);
     const [totalTicket, setTotalTicket] = useState(0);
     const [ticketPrice, setTicketPrice] = useState(0);
     const [ticketIcpPrice, setTicketIcpPrice] = useState(0);
     const [myTicket, setMyTicket] = useState([]);
     const [tickets, setTickets] = useState([]);
     const [show, setShow] = useState(false);
+    const [inputs, setInputs] = useState([{ username: "", ticket: 1 }]);
+    const [receiverUsername, setReceiverUsername] = useState('');
+    const [existUsername, setExistUsername] = useState(true);
 
     useEffect(() => {
         setPrincipal(data.replace(/"/g, ''));
+        pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
+            if (res.ok) {
+                const profile = res.ok;
+                setProfile(profile);
+            console.log(profile);
+            }
+        });
         getEvent();
         getTicket();
         getAllTicket();
@@ -46,6 +59,7 @@ export default function Event() {
 
     const handlePayment = (e) => {
         e.preventDefault();
+        resellerBuyTicket(inputs);
         setIsLoading(true);
         pickme_backend.buyTicket(principal, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-"
         ).then((res) => {
@@ -61,16 +75,29 @@ export default function Event() {
         });
     };
 
+    const resellerBuyTicket = (data) => {
+        data.forEach(user => {
+            pickme_backend.checkUsername(user.username).then((res) => {
+                const user = res.ok;
+                if (user.length > 0) {
+                    setExistUsername(true);
+                    pickme_backend.buyTicket(user[0].internet_identity, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-");
+                
+                }else{
+                    setExistUsername(false);
+                }
+            });
+        });
+    }
+
     const getTicket = () =>  {
         pickme_backend.getTicketsByUId(data.replace(/"/g, ''),eventId).then((res) => {
-            // console.log("setMyTicket:",res.ok, !res.ok);
             setMyTicket(res.ok);
         });
     }
 
     const getAllTicket = () => {
         pickme_backend.getAllTicket().then((res) => {
-            // console.log("all ticket:",res.ok);
             setTickets(res.ok);
         });
     }
@@ -83,6 +110,25 @@ export default function Event() {
             setTFormat(res.ok.time < "12:00" ? "AM" : "PM");
         });
     }
+
+    const handleAddInput = () => {
+        setInputs([...inputs, { username: "", ticket: 1 }]);
+        setOtherPrice(inputs.length*price);
+    };
+
+    const handleChange = (event, index) => {
+        let { name, value } = event.target;
+        let onChangeValue = [...inputs];
+        onChangeValue[index][name] = value;
+        setInputs(onChangeValue);
+    };
+
+    const handleDeleteInput = (index) => {
+        const newArray = [...inputs];
+        newArray.splice(index, 1);
+        setInputs(newArray);
+        setOtherPrice(otherPrice-price);
+    };
 
     return (
         
@@ -158,14 +204,22 @@ export default function Event() {
                                 </div>
                                 <div className="col-md-6">
                                     <div className="row g-3 mt-3">
-                                        {myTicket.length > 0 ? 
-                                        <Button variant="outline-light" className="button button-large text-bg-dark rounded-5 border-0 mt-4" disabled="true">
-                                            Paid
-                                        </Button>
+                                        {event.available_ticket === 0 ? 
+                                            <Button variant="outline-light" className="button button-large text-bg-dark rounded-5 border-0 mt-4" disabled="true">
+                                                <b>Sold Out</b>
+                                            </Button>
                                         :
-                                        <Button variant="outline-light" className="button button-large gradient-color rounded-5 border-0 mt-4" onClick={handleShow}>
-                                            Buy Ticket
-                                        </Button>
+                                        <>
+                                            {myTicket.length > 0 ? 
+                                            <Button variant="outline-light" className="button button-large bg-white text-primary-second rounded-5 border-0 mt-4" disabled="true">
+                                                <b>Paid</b>
+                                            </Button>
+                                            :
+                                            <Button variant="outline-light" className="button button-large gradient-color rounded-5 border-0 mt-4" onClick={handleShow}>
+                                                <b>Buy Ticket</b>
+                                            </Button>
+                                            }
+                                        </>
                                         }
                                     </div>
                                 </div>
@@ -207,7 +261,7 @@ export default function Event() {
                             <Col className="pl-5 pr-3 text-start">
                                 <Form.Label className="fs-6">Total Ticket</Form.Label>
                                 <InputGroup>
-                                    <Form.Control className="text-light border" type="number" required min={1} max={10} disabled={isLoading}
+                                    <Form.Control className="text-light border" type="number" required min={1} max={1} disabled={isLoading}
                                     onChange={(e) => { 
                                         setTotalTicket(e.target.value); 
                                         setTicketPrice(e.target.value*event.price); 
@@ -218,7 +272,7 @@ export default function Event() {
                                         maxWidth: "100%",
                                         padding: "0.5em 1em",
                                     }} />
-                                    <InputGroup.Text>ticket(s)</InputGroup.Text>
+                                    <InputGroup.Text>ticket</InputGroup.Text>
                                 </InputGroup>
                             </Col>
                             <Col className="pl-3 pr-5 text-start">
@@ -233,6 +287,60 @@ export default function Event() {
                                 </InputGroup>
                             </Col>
                         </Row>
+                        {profile.reseller_type !== "Basic" ? 
+                        <>
+                            <Row className="my-1">
+                                <Col className="pl-5 mt-4 pr-3 text-start">
+                                    <Form.Label className="fs-6">
+                                        <b>Buy for others</b>
+                                        <br/><b className=" text-primary-second">Total Price: ${otherPrice+price}</b>
+                                    </Form.Label>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <div className="container">
+                                    {inputs.map((item, index) => (
+                                        <div className="input_container" key={index}>
+                                            <Row className="my-1">
+                                                <Col className="pl-5 pr-3 text-start">
+                                                    <Form.Label className="fs-6">Username</Form.Label>
+                                                    <InputGroup hasValidation>
+                                                        <InputGroup.Text>@</InputGroup.Text>
+                                                        <Form.Control 
+                                                            type="text" 
+                                                            name="username"
+                                                            required 
+                                                            isInvalid 
+                                                            className="text-light border" 
+                                                            minLength={7} 
+                                                            disabled={isLoading}
+                                                            onChange={(event) => handleChange(event, index)}
+                                                            style={{ 
+                                                                maxWidth: "100%",
+                                                                padding: "0.5em 1em",
+                                                            }} />
+                                                    </InputGroup>
+                                                </Col>
+                                                <Col>
+                                                    <Form.Label className="fs-6">Action</Form.Label>
+                                                    <Col>
+                                                        {inputs.length > 1 && (
+                                                            <Button className="mx-1" variant="danger" onClick={() => handleDeleteInput(index)}>Delete</Button>
+                                                        )}
+                                                        {index === inputs.length - 1 && (
+                                                            <Button className="mx-1" variant="light" onClick={() => handleAddInput()}>Add</Button>
+                                                        )}
+                                                    </Col>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                    ))}
+                                </div>
+                            </Row>
+                        </>
+                        :
+                        <></>
+                        }
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>

@@ -25,6 +25,18 @@ let listPackage = [
     { id: 3, name: 'Diamond', desc: '10 Events and max 10.000 tickets/event', price: '500' },
 ];
 
+let resellerBasic = { id: 0, name: 'Basic', desc: '0 Events and max 0 tickets/event', price: '0' };
+let resellerBronze = { id: 1, name: 'Bronze', desc: '3 Events and max 30 tickets/event', price: '20' };
+let resellerSilver = { id: 2, name: 'Silver', desc: '5 Events and max 75 tickets/event', price: '50' };
+let resellerGold = { id: 3, name: 'Gold', desc: '7 Events and max 200 tickets/event', price: '100' };
+let resellerDiamond = { id: 4, name: 'Diamond', desc: '10 Events and max 1.000 tickets/event', price: '500' };
+let listResellerPackage = [
+    { id: 0, name: 'Bronze', desc: '3 Events and max 30 tickets/event', price: '20' },
+    { id: 1, name: 'Silver', desc: '5 Events and max 75 tickets/event', price: '50' },
+    { id: 2, name: 'Gold', desc: '7 Events and max 200 tickets/event', price: '100' },
+    { id: 3, name: 'Diamond', desc: '10 Events and max 1.000 tickets/event', price: '500' },
+];
+
 export default function Profile() {
     const [principal, setPrincipal] = useState('');
     const [progress, setProgress] = useState(0);
@@ -35,17 +47,22 @@ export default function Profile() {
     const [domicile, setDomicile] = useState('');
     const [address, setAddress] = useState('');
     const [userType, setUserType] = useState('');
+    const [resellerType, setResellerType] = useState('');
     const [profile, setProfile] = useState('');
     const [tickets, setTickets] = useState([]);
     const [events, setEvents] = useState([]);
     const [itemPackage, setItemPackage] = useState({});
+    const [resellerPackage, setResellerPackage] = useState({});
     const [showPackage, setShowPackage] = useState(false);
+    const [showResellerPackage, setShowResellerPackage] = useState(false);
     const [showTicket, setShowTicket] = useState(false);
     const [modalTicket, setModalTicket] = useState({});
     const [modalTicketEvent, setModalTicketEvent] = useState({});
     const [packages] = useState(listPackage);
     const [item, setItem] = useState({ selectedPackage: "Bronze" });
     const { selectedPackage } = item;
+    const [itemReseller, setItemReseller] = useState({ selectedReseller: "Bronze" });
+    const { selectedReseller } = itemReseller;
     const data = window.localStorage.getItem('user');
     if ( data == null ) {
         return <Navigate to="/" />;
@@ -65,24 +82,11 @@ export default function Profile() {
                 setAddress(profile.address);
                 setProgress(profile.progress);
                 setUserType(profile.user_type);
-                switch (profile.user_type) {
-                    case "Bronze":
-                        setItemPackage(packageBronze);
-                        break;
-                    case "Silver":
-                        setItemPackage(packageSilver);
-                        break;
-                    case "Gold":
-                        setItemPackage(packageGold);
-                        break;
-                    case "Diamond":
-                        setItemPackage(packageDiamond);
-                        break;
-                    default:
-                        setItemPackage(packageBasic);
-                        break;
-                }
+                setResellerType(profile.reseller_type);
+                getMemberPackage();
+                getResellerPackage();
             }
+            console.log(profile);
         });
         pickme_backend.getAllTicket().then((res) => {
             if (res.ok) {
@@ -95,6 +99,51 @@ export default function Profile() {
             }
         });
     },[]);
+
+    const updateSetting = () => {
+        getMemberPackage();
+        getResellerPackage();
+    }
+
+    const getMemberPackage = () => {
+        switch (profile.user_type) {
+            case "Bronze":
+                setItemPackage(packageBronze);
+                break;
+            case "Silver":
+                setItemPackage(packageSilver);
+                break;
+            case "Gold":
+                setItemPackage(packageGold);
+                break;
+            case "Diamond":
+                setItemPackage(packageDiamond);
+                break;
+            default:
+                setItemPackage(packageBasic);
+                break;
+        }
+    }
+
+    const getResellerPackage = () => {
+        switch (profile.reseller_type) {
+            case "Bronze":
+                setResellerPackage(resellerBronze);
+                break;
+            case "Silver":
+                setResellerPackage(resellerSilver);
+                break;
+            case "Gold":
+                setResellerPackage(resellerGold);
+                break;
+            case "Diamond":
+                setResellerPackage(resellerDiamond);
+                break;
+            default:
+                setResellerPackage(resellerBasic);
+                break;
+        }
+    }
 
     const handleUpdate = (e) => {
         e.preventDefault();
@@ -136,10 +185,31 @@ export default function Profile() {
     const handlePackageClose = () => setShowPackage(false);
     const handlePackageShow = () => setShowPackage(true);
     const handleUpgradePackage = (e) => {
-        pickme_backend.updateProfile(principal.replace(/"/g, ''), profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, profile.avatar, profile.progress).then((res) => {
+        pickme_backend.updateProfile(principal.replace(/"/g, ''), profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, selectedReseller, profile.avatar, profile.progress).then((res) => {
             if (res) {
                 setShowPackage(false);
-                alert(`successfuly buy ${selectedPackage} package profile!`);
+                // alert(`successfuly buy ${selectedPackage} package profile!`);
+                window.location.reload();;
+            }
+        });
+    };
+
+    const handleResellerChange = e => {
+        e.persist();
+
+        setItemReseller(prevState => ({
+        ...prevState,
+        selectedReseller: e.target.value
+        }));
+    };
+
+    const handleResellerPackageClose = () => setShowResellerPackage(false);
+    const handleResellerPackageShow = () => setShowResellerPackage(true);
+    const handleResellerPackage = (e) => {
+        pickme_backend.updateProfile(principal.replace(/"/g, ''), profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, selectedReseller, profile.avatar, profile.progress).then((res) => {
+            if (res) {
+                setShowPackage(false);
+                // alert(`successfuly buy ${selectedPackage} package profile!`);
                 window.location.reload();;
             }
         });
@@ -199,7 +269,7 @@ export default function Profile() {
                                         <Nav.Link className="text-light px-2" eventKey="tickets">Tickets</Nav.Link>
                                     </Nav.Item>
                                     <Nav.Item>
-                                        <Nav.Link className="text-light px-2" eventKey="setting">Setting</Nav.Link>
+                                        <Nav.Link className="text-light px-2" onClick={updateSetting} eventKey="setting">Settings</Nav.Link>
                                     </Nav.Item>
                                 </Nav>
                                 <Tab.Content className="text-light mt-3 text-start">
@@ -306,13 +376,25 @@ export default function Profile() {
                                         </div>
                                     </Tab.Pane>
                                     <Tab.Pane eventKey="setting">
-                                        <h5 className='text-light'>You are <b className="text-primary-second">{userType}</b> Member now! You can create <b className="text-primary-second">{itemPackage.desc}</b>. 
-                                            Upgrade for more frexibility!
-                                        </h5>
+                                        <div>
+                                            <h5 className='text-light'>You are <b className="text-primary-second">{userType}</b> Member now! You can create <b className="text-primary-second">{itemPackage.desc}</b>. 
+                                                Upgrade for more frexibility!
+                                            </h5>
 
-                                        <Button variant="light" onClick={handlePackageShow}>
-                                            Upgrade Package
-                                        </Button>
+                                            <Button variant="light" onClick={handlePackageShow}>
+                                                Upgrade Package
+                                            </Button>
+                                        </div>
+                                        <div className="mt-4">
+                                            <h5 className='text-light'>You are <b className="text-primary-second">{resellerType}</b> Reseller! 
+                                            You can create <b className="text-primary-second">{resellerPackage.desc}</b>.
+                                            Buy package for more ticket bundling <b className="text-primary-second">exclusive for Reseller only</b>. Upgrade for more frexibility!
+                                            </h5>
+
+                                            <Button variant="warning" onClick={handleResellerPackageShow}>
+                                                Buy Reseller Package
+                                            </Button>
+                                        </div>
                                     </Tab.Pane>
                                 </Tab.Content>
                             </Tab.Container>
@@ -352,6 +434,38 @@ export default function Profile() {
                         </Modal.Footer>
                     </Modal>
 
+                    <Modal show={showResellerPackage} onHide={handleResellerPackageClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
+                        <Modal.Header closeButton>
+                            <div className="mx-2 text-light fs-5 fw-bold">Reseller Package</div>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Container className="my-1 text-light">
+                                <Row className="my-1">
+                                    <Col className="pl-5 pr-3 text-start">
+                                        <Form.Group controlId="selectedPackage">
+                                            {listResellerPackage.map(item => (
+                                                <Form.Check
+                                                key={item.id}
+                                                value={item.name}
+                                                type="radio"
+                                                aria-label={`radio ${item.id}`}
+                                                label={`[`+item.name+`] $`+item.price+` for `+item.desc}
+                                                onChange={handleResellerChange}
+                                                checked={selectedReseller === item.name}
+                                                style={{ fontSize: 16 }}
+                                                />
+                                            ))}
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </Modal.Body>
+                        <Modal.Footer>
+                        <Button variant="light" onClick={handleResellerPackage}>
+                            Buy Package
+                        </Button>
+                        </Modal.Footer>
+                    </Modal>
                 </div>
             </div>
         </div>
