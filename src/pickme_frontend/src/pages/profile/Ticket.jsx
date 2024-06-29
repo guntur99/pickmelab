@@ -12,7 +12,6 @@ import { pickme_backend } from 'declarations/pickme_backend';
 import Spinner from 'react-bootstrap/Spinner';
 
 const Ticket = ({ticket, event, showTicket, handleTicketClose}) => {
-    // console.log(ticket, Object.entries(event).length);
     const [isLoading, setIsLoading] = useState(false);
     const [receiverUsername, setReceiverUsername] = useState('');
     const [existUsername, setExistUsername] = useState(true);
@@ -34,9 +33,6 @@ const Ticket = ({ticket, event, showTicket, handleTicketClose}) => {
             const available = res.ok;
             if (available.length > 0) {
                 setExistUsername(true);
-                console.log('existUsername',existUsername);
-                console.log('available',available);
-                console.log('ticket',ticket);
                 setIsLoading(true);
                 pickme_backend.transferTicket(available[0].internet_identity.replace(/"/g, ''), ticket.event_id, ticket.event_title, ticket.category, 1, parseInt(ticket.price), parseInt(ticket.icp_price), ticket.discount, ticket.uuid).then((res) => {
                     if (res) {
@@ -47,11 +43,10 @@ const Ticket = ({ticket, event, showTicket, handleTicketClose}) => {
                 });
             }else{
                 setExistUsername(false);
-                console.log('existUsername',existUsername);
-                console.log('available',available);
             }
         });
     }
+    
     return (
         <>
             <Modal show={showTicket} onHide={handleTicketClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
