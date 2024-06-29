@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
 let listStep = [
-    { id: 0, img: '../theme/images/icons/1.svg', title: 'Create a Free Account', desc: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusantium quos ipsam placeat fuga tenetur earum.' },
-    { id: 1, img: '../theme/images/icons/2.png', title: 'Manage your wallet', desc: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusantium quos ipsam placeat fuga tenetur earum.' },
-    { id: 2, img: '../theme/images/icons/3.svg', title: 'Buy/sell ticket', desc: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusantium quos ipsam placeat fuga tenetur earum.' },
+    { id: 0, img: '../theme/images/icons/1.svg', title: 'Secure & Flexible', desc: 'Secure because blockchain and ICP are secure. Flexible means events can be created by anyone and anyone can become anything.' },
+    { id: 1, img: '../theme/images/icons/2.png', title: 'Manage Wallet & NFT', desc: 'Manage a digital wallet for ticket payments and can carry out limited NFT buying and selling transactions and get lots of benefits.' },
+    { id: 2, img: '../theme/images/icons/3.svg', title: 'Buy & Sell Ticket', desc: 'Be a committee and sell your tickets. Resellers have many benefits that can be obtained and Buyers can attend various extraordinary events.' },
 ];
 
 export default function HowToUse() {
@@ -18,7 +18,7 @@ export default function HowToUse() {
                 <div className="row g-4">
                     <div className="col-12 text-center mb-lg-5">
                         <div className="text-uppercase color ls-3 fw-bold mb-2">How to do</div>
-                        <h2 className="display-5 fw-bold text-white mb-0">Simple steps to get your ticket</h2>
+                        <h2 className="display-5 fw-bold text-white mb-0">Simple steps to get your heart</h2>
                     </div>
                     <div className="clear"></div>
 

@@ -243,7 +243,7 @@ export default function Profile() {
                         <div className="card-body p-5">
                             <img src={`../theme/images/icons/1.svg`} alt="..." height="150" className="rounded-5 mb-5"/>
                             <h4 className="text-light mb-3">Need Help?</h4>
-                            <p className="fs-6 text-light">Lorem ipsum dolor sit amet</p>
+                            <p className="fs-6 text-light">Contact us for more info</p>
                             <a href="#" className="button button-large button-large gradient-color rounded-5 border-0 mt-4">Chat With Us</a>
                         </div>
                     </div>
@@ -252,9 +252,9 @@ export default function Profile() {
                     <div className="card rounded-6 card-bg-dark text-start">
                         <div className="card-body p-5">
                             <h4 className="text-white mb-3">Your account is being verified!</h4>
-                            <p className="fs-6 text-white-50">Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
-                                sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
-                                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                            <p className="fs-6 text-white-50">Let's fill in your personal data to get various attractive 
+                                treatments and limited discounts by completing your personal data. No need to worry because 
+                                this platform uses blockchain technology so only you can access all your data.</p>
                             <ProgressBar now={progress} label={`${progress}%`} />
                         </div>
                     </div>
