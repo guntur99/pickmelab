@@ -24,6 +24,7 @@ export default function Event() {
     const [principal, setPrincipal] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const {eventId} = useParams();
+    const [profile, setProfile] = useState('');
     const [event, setEvent] = useState('');
     const [date, setDate] = useState('');
     const [tFormat, setTFormat] = useState('');
@@ -41,6 +42,13 @@ export default function Event() {
 
     useEffect(() => {
         setPrincipal(data.replace(/"/g, ''));
+        pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
+            if (res.ok) {
+                const profile = res.ok;
+                setProfile(profile);
+            console.log(profile);
+            }
+        });
         getEvent();
         getTicket();
         getAllTicket();
@@ -279,54 +287,60 @@ export default function Event() {
                                 </InputGroup>
                             </Col>
                         </Row>
-                        <Row className="my-1">
-                            <Col className="pl-5 mt-4 pr-3 text-start">
-                                <Form.Label className="fs-6">
-                                    <b>Buy for others</b>
-                                    <br/><b className=" text-primary-second">Total Price: ${otherPrice+price}</b>
-                                </Form.Label>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <div className="container">
-                                {inputs.map((item, index) => (
-                                    <div className="input_container" key={index}>
-                                        <Row className="my-1">
-                                            <Col className="pl-5 pr-3 text-start">
-                                                <Form.Label className="fs-6">Username</Form.Label>
-                                                <InputGroup hasValidation>
-                                                    <InputGroup.Text>@</InputGroup.Text>
-                                                    <Form.Control 
-                                                        type="text" 
-                                                        name="username"
-                                                        required 
-                                                        isInvalid 
-                                                        className="text-light border" 
-                                                        minLength={7} 
-                                                        disabled={isLoading}
-                                                        onChange={(event) => handleChange(event, index)}
-                                                        style={{ 
-                                                            maxWidth: "100%",
-                                                            padding: "0.5em 1em",
-                                                        }} />
-                                                </InputGroup>
-                                            </Col>
-                                            <Col>
-                                                <Form.Label className="fs-6">Action</Form.Label>
-                                                <Col>
-                                                    {inputs.length > 1 && (
-                                                        <Button className="mx-1" variant="danger" onClick={() => handleDeleteInput(index)}>Delete</Button>
-                                                    )}
-                                                    {index === inputs.length - 1 && (
-                                                        <Button className="mx-1" variant="light" onClick={() => handleAddInput()}>Add</Button>
-                                                    )}
+                        {profile.reseller_type !== "Basic" ? 
+                        <>
+                            <Row className="my-1">
+                                <Col className="pl-5 mt-4 pr-3 text-start">
+                                    <Form.Label className="fs-6">
+                                        <b>Buy for others</b>
+                                        <br/><b className=" text-primary-second">Total Price: ${otherPrice+price}</b>
+                                    </Form.Label>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <div className="container">
+                                    {inputs.map((item, index) => (
+                                        <div className="input_container" key={index}>
+                                            <Row className="my-1">
+                                                <Col className="pl-5 pr-3 text-start">
+                                                    <Form.Label className="fs-6">Username</Form.Label>
+                                                    <InputGroup hasValidation>
+                                                        <InputGroup.Text>@</InputGroup.Text>
+                                                        <Form.Control 
+                                                            type="text" 
+                                                            name="username"
+                                                            required 
+                                                            isInvalid 
+                                                            className="text-light border" 
+                                                            minLength={7} 
+                                                            disabled={isLoading}
+                                                            onChange={(event) => handleChange(event, index)}
+                                                            style={{ 
+                                                                maxWidth: "100%",
+                                                                padding: "0.5em 1em",
+                                                            }} />
+                                                    </InputGroup>
                                                 </Col>
-                                            </Col>
-                                        </Row>
-                                    </div>
-                                ))}
-                            </div>
-                        </Row>
+                                                <Col>
+                                                    <Form.Label className="fs-6">Action</Form.Label>
+                                                    <Col>
+                                                        {inputs.length > 1 && (
+                                                            <Button className="mx-1" variant="danger" onClick={() => handleDeleteInput(index)}>Delete</Button>
+                                                        )}
+                                                        {index === inputs.length - 1 && (
+                                                            <Button className="mx-1" variant="light" onClick={() => handleAddInput()}>Add</Button>
+                                                        )}
+                                                    </Col>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                    ))}
+                                </div>
+                            </Row>
+                        </>
+                        :
+                        <></>
+                        }
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>

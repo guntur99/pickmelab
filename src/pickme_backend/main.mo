@@ -27,6 +27,7 @@ actor {
     domicile : Text;
     address : Text;
     user_type : Text;
+    reseller_type : Text;
     progress : Nat32;
     timestamp : Time.Time;
   };
@@ -63,7 +64,7 @@ actor {
     timestamp : Time.Time;
   };
   
-  public func updateProfile(userId : Text, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, avatar : Text, progress : Nat32) : async Bool {
+  public func updateProfile(userId : Text, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, reseller_type : Text, avatar : Text, progress : Nat32) : async Bool {
     let user = usersIi.get(userId);
     switch (user) {
         case (?user) {
@@ -75,6 +76,7 @@ actor {
             domicile = domicile;
             address = address;
             user_type = user_type;
+            reseller_type = reseller_type;
             avatar = avatar;
             progress = progress;
             timestamp = Time.now();
@@ -89,7 +91,7 @@ actor {
 
   };
 
-  public func register(userId : Text, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, avatar : Text, progress : Nat32) : async Bool {
+  public func register(userId : Text, username : Text, fullname : Text, dob : Text, domicile : Text, address : Text, user_type : Text, reseller_type : Text, avatar : Text, progress : Nat32) : async Bool {
     let uuid = await generateUUID();
     
     if (usersIi.get(userId) != null) {
@@ -104,6 +106,7 @@ actor {
       domicile = domicile;
       address = address;
       user_type = user_type;
+      reseller_type = reseller_type;
       avatar = avatar;
       progress = progress;
       timestamp = Time.now();

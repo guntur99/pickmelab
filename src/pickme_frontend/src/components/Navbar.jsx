@@ -77,7 +77,7 @@ export default function Navbar() {
             if (available.length === 0) {
                 setExistUsername(false);
                 setIsLoading(true);
-                pickme_backend.register(data.replace(/"/g, ''), username, "", "", "", "", "Basic", "", 50).then((res) => {
+                pickme_backend.register(data.replace(/"/g, ''), username, "", "", "", "", "Basic", "Basic", "", 50).then((res) => {
                     if (res) {
                         setIsLoading(false);
                         setShow(false);
