@@ -78,10 +78,11 @@ export default function Create() {
     const handleBuyPackage = (e) => {
         e.preventDefault();
         setIsLoading(true);
-        pickme_backend.updateProfile(principal.replace(/"/g, ''), profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, profile.avatar, profile.progress).then((res) => {
+        pickme_backend.updateProfile(principal.replace(/"/g, ''), profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, "Basic", profile.avatar, profile.progress).then((res) => {
             if (res) {
                 setIsLoading(false);
                 setShowPackage(false);
+                getEventLimit();
                 window.location.reload();
                 // alert(`successfuly buy ${selectedPackage} package profile!`);
             }

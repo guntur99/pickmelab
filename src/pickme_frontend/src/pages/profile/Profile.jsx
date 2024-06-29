@@ -158,7 +158,7 @@ export default function Profile() {
         
         var lastProgress = (count+2)*10;
         setProgress((count+2)*10);
-        pickme_backend.updateProfile(principal, username, fullname, dob, domicile, address, "Basic", avatar, parseInt(lastProgress)).then((res) => {
+        pickme_backend.updateProfile(principal, username, fullname, dob, domicile, address, "Basic", "Basic", avatar, parseInt(lastProgress)).then((res) => {
             if (res) {
                 window.location.reload();
             }

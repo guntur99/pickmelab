@@ -13,7 +13,7 @@ let listCategory = [
 // let listEvent = [
 //     { id: 0, img: '../theme/images/products/1.jpg', title: 'Live with U in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
 //     { id: 1, img: '../theme/images/products/2.jpg', title: 'Hipster portrait animal', account: '@alexPoint', icpCurrency: 9.33, dollarCurrency: 19.88 },
-//     { id: 2, img: '../theme/images/products/3.jpg', title: 'Hipster portrait man', account: '@alexPoint', icpCurrency: 12.33, dollarCurrency: 23.33 },
+//     { id: 2, img: '../theme/images/products/3.jpg', title: 'Hustler walk to mars', account: '@alexPoint', icpCurrency: 12.33, dollarCurrency: 23.33 },
 //     { id: 3, img: '../theme/images/products/4.jpg', title: 'Portrait of a woman', account: '@steavejosh', icpCurrency: 3.33, dollarCurrency: 14.33 },
 //     { id: 4, img: '../theme/images/products/5.jpg', title: 'Live in Heaven', account: '@steavejosh', icpCurrency: 2.33, dollarCurrency: 13.33 },
 // ];
@@ -59,7 +59,7 @@ export default function MyEvents({events}) {
         if (e.target.text === "Your Upcoming Events") {
             const incomingEvent = events.filter((event) => event.date >= maxDate );
             const iFilterEvent = incomingEvent.filter((event) => event.committee_id === data.replace(/"/g, ''));
-            console.log(iFilterEvent);
+            // console.log(iFilterEvent);
             setEventsFiltered(iFilterEvent);
         }else if(e.target.text === "Your Past Events"){
             const latestEvent = events.filter((event) => event.date < maxDate );
