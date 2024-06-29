@@ -68,19 +68,15 @@ export default function Navbar() {
     function handleSignIn(e) {
         const form = e.currentTarget;
         if (form.checkValidity() === false) {
-        e.preventDefault();
+            e.preventDefault();
             e.stopPropagation();
         }
 
-        // setIsLoading(true);
         pickme_backend.checkUsername(username).then((res) => {
-            // console.log('checkUsername',res.ok);
-            // console.log('checkUsername',res.ok.length);
             const available = res.ok;
             if (available.length === 0) {
                 setExistUsername(false);
-                // console.log(existUsername);
-                // console.log('register');
+                setIsLoading(true);
                 pickme_backend.register(data.replace(/"/g, ''), username, "", "", "", "", "Basic", "", 50).then((res) => {
                     if (res) {
                         setIsLoading(false);
@@ -90,8 +86,6 @@ export default function Navbar() {
                 });
             }else{
                 setExistUsername(true);
-                // console.log('existing user');
-                // console.log(existUsername);
             }
         });
     }
