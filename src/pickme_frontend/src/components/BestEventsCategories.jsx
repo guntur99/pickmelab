@@ -15,7 +15,7 @@ let listCategory = [
 export default function BestEventsCategories() {
 
     const [activeRecent, setActiveRecent] = useState('Show All');
-    const [categories, setCategories] = useState(listCategory);
+    const [categories] = useState(listCategory);
     const [events, setEvents] = useState([]);
     const [eventsFiltered, setEventsFiltered] = useState([]);
 

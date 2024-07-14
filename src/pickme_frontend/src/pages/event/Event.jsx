@@ -13,15 +13,11 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { pickme_backend } from 'declarations/pickme_backend';
 import Spinner from 'react-bootstrap/Spinner';
 import BuyMoreTicket from './BuyMoreTicket';
+import { useAuth } from '../../AuthProvider';
 
 export default function Event() {
 
-    const data = window.localStorage.getItem('user');
-    if ( data == null ) {
-        return <Navigate to="/" />;
-    };
-
-    const [principal, setPrincipal] = useState('');
+    const { principal } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const {eventId} = useParams();
     const [profile, setProfile] = useState('');
@@ -34,24 +30,19 @@ export default function Event() {
     const [ticketPrice, setTicketPrice] = useState(0);
     const [ticketIcpPrice, setTicketIcpPrice] = useState(0);
     const [myTicket, setMyTicket] = useState([]);
-    const [tickets, setTickets] = useState([]);
     const [show, setShow] = useState(false);
     const [inputs, setInputs] = useState([{ username: "", ticket: 1 }]);
-    const [receiverUsername, setReceiverUsername] = useState('');
     const [existUsername, setExistUsername] = useState(true);
 
     useEffect(() => {
-        setPrincipal(data.replace(/"/g, ''));
-        pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
+        pickme_backend.checkUserById(principal).then((res) => {
             if (res.ok) {
                 const profile = res.ok;
                 setProfile(profile);
-            console.log(profile);
             }
         });
         getEvent();
         getTicket();
-        getAllTicket();
     },[]);
 
     const handleClose = () => setShow(false);
@@ -65,7 +56,7 @@ export default function Event() {
         ).then((res) => {
             pickme_backend.updateEvent(eventId, event.title, event.poster, event.category, parseInt(event.total_ticket), 
                 parseInt(event.available_ticket-totalTicket), parseInt(event.price), parseInt(Math.ceil(event.price/5)), event.date, 
-                event.time, event.country, event.city, event.location, event.description, event.committee_id, event.published_by
+                event.time, event.country, event.city, event.location, event.description, event.published_by
             ).then((res) => {
                 setIsLoading(false);
                 setShow(false);
@@ -91,14 +82,8 @@ export default function Event() {
     }
 
     const getTicket = () =>  {
-        pickme_backend.getTicketsByUId(data.replace(/"/g, ''),eventId).then((res) => {
+        pickme_backend.getTicketsByUId(principal,eventId).then((res) => {
             setMyTicket(res.ok);
-        });
-    }
-
-    const getAllTicket = () => {
-        pickme_backend.getAllTicket().then((res) => {
-            setTickets(res.ok);
         });
     }
 

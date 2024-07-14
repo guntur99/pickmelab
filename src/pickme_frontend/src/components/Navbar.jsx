@@ -1,68 +1,42 @@
-import { Navigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
-import { AuthClient } from '@dfinity/auth-client';
 import { Link, NavLink } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import { canisterId as internetIdentityCanisterId } from "declarations/internet_identity";
 import { pickme_backend } from 'declarations/pickme_backend';
 import Spinner from 'react-bootstrap/Spinner';
 import InputGroup from 'react-bootstrap/InputGroup';
+import { useAuth } from '../AuthProvider';
 
 export default function Navbar() {
     
-    const [principal, setPrincipal] = useState('');
-    const [auth, setAuth] = useState('');
+    const { isAuth, principal, logout } = useAuth();
     const [username, setUsername] = useState('');
     const [uname, setUname] = useState('');
     const [isRegistered, setIsRegistered] = useState('');
-    const [isAuthenticated, setIsAuthenticated] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [show, setShow] = useState(false);
     const [out, setLogout] = useState(false);
     const [existUsername, setExistUsername] = useState(false);
-    const data = window.localStorage.getItem('user');
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
     const handleLogoutClose = () => setLogout(false);
-    const handleLogoutShow = () => setLogout(true);
-    const handleLogoutNow = () => {
-        setLogout(false);
-        localStorage.removeItem('user');
-        setAuth(null);
-        setPrincipal(null);
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.reload();
-
-        return <Navigate to="/" />;
-    };
 
     useEffect(() => {
-        const data = window.localStorage.getItem('user');
-        if (data) {
-            pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
-                if ( data !== null ) {
-                    if (res.ok) {
-                        // console.log('cekc',res.ok);
-                        setIsRegistered(true);
-                        setUname(res.ok.username);
-                    }else{
-                        setPrincipal(data.replace(/"/g, ''));
-                        if (!isRegistered) {
-                            handleShow(); //check if profile data is not completed
-                        }
-                    }
-                };
-            });
-        }
-        // console.log(isRegistered);
+        pickme_backend.checkUserById(principal).then((res) => {
+            if (res.ok) {
+                setIsRegistered(true);
+                setUname(res.ok.username);
+            }else{
+                if (!isRegistered) {
+                    handleShow(); //check if profile data is not completed
+                }
+            }
+        });
     }, []);
 
     function handleSignIn(e) {
@@ -77,62 +51,16 @@ export default function Navbar() {
             if (available.length === 0) {
                 setExistUsername(false);
                 setIsLoading(true);
-                pickme_backend.register(data.replace(/"/g, ''), username, "", "", "", "", "Basic", "Basic", "", 50).then((res) => {
+                pickme_backend.register(principal, username, "", "", "", "", "Basic", "Basic", "", 50).then((res) => {
                     if (res) {
                         setIsLoading(false);
                         setShow(false);
-                        window.location.reload();
                     }
                 });
             }else{
                 setExistUsername(true);
             }
         });
-    }
-    
-    function handleLogin(e) {
-        e.preventDefault();
-        init();
-
-        return false;
-    }
-
-    const init = async () => {
-        const authClient = await AuthClient.create();
-    
-        const isAuthenticated = await authClient.isAuthenticated();
-        // console.log(isAuthenticated);
-        if (auth && authClient.isAuthenticated()) { //You have already logged in
-            handleAuthenticated(authClient);
-            setAuth(authClient);
-            setIsAuthenticated(isAuthenticated);
-                
-        } else {
-        await authClient.login({
-            identityProvider: process.env.DFX_NETWORK === "local"
-                ? `http://${internetIdentityCanisterId}.localhost:4943/`
-                : 'https://identity.ic0.app/#authorize',
-            onSuccess: () => {
-                handleAuthenticated(authClient);
-                setAuth(authClient);
-                const isAuthenticated = authClient.isAuthenticated();
-                setIsAuthenticated(isAuthenticated);
-                window.location.reload();
-            }
-        });
-        }
-    }
-
-    async function handleAuthenticated(authClient) {
-        const identity = await authClient.getIdentity();
-        const userPrincipal = identity.getPrincipal().toString();
-        // Now you can use the userPrincipal to interact with your backend
-        localStorage.setItem('user', JSON.stringify(userPrincipal));
-    }
-
-    function handleLogout(e) {
-        e.preventDefault();
-        handleLogoutShow();
     }
 
     return (
@@ -155,7 +83,7 @@ export default function Navbar() {
                                     </div>
                                     <div className="header-misc ms-auto">
                                         <div className="header-misc ms-0">
-                                            {isRegistered ?
+                                            {isAuth &&
                                                 <div className="header-misc">
                                                     <div className="header-misc-icon tooltips">
                                                         <Link className="header-icon-notification " to="/event/create">
@@ -170,17 +98,12 @@ export default function Navbar() {
                                                         <span className="tooltiptext fs-6">Profile</span>
                                                     </div>
                                                     <div className="header-misc-icon tooltips">
-                                                        <form onSubmit={handleLogout}>
-                                                            <button id="logout" className="header-icon-notification">
-                                                                <i className="bi-door-open-fill text-light text-opacity-75"></i>
-                                                            </button>
-                                                        </form>
+                                                        <button onClick={logout} id="logout" className="header-icon-notification">
+                                                            <i className="bi-door-open-fill text-light text-opacity-75"></i>
+                                                        </button>
                                                         <span className="tooltiptext fs-6">Logout</span>
                                                     </div>
-                                                </div> :
-                                                <form onSubmit={handleLogin}>
-                                                    <button id="login" className="cnvs-hamburger button border-0 bg-gradient rounded-6 button-small m-0 ms-lg-4 me-lg-3" disabled={isRegistered}>Sign In</button>
-                                                </form>
+                                                </div> 
                                             }
                                         </div>
                                     </div>
@@ -256,7 +179,7 @@ export default function Navbar() {
                     <Button variant="dark" onClick={handleLogoutClose}>
                         No
                     </Button>
-                    <Button variant="light" onClick={handleLogoutNow}>
+                    <Button variant="light" onClick={logout}>
                         Yes, logout!
                     </Button>
                 </Modal.Footer>

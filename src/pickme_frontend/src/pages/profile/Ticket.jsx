@@ -34,7 +34,7 @@ const Ticket = ({ticket, event, showTicket, handleTicketClose}) => {
             if (available.length > 0) {
                 setExistUsername(true);
                 setIsLoading(true);
-                pickme_backend.transferTicket(available[0].internet_identity.replace(/"/g, ''), ticket.event_id, ticket.event_title, ticket.category, 1, parseInt(ticket.price), parseInt(ticket.icp_price), ticket.discount, ticket.uuid).then((res) => {
+                pickme_backend.transferTicket(available[0].internet_identity, ticket.event_id, ticket.event_title, ticket.category, 1, parseInt(ticket.price), parseInt(ticket.icp_price), ticket.discount, ticket.uuid).then((res) => {
                     if (res) {
                         setIsLoading(false);
                         setShowTransferTicket(false);
