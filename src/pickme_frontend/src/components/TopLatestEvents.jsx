@@ -3,17 +3,16 @@ import { Link } from "react-router-dom";
 import { format } from 'date-fns';
 import { pickme_backend } from 'declarations/pickme_backend';
 
-let listTime = [
-    { id: 0, val: 'Week' },
-    { id: 1, val: 'Month' },
-    { id: 2, val: '3 Month' },
-    { id: 3, val: 'Year' },
-];
+// let listTime = [
+//     { id: 0, val: 'Week' },
+//     { id: 1, val: 'Month' },
+//     { id: 2, val: '3 Month' },
+//     { id: 3, val: 'Year' },
+// ];
 
 export default function TopEvents() {
 
-    const [times, setTimes] = useState(listTime);
-    const [events, setEvents] = useState([]);
+    // const [times, setTimes] = useState(listTime);
     const [latestEvent, setLatestEvent] = useState([]);
 
     useEffect(() => {
@@ -21,13 +20,12 @@ export default function TopEvents() {
             const data = res.ok;
             const maxDate = format(new Date(), 'yyyy-MM-dd');
             const latestEvent = data.filter((event) => event.date < maxDate );
-            setEvents(latestEvent);
             setLatestEvent(latestEvent);
         });
     },[]);
     
     return (
-        <div>
+        <>
             <div className="line"></div>
 
             <div className="container py-lg-5">
@@ -47,7 +45,7 @@ export default function TopEvents() {
                     </div>
                     <div className="clear"></div>
 
-                    {events.map(event => (
+                    {latestEvent.map(event => (
                         <div key={event.id} className="col-md-4">
                             <div className="card rounded-6 card-bg-dark">
                                 <div className="card-body p-4">
@@ -82,6 +80,6 @@ export default function TopEvents() {
                     ))}
                 </div>
             </div>
-        </div>
+        </>
     )
 }

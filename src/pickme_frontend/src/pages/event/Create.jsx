@@ -21,11 +21,8 @@ let listPackage = [
 ];
 
 export default function Create() {
-    const { isAuth, principal } = useAuth();
-    if (!isAuth) {
-        return <Navigate to="/" />;
-    };
-
+    
+    const { principal } = useAuth();
     const [isRegistered, setIsRegistered] = useState(false);
     const [title, setTitle] = useState('');
     const [poster, setPoster] = useState('');

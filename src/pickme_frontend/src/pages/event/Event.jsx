@@ -17,8 +17,7 @@ import { useAuth } from '../../AuthProvider';
 
 export default function Event() {
 
-    const { isAuth, principal } = useAuth();
-    // const [principal, setPrincipal] = useState('');
+    const { principal } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const {eventId} = useParams();
     const [profile, setProfile] = useState('');
@@ -31,28 +30,19 @@ export default function Event() {
     const [ticketPrice, setTicketPrice] = useState(0);
     const [ticketIcpPrice, setTicketIcpPrice] = useState(0);
     const [myTicket, setMyTicket] = useState([]);
-    const [tickets, setTickets] = useState([]);
     const [show, setShow] = useState(false);
     const [inputs, setInputs] = useState([{ username: "", ticket: 1 }]);
-    const [receiverUsername, setReceiverUsername] = useState('');
     const [existUsername, setExistUsername] = useState(true);
 
-    if (!isAuth) {
-        return <Navigate to="/" />;
-    };
     useEffect(() => {
-        
-
         pickme_backend.checkUserById(principal).then((res) => {
             if (res.ok) {
                 const profile = res.ok;
                 setProfile(profile);
-            console.log(profile);
             }
         });
         getEvent();
         getTicket();
-        getAllTicket();
     },[]);
 
     const handleClose = () => setShow(false);
@@ -94,12 +84,6 @@ export default function Event() {
     const getTicket = () =>  {
         pickme_backend.getTicketsByUId(principal,eventId).then((res) => {
             setMyTicket(res.ok);
-        });
-    }
-
-    const getAllTicket = () => {
-        pickme_backend.getAllTicket().then((res) => {
-            setTickets(res.ok);
         });
     }
 

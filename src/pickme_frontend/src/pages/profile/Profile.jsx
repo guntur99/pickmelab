@@ -39,7 +39,7 @@ let listResellerPackage = [
 
 export default function Profile() {
 
-    const { isAuth, principal } = useAuth();
+    const { principal } = useAuth();
     const [progress, setProgress] = useState(0);
     const [fullname, setFullname] = useState('');
     const [username, setUsername] = useState('');
@@ -51,7 +51,6 @@ export default function Profile() {
     const [resellerType, setResellerType] = useState('');
     const [profile, setProfile] = useState('');
     const [tickets, setTickets] = useState([]);
-    // const [events, setEvents] = useState([]);
     const [itemPackage, setItemPackage] = useState({});
     const [resellerPackage, setResellerPackage] = useState({});
     const [showPackage, setShowPackage] = useState(false);
@@ -64,10 +63,6 @@ export default function Profile() {
     const { selectedPackage } = item;
     const [itemReseller, setItemReseller] = useState({ selectedReseller: "Bronze" });
     const { selectedReseller } = itemReseller;
-    
-    if (!isAuth) {
-        return <Navigate to="/" />;
-    };
 
     useEffect(() => {
         pickme_backend.checkUserById(principal).then((res) => {

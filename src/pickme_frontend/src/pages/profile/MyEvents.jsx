@@ -21,17 +21,13 @@ let listCategory = [
 
 export default function MyEvents({events}) {
 
-    const { isAuth, principal } = useAuth();
+    const { principal } = useAuth();
     const [categories] = useState(listCategory);
     const [tickets, setTickets] = useState([]);
     const [profile, setProfile] = useState('');
     const [isRegistered, setIsRegistered] = useState(false);
     const [eventsFiltered, setEventsFiltered] = useState([]);
     const [activeRecent, setActiveRecent] = useState('Your Upcoming Events');
-
-    if (!isAuth) {
-        return <Navigate to="/" />;
-    };
     
     useEffect(() => {
         getEvents();

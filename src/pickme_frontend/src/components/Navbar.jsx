@@ -29,7 +29,6 @@ export default function Navbar() {
     useEffect(() => {
         pickme_backend.checkUserById(principal).then((res) => {
             if (res.ok) {
-                // console.log('cekc',res.ok);
                 setIsRegistered(true);
                 setUname(res.ok.username);
             }else{

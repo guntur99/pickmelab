@@ -8,7 +8,7 @@ let listStep = [
 
 export default function HowToUse() {
 
-    const [steps, setSteps] = useState(listStep);
+    const [steps] = useState(listStep);
 
     return (
         <div>

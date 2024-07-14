@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from './AuthProvider';
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export default function Guest() {
 

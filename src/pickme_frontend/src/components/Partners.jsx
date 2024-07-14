@@ -11,7 +11,7 @@ let listPartner = [
 
 export default function Partners() {
 
-    const [partners, setPartners] = useState(listPartner);
+    const [partners] = useState(listPartner);
     
     return (
         <div className="container pb-lg-5">
