@@ -11,6 +11,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { pickme_backend } from 'declarations/pickme_backend';
 import Spinner from 'react-bootstrap/Spinner';
 import { format } from 'date-fns';
+import { useAuth } from '../../AuthProvider';
 
 let listPackage = [
     { id: 0, name: 'Bronze', desc: '3 Events and max 100 tickets/event', price: '20' },
@@ -20,12 +21,11 @@ let listPackage = [
 ];
 
 export default function Create() {
-    const data = window.localStorage.getItem('user');
-    if ( data == null ) {
+    const { isAuth, principal } = useAuth();
+    if (!isAuth) {
         return <Navigate to="/" />;
     };
 
-    const [principal, setPrincipal] = useState('');
     const [isRegistered, setIsRegistered] = useState(false);
     const [title, setTitle] = useState('');
     const [poster, setPoster] = useState('');
@@ -38,7 +38,6 @@ export default function Create() {
     const [city, setCity] = useState('Jakarta');
     const [location, setLocation] = useState('');
     const [description, setDescription] = useState('');
-    const [committeeId, setCommitteeId] = useState('');
     const [publishedBy, setPublishedBy] = useState('');
     const [profile, setProfile] = useState('');
     const [show, setShow] = useState(false);
@@ -54,23 +53,6 @@ export default function Create() {
     useEffect(() => {
         getEvents();
         getEventLimit();
-        setPrincipal(data.replace(/"/g, ''));
-        if (data) {
-            setCommitteeId(data);
-            pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
-                if (res.ok) {
-                    const profile = res.ok;
-                    setPublishedBy(profile.username);
-                    setProfile(profile);
-                    setIsRegistered(true);
-                }else{
-                    setPrincipal(data.replace(/"/g, ''));
-                    if (!isRegistered) {
-                        handleShow(); //check if profile data is not completed
-                    }
-                }
-            });
-        }
     },[]);
 
     const handlePackageClose = () => setShowPackage(false);
@@ -78,13 +60,12 @@ export default function Create() {
     const handleBuyPackage = (e) => {
         e.preventDefault();
         setIsLoading(true);
-        pickme_backend.updateProfile(principal.replace(/"/g, ''), profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, "Basic", profile.avatar, profile.progress).then((res) => {
+        pickme_backend.updateProfile(principal, profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, "Basic", profile.avatar, profile.progress).then((res) => {
             if (res) {
                 setIsLoading(false);
                 setShowPackage(false);
                 getEventLimit();
                 window.location.reload();
-                // alert(`successfuly buy ${selectedPackage} package profile!`);
             }
         });
     };
@@ -99,7 +80,7 @@ export default function Create() {
         setIsLoading(true);
         pickme_backend.createEvent(
             title, poster, category, parseInt(totalTicket), parseInt(price), parseInt(Math.ceil(price/5)),
-            date, time, country, city, location, description, committeeId.replace(/"/g, ''), publishedBy
+            date, time, country, city, location, description, publishedBy
         ).then((res) => {
             setIsLoading(false);
             setShow(false);
@@ -126,12 +107,25 @@ export default function Create() {
     }
 
     const getEvents = () => {
-        pickme_backend.getAllEvent().then((res) => {
-            const resData = res.ok;
-            const iFilterEvent = resData.filter((event) => event.committee_id === data.replace(/"/g, ''));
-            setEvents(resData);
-            setEventsFiltered(iFilterEvent);
+        pickme_backend.checkUserById(principal).then((res) => {
+            if (res.ok) {
+                const profile = res.ok;
+                setPublishedBy(profile.username);
+                setProfile(profile);
+                setIsRegistered(true);
+
+                pickme_backend.getEventsByUser(profile.username).then((res) => {
+                    const resData = res.ok;
+                    setEvents(resData);
+                    setEventsFiltered(resData);
+                });
+            }else{
+                if (!isRegistered) {
+                    handleShow(); //check if profile data is not completed
+                }
+            }
         });
+
     }
 
     const handlePoster = (e) => {

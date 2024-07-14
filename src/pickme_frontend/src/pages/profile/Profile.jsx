@@ -1,4 +1,3 @@
-import { Navigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import Nav from 'react-bootstrap/Nav';
 import Tab from 'react-bootstrap/Tab';
@@ -12,6 +11,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import { pickme_backend } from 'declarations/pickme_backend';
 import Spinner from 'react-bootstrap/Spinner';
 import Ticket from "./Ticket";
+import { useAuth } from '../../AuthProvider';
 
 let packageBasic = { id: 0, name: 'Basic', desc: '0 Events and max 0 tickets/event', price: '0' };
 let packageBronze = { id: 1, name: 'Bronze', desc: '3 Events and max 100 tickets/event', price: '20' };
@@ -38,7 +38,8 @@ let listResellerPackage = [
 ];
 
 export default function Profile() {
-    const [principal, setPrincipal] = useState('');
+
+    const { isAuth, principal } = useAuth();
     const [progress, setProgress] = useState(0);
     const [fullname, setFullname] = useState('');
     const [username, setUsername] = useState('');
@@ -50,7 +51,7 @@ export default function Profile() {
     const [resellerType, setResellerType] = useState('');
     const [profile, setProfile] = useState('');
     const [tickets, setTickets] = useState([]);
-    const [events, setEvents] = useState([]);
+    // const [events, setEvents] = useState([]);
     const [itemPackage, setItemPackage] = useState({});
     const [resellerPackage, setResellerPackage] = useState({});
     const [showPackage, setShowPackage] = useState(false);
@@ -63,14 +64,13 @@ export default function Profile() {
     const { selectedPackage } = item;
     const [itemReseller, setItemReseller] = useState({ selectedReseller: "Bronze" });
     const { selectedReseller } = itemReseller;
-    const data = window.localStorage.getItem('user');
-    if ( data == null ) {
+    
+    if (!isAuth) {
         return <Navigate to="/" />;
     };
 
     useEffect(() => {
-        setPrincipal(data.replace(/"/g, ''));
-        pickme_backend.checkUserById(data.replace(/"/g, '')).then((res) => {
+        pickme_backend.checkUserById(principal).then((res) => {
             if (res.ok) {
                 const profile = res.ok;
                 setProfile(profile);
@@ -86,18 +86,15 @@ export default function Profile() {
                 getMemberPackage();
                 getResellerPackage();
             }
-            console.log(profile);
         });
-        pickme_backend.getAllTicket().then((res) => {
+
+        pickme_backend.getAllTicketsByUId(principal).then((res) => {
             if (res.ok) {
                 const tickets = res.ok;
-                const selectedTicket = tickets.filter((ticket) => ticket.user_id === data.replace(/"/g, ''));
-                if (selectedTicket) {
-                    // console.log('selectedTicket',selectedTicket);
-                    setTickets(selectedTicket);
-                }
+                setTickets(tickets);
             }
         });
+        
     },[]);
 
     const updateSetting = () => {
@@ -185,10 +182,9 @@ export default function Profile() {
     const handlePackageClose = () => setShowPackage(false);
     const handlePackageShow = () => setShowPackage(true);
     const handleUpgradePackage = (e) => {
-        pickme_backend.updateProfile(principal.replace(/"/g, ''), profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, selectedReseller, profile.avatar, profile.progress).then((res) => {
+        pickme_backend.updateProfile(principal, profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, selectedReseller, profile.avatar, profile.progress).then((res) => {
             if (res) {
                 setShowPackage(false);
-                // alert(`successfuly buy ${selectedPackage} package profile!`);
                 window.location.reload();;
             }
         });
@@ -206,10 +202,9 @@ export default function Profile() {
     const handleResellerPackageClose = () => setShowResellerPackage(false);
     const handleResellerPackageShow = () => setShowResellerPackage(true);
     const handleResellerPackage = (e) => {
-        pickme_backend.updateProfile(principal.replace(/"/g, ''), profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, selectedReseller, profile.avatar, profile.progress).then((res) => {
+        pickme_backend.updateProfile(principal, profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, selectedReseller, profile.avatar, profile.progress).then((res) => {
             if (res) {
                 setShowPackage(false);
-                // alert(`successfuly buy ${selectedPackage} package profile!`);
                 window.location.reload();;
             }
         });
@@ -217,7 +212,6 @@ export default function Profile() {
 
     const handleTicketClose = () => setShowTicket(false);
     const handleTicketShow = (data) => {
-        // console.log('tickets',tickets);
         const selectedTicket = tickets.filter((ticket) => ticket.uuid === data.uuid);
         if (selectedTicket) {
             pickme_backend.getEventById(selectedTicket[0].event_id).then((res) => {

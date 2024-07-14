@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import { format } from 'date-fns';
 import { pickme_backend } from 'declarations/pickme_backend';
+import { useAuth } from '../../AuthProvider';
 
 let listCategory = [
     { id: 0, name: 'Your Upcoming Events', filter: '.your-upcoming-events', status: 'activeFilter' },
@@ -20,25 +21,28 @@ let listCategory = [
 
 export default function MyEvents({events}) {
 
-    const [categories, setCategories] = useState(listCategory);
+    const { isAuth, principal } = useAuth();
+    const [categories] = useState(listCategory);
     const [tickets, setTickets] = useState([]);
+    const [profile, setProfile] = useState('');
+    const [isRegistered, setIsRegistered] = useState(false);
     const [eventsFiltered, setEventsFiltered] = useState([]);
     const [activeRecent, setActiveRecent] = useState('Your Upcoming Events');
-    const data = window.localStorage.getItem('user');
 
+    if (!isAuth) {
+        return <Navigate to="/" />;
+    };
+    
     useEffect(() => {
-        pickme_backend.getAllEvent().then((res) => {
-            const resData = res.ok;
-            const maxDate = format(new Date(), 'yyyy-MM-dd');
-            const newEvent = resData.filter((event) => event.date >= maxDate);
-            const iFilterEvent = newEvent.filter((event) => event.committee_id === data.replace(/"/g, ''));
-            setEventsFiltered(iFilterEvent);
-        });
-        
+        getEvents();
+        getTickets();
+    },[]);
+
+    const getTickets = () => {
         pickme_backend.getAllTicket().then((res) => {
             if (res.ok) {
                 const tickets = res.ok;
-                const selectedTicket = tickets.filter((ticket) => ticket.user_id === data.replace(/"/g, ''));
+                const selectedTicket = tickets.filter((ticket) => ticket.user_id === principal);
                 if (selectedTicket) {
                     var events = [];
                     selectedTicket.forEach(el => {
@@ -50,7 +54,28 @@ export default function MyEvents({events}) {
                 }
             }
         });
-    },[]);
+    }
+
+    const getEvents = () => {
+        pickme_backend.checkUserById(principal).then((res) => {
+            if (res.ok) {
+                const profile = res.ok;
+                const maxDate = format(new Date(), 'yyyy-MM-dd');
+                setProfile(profile);
+                setIsRegistered(true);
+
+                pickme_backend.getEventsByUser(profile.username).then((res) => {
+                    const resData = res.ok;
+                    const iFilterEvent = resData.filter((event) => event.date >= maxDate );
+                    setEventsFiltered(iFilterEvent);
+                });
+            }else{
+                if (!isRegistered) {
+                    handleShow(); //check if profile data is not completed
+                }
+            }
+        });
+    }
 
     const handleActiveRecent = (e) => {
         e.preventDefault();
@@ -58,13 +83,10 @@ export default function MyEvents({events}) {
         const maxDate = format(new Date(), 'yyyy-MM-dd');
         if (e.target.text === "Your Upcoming Events") {
             const incomingEvent = events.filter((event) => event.date >= maxDate );
-            const iFilterEvent = incomingEvent.filter((event) => event.committee_id === data.replace(/"/g, ''));
-            // console.log(iFilterEvent);
-            setEventsFiltered(iFilterEvent);
+            setEventsFiltered(incomingEvent);
         }else if(e.target.text === "Your Past Events"){
             const latestEvent = events.filter((event) => event.date < maxDate );
-            const lFilterEvent = latestEvent.filter((event) => event.committee_id === data.replace(/"/g, ''));
-            setEventsFiltered(lFilterEvent);
+            setEventsFiltered(latestEvent);
         }else{
             setEventsFiltered(tickets);
         }
