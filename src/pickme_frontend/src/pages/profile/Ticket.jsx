@@ -75,12 +75,14 @@ const Ticket = ({ticket, event, showTicket, handleTicketClose}) => {
                                 <div className="location">
                                 <div className='qr-code'>
                                     <div style={{ height: "auto", margin: "0 auto", maxWidth: 150, width: "100%" }}>
-                                        <QRCode
-                                            size={256}
-                                            style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                                            value={ticket.uuid}
-                                            viewBox={`0 0 256 256`}
-                                        />
+                                        {ticket.uuid && 
+                                            <QRCode
+                                                size={256}
+                                                style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                                                value={ticket.uuid}
+                                                viewBox={`0 0 256 256`}
+                                            />
+                                        }
                                     </div>
                                 </div>
                                     <span>{event.title}</span>
