@@ -25,6 +25,7 @@ export default function Navbar() {
     const handleShow = () => setShow(true);
 
     const handleLogoutClose = () => setLogout(false);
+    const handleLogoutShow = () => setLogout(true);
 
     useEffect(() => {
         pickme_backend.checkUserById(principal).then((res) => {
@@ -98,7 +99,7 @@ export default function Navbar() {
                                                         <span className="tooltiptext fs-6">Profile</span>
                                                     </div>
                                                     <div className="header-misc-icon tooltips">
-                                                        <button onClick={logout} id="logout" className="header-icon-notification">
+                                                        <button onClick={handleLogoutShow} id="logout" className="header-icon-notification">
                                                             <i className="bi-door-open-fill text-light text-opacity-75"></i>
                                                         </button>
                                                         <span className="tooltiptext fs-6">Logout</span>
