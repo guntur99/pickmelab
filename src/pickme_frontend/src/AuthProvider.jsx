@@ -53,17 +53,21 @@ export const useAuthClient = (options = defaultOptions) => {
     }
 
     const login = () => {
+        localStorage.setItem('logged', true);
         authUser.login({
             ...options.loginOptions,
             onSuccess: () => {
                 updateClient(authUser);
+                window.location.reload();
             }
         })
     }
 
     async function logout(){
+        localStorage.removeItem('logged');
         await authUser?.logout();
         await updateClient(authUser);
+        window.location.reload();
     }
 
     return {
