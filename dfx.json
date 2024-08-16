@@ -17,7 +17,8 @@
     },
     "pickme_frontend": {
       "dependencies": [
-        "pickme_backend"
+        "pickme_backend",
+        "pickme_face_recognition"
       ],
       "source": [
         "src/pickme_frontend/dist"
@@ -29,6 +30,18 @@
         "main": "src/pickme_nft/main.mo",
         "type": "motoko",
         "gzip": true
+    },
+    "pickme_face_recognition": {
+      "metadata": [
+        {
+          "name": "candid:service"
+        }
+      ],
+      "candid": "src/pickme_face_recognition/pickme_face_recognition.did",
+      "package": "pickme_face_recognition",
+      "type": "custom",
+      "wasm": "target/wasm32-wasi/release/backend-ic.wasm",
+      "build": [ "bash build.sh" ]
     }
   },
   "defaults": {
