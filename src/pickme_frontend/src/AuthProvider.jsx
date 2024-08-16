@@ -2,7 +2,10 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import { AuthClient } from "@dfinity/auth-client";
 import { createActor, canisterId } from 'declarations/pickme_backend';
 import { canisterId as internetIdentityCanisterId } from "declarations/internet_identity";
-
+ 
+const days = BigInt(1); // One day
+const hours = BigInt(24);  
+const nanoseconds = BigInt(3600000000000); 
 const AuthContext = createContext();
 const defaultOptions = {
     createOptions: {
@@ -11,6 +14,7 @@ const defaultOptions = {
         }
     },
     loginOptions: {
+        maxTimeToLive: days * hours * nanoseconds,
         identityProvider: process.env.DFX_NETWORK === "local"
             ? `http://${internetIdentityCanisterId}.localhost:4943/`
             : 'https://identity.ic0.app/#authorize',

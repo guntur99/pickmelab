@@ -17,7 +17,8 @@
     },
     "pickme_frontend": {
       "dependencies": [
-        "pickme_backend"
+        "pickme_backend",
+        "pickme_face_recognition"
       ],
       "source": [
         "src/pickme_frontend/dist"
