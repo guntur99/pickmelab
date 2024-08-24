@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from './AuthProvider';
 import { NavLink } from "react-router-dom";
+import Home from "./pages/Home"
 
 export default function Guest() {
 
@@ -36,6 +37,7 @@ export default function Guest() {
                     </header>
                     <div id="wrapper" className="noice-effect overflow-hidden"></div>
                 </div>
+                <Home/>
             </main>
         </>
     )
