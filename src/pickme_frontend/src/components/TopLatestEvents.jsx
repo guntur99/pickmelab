@@ -59,7 +59,7 @@ export default function TopEvents() {
                                             <h4 className="mb-0">
                                                 <Link className="text-white" to={`/event/${event.uuid}`}>{event.title}</Link>
                                             </h4>
-                                            <h6 className="card-subtitle m-2 text-white-50">{event.icp_price} ICP / ${event.price}</h6>
+                                            <h6 className="card-subtitle m-2 text-white-50">${event.price}</h6>
                                         </div>
                                         {/* <div className="col-auto">
                                             <div className="dropdown">

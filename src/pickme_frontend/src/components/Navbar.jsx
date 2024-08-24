@@ -447,7 +447,7 @@ export default function Navbar() {
                 <Modal.Body>
                     <Container className="my-1 text-light">
                         <Row className="my-1">
-                            <Form.Label className="fs-6">Username (min. 6 chars)</Form.Label>
+                            <Form.Label className="fs-6">Username (min. 7 chars)</Form.Label>
                             <InputGroup hasValidation>
                                 <InputGroup.Text>@</InputGroup.Text>
                                 <Form.Control 
@@ -473,42 +473,20 @@ export default function Navbar() {
                             </InputGroup>
                         </Row>
                         <Row >
-                          <div className="container mt-4">
-                                            {/* <div> */}
-                                                <label id="filelabel" htmlFor="file" className="clickable">
-                                                {/* <div id="camera"> */}
-                                                    <img id="image"/>
-                                                    <video playsInline="" id="video" className="d-none" />
-                                                    <canvas id="canvas" className="d-none" />
-                                                {/* </div> */}
-                                                </label>
-                                                {/* <input
-                                                id="file"
-                                                className="file d-none"
-                                                name="file"
-                                                type="file"
-                                                accept="image/png, image/jpeg"
-                                                /> */}
-                                            {/* </div> */}
-                                            <div>
-                                                <img id="loader" src="loader.svg" className="d-none" />
-                                            </div>
-                                            <div id="toolbar">
-                                                <div id="buttons" className="d-none">
-                                                    {/* <Button className='mx-2 d-none' id="recognize" variant='light'>
-                                                        Recognize
-                                                    </Button>
-                                                    <Button className='mx-2 d-none' id="store" variant='light'>
-                                                        Add Me
-                                                    </Button> */}
-                                                </div>
-                                                <div id="message" />
-                                                {/* <Button className='mx-2 d-none' id="restart" variant='light'>
-                                                    Try Again!
-                                                </Button> */}
-                                            </div>
-
-                                        </div>
+                            <div className="container mt-4">
+                                <label id="filelabel" htmlFor="file" className="clickable">
+                                    <img id="image"/>
+                                    <video playsInline="" id="video" className="d-none" />
+                                    <canvas id="canvas" className="d-none" />
+                                </label>
+                                <div>
+                                    <img id="loader" src="loader.svg" className="d-none" />
+                                </div>
+                                <div id="toolbar">
+                                    <div id="buttons" className="d-none"></div>
+                                    <div id="message" />
+                                </div>
+                            </div>
                         </Row>
                     </Container>
                 </Modal.Body>
