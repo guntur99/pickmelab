@@ -63,7 +63,7 @@ dfx canister call icrc7 icrcX_mint "(
       memo = opt blob \"\00\01\";
       override = true;
       created_at_time = null;
-    };
+    }; 
     record {
       token_id = 1 : nat;
       owner = opt record { owner = principal \"$ICRC7_CANISTER\"; subaccount = null;};

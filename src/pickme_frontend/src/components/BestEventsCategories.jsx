@@ -84,7 +84,7 @@ export default function BestEventsCategories() {
                                             <div className="col">
                                                 <h4 className="text-white mb-2">{event.title}</h4>
                                                 <h6 className="card-subtitle mb-2 text-white-50">@{event.published_by}</h6>
-                                                <div className="color fw-bold">{event.icp_price} ICP <span className="text-light text-opacity-50">/ ${event.price}</span></div>
+                                                <div className="color fw-bold">${event.price} <span className="text-light text-opacity-50"></span></div>
                                             </div>
                                             {/* <div className="col-auto">
                                                 <div className="dropdown">

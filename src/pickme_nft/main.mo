@@ -85,7 +85,7 @@ shared(_init_msg) actor class Example(_args : {
     switch(_args.icrc3_args){
       case(null) ICRC3Default.defaultConfig(init_msg.caller);
       case(?val) ?val : ICRC3.InitArgs;
-      }, 
+      },  
     init_msg.caller);
 
   let #v0_1_0(#data(icrc3_state_current)) = icrc3_migration_state;

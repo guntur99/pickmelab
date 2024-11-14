@@ -39,10 +39,13 @@ export default function Event() {
             if (res.ok) {
                 const profile = res.ok;
                 setProfile(profile);
+                
             }
         });
         getEvent();
         getTicket();
+        
+        
     },[]);
 
     const handleClose = () => setShow(false);
@@ -140,7 +143,7 @@ export default function Event() {
                                     <div className="row g-3 align-items-center">
                                         <div className="col pt-3">
                                             <h6 className="p-0 text-white">Price<br/>
-                                                <a className="fs-4 fw-bold text-primary-second" href="#">{event.icp_price} ICP / ${event.price}</a>
+                                                <a className="fs-4 fw-bold text-primary-second" href="#">${event.price}</a>
                                             </h6>
                                         </div>
                                     </div>
@@ -200,7 +203,7 @@ export default function Event() {
                                                 <b>Paid</b>
                                             </Button>
                                             :
-                                            <Button variant="outline-light" className="button button-large gradient-color rounded-5 border-0 mt-4" onClick={handleShow}>
+                                            <Button variant="outline-light" className="button button-large gradient-color rounded-5 border-0 mt-4" onClick={handleShow} disabled={event.published_by == profile.username}>
                                                 <b>Buy Ticket</b>
                                             </Button>
                                             }
@@ -225,12 +228,23 @@ export default function Event() {
                             <Nav.Item>
                                 <Nav.Link className="text-light px-2" eventKey="detail">Detail</Nav.Link>
                             </Nav.Item>
+                            {event.published_by == profile.username ?
+                            <>
+                                <Nav.Item>
+                                    <Nav.Link className="text-light px-2" eventKey="scanner">Attendance</Nav.Link>
+                                </Nav.Item>
+                            </>: <></>
+                            }
                         </Nav>
                         <Tab.Content className="text-light mt-3 text-start">
                             <Tab.Pane eventKey="activity"> 
                                 <h5 className='text-light'>Activity not found</h5>
                             </Tab.Pane>
                             <Tab.Pane eventKey="detail"><h5 className='text-light'>Detail not found</h5></Tab.Pane>
+                            <Tab.Pane eventKey="scanner">
+                                <h5 className='text-light'>Click button bellow for scanning Face AI or Ticket QR Code for attendance!</h5>
+                                <Button id='scan' variant="light" >Start Attendance</Button>
+                            </Tab.Pane>
                         </Tab.Content>
                     </Tab.Container>
                 </div>

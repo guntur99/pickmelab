@@ -1,13 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from './AuthProvider';
 import { NavLink } from "react-router-dom";
+import Home from "./pages/Home";
 
 export default function Guest() {
 
     const { login } = useAuth();
+    const [isHomeExist, setIsHomeExist] = useState(false);
 
-    return (
-        <>
+  useEffect(() => {
+    const element = document.querySelector('.home-exist');
+    
+    if (element) {
+      console.log('Element with the class "home-exist" exists');
+      setIsHomeExist(true);
+    } else {
+      console.log('Element with the class "home-exist" does not exist');
+      setIsHomeExist(false);
+    }
+  }, []);
+
+    return ( <>
             <main>
                 <div className="stretched dark">
                     <header id="header" className="dark header-size-md floating-nft-header floating-header" style={{ 
@@ -37,6 +50,7 @@ export default function Guest() {
                     <div id="wrapper" className="noice-effect overflow-hidden"></div>
                 </div>
             </main>
+            { isHomeExist ? <></> : <Home/> }
         </>
     )
 }

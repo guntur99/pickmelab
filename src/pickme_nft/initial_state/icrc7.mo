@@ -21,4 +21,4 @@ module{
         supported_standards = null;
       };
   };
-};
+}; 
