@@ -19,7 +19,7 @@ import '../../public/assets/js/skrollr.min.js';
 export default function Home() {
     
     return (
-        <div className="content-wrap">
+        <div className="content-wrap home-exist">
             <Headline/>
             <BestEventsCategories/>
             <HowToGetTicket/>

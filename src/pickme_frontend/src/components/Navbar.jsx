@@ -28,6 +28,7 @@ export default function Navbar() {
     const [isCameraActive, setIsCameraActive] = useState(false);
     const [error, setError] = useState('');
     const [stream, setStream] = useState(null);
+    const [isHomeExist, setIsHomeExist] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -48,6 +49,16 @@ export default function Navbar() {
                 }
             }
         });
+
+    const element = document.querySelector('.home-exist');
+    
+    if (element) {
+      console.log('Element with the class "my-class-name" exists');
+      setIsHomeExist(true);
+    } else {
+      console.log('Element with the class "my-class-name" does not exist');
+      setIsHomeExist(false);
+    }
     }, []);
 
     function handleSignIn(e) {
