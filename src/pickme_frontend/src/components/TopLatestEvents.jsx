@@ -14,6 +14,7 @@ export default function TopEvents() {
 
     // const [times, setTimes] = useState(listTime);
     const [latestEvent, setLatestEvent] = useState([]);
+    const [logged] = useState(window.localStorage.getItem('logged') !== null ? true : false);
 
     useEffect(() => {
         pickme_backend.getAllEvent().then((res) => {
@@ -56,9 +57,9 @@ export default function TopEvents() {
                                                 <span className="position-absolute top-0 mt-1 translate-middle p-2 bg-color border-0 rounded-circle"><span className="visually-hidden">Online</span></span>
                                         </div>
                                         <div className="col">
-                                            <h4 className="mb-0">
+                                            <h5 className="mb-0">
                                                 <Link className="text-white" to={`/event/${event.uuid}`}>{event.title}</Link>
-                                            </h4>
+                                            </h5>
                                             <h6 className="card-subtitle m-2 text-white-50">${event.price}</h6>
                                         </div>
                                         {/* <div className="col-auto">

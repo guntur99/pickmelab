@@ -203,8 +203,8 @@ export default function Event() {
                                                 <b>Paid</b>
                                             </Button>
                                             :
-                                            <Button variant="outline-light" className="button button-large gradient-color rounded-5 border-0 mt-4" onClick={handleShow} disabled={event.published_by == profile.username}>
-                                                <b>Buy Ticket</b>
+                                            <Button variant="outline-light" className={event.published_by == profile.username ? "button button-large bg-white text-primary-second rounded-5 border-0 mt-4" : "button button-large gradient-color rounded-5 border-0 mt-4"} onClick={handleShow} disabled={event.published_by == profile.username}>
+                                                <b>{event.published_by == profile.username ? 'Your Event' : 'Buy Ticket'}</b>
                                             </Button>
                                             }
                                         </>

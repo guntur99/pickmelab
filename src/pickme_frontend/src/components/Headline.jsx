@@ -2,10 +2,12 @@ import Partners from './Partners';
 import { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { pickme_backend } from 'declarations/pickme_backend';
+import { Button } from 'react-bootstrap';
 
 export default function Headline() {
 
     const [event, setEvent] = useState('');
+    const [logged] = useState(window.localStorage.getItem('logged') !== null ? true : false);
 
     useEffect(() => {
         pickme_backend.getHeadlineEvent().then((res) => {
@@ -59,7 +61,11 @@ export default function Headline() {
                                                 </div> */}
                                             </div>
                                         </div>
+                                        {logged ? 
                                         <Link className="menu-link card-footer-btn text-center gradient-color fw-medium py-4 text-light" to={`/event/${event.uuid}`}>Buy Ticket</Link>
+                                        :
+                                        <Link onClick={login} className="menu-link card-footer-btn text-center bg-light fw-medium py-4 text-dark">Sign In</Link>
+                                        }
                                     </div>
                                 : 
                                     <div className="card overflow-hidden card-bg-dark"></div>

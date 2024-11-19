@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { format } from 'date-fns';
 import { pickme_backend } from 'declarations/pickme_backend';
+import { useAuth } from '../AuthProvider';
 
 let listCategory = [
     { id: 0, name: 'Show All', filter: '*', status: 'activeFilter' },
@@ -18,6 +19,8 @@ export default function BestEventsCategories() {
     const [categories] = useState(listCategory);
     const [events, setEvents] = useState([]);
     const [eventsFiltered, setEventsFiltered] = useState([]);
+    const [logged] = useState(window.localStorage.getItem('logged') !== null ? true : false);
+    const { login } = useAuth();
 
     useEffect(() => {
         pickme_backend.getAllEvent().then((res) => {
@@ -101,7 +104,11 @@ export default function BestEventsCategories() {
                                         </div>
                                     </div>
 
-                                    <Link className="menu-link card-footer-btn text-center gradient-color fw-medium text-light py-4 h-op-09" to={`/event/${event.uuid}`}>Buy Ticket</Link>
+                                    {logged ? 
+                                    <Link className="menu-link card-footer-btn text-center gradient-color fw-medium py-4 text-light" to={`/event/${event.uuid}`}>Buy Ticket</Link>
+                                    :
+                                    <Link onClick={login} className="menu-link card-footer-btn text-center bg-light fw-medium py-4 text-dark">Sign In</Link>
+                                    }
                                 </div>
                             </article>
                         ))}

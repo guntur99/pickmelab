@@ -49,7 +49,7 @@ const Ticket = ({ticket, event, showTicket, handleTicketClose}) => {
     
     return (
         <>
-            <Modal show={showTicket} onHide={handleTicketClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
+            <Modal show={showTicket} onHide={handleTicketClose} size="xl" backdrop="static" keyboard={false} data-bs-theme="dark">
                 <Modal.Header closeButton>
                     <div className="mx-2 text-light fs-5 fw-bold">Your Ticket</div>
                 </Modal.Header>
@@ -73,20 +73,26 @@ const Ticket = ({ticket, event, showTicket, handleTicketClose}) => {
                                     <span className="live small">{event.country}</span>
                                 </div>
                                 <div className="location">
-                                <div className='qr-code'>
-                                    <div style={{ height: "auto", margin: "0 auto", maxWidth: 150, width: "100%" }}>
-                                        {ticket.uuid && 
-                                            <QRCode
-                                                size={256}
-                                                style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                                                value={ticket.uuid}
-                                                viewBox={`0 0 256 256`}
-                                            />
-                                        }
+                                    <div className='qr-code'>
+                                        <div style={{ height: "auto", margin: "0 auto", maxWidth: 150, width: "100%" }}>
+                                            {ticket.uuid && 
+                                                <QRCode
+                                                    size={256}
+                                                    style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                                                    value={ticket.uuid}
+                                                    viewBox={`0 0 256 256`}
+                                                />
+                                            }
+                                        </div>
                                     </div>
-                                </div>
-                                    <span>{event.title}</span>
-                                    <span className="small"><span>{ticket.category} <i className="bi-check-circle-fill"></i></span></span>
+                                    <div className="ticket-title">
+                                        <span className="fs-4">{event.title}</span>
+                                        <div>
+                                            <span className="fs-6 text-light">
+                                                <span>{ticket.category} <i className="bi-check-circle-fill"></i></span>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                                 {/* <div className="rip"></div> */}
                                 <div className="cta">
