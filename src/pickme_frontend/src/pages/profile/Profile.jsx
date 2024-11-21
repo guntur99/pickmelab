@@ -233,6 +233,8 @@ export default function Profile() {
     };
 
     const startFaceRecognition = async () => {
+        elem("start-face-ai").classList.add("d-none");
+        elem("stop-face-ai").classList.remove("d-none");
         elem("recognize").onclick = recognize;
         elem("store").onclick = store;
         elem("file").onchange = load_local_image;
@@ -267,9 +269,9 @@ export default function Profile() {
         const video = elem("video");
         const image = elem("image");
         const canvas = elem("canvas");
-        if (!video.className.includes("invisible")) {
+        if (!video.className.includes("d-none")) {
             return [video, video.videoWidth, video.videoHeight];
-        } else if (!image.className.includes("invisible")) {
+        } else if (!image.className.includes("d-none")) {
             return [image, image.width, image.height];
         } else {
             return [canvas, canvas.width, canvas.height];
@@ -413,7 +415,7 @@ export default function Profile() {
             if (!result.Ok) {
             throw result.Err.message;
             }
-            message(`Successfully added ${label}.`);
+            message(`Successfully added new sample for ${label}.`);
         } catch (err) {
             console.error(`An error occurred: ${err}`);
             message("Failed to add the face: " + err.toString());
@@ -490,9 +492,9 @@ export default function Profile() {
         window.location.reload();
     }
 
-    // Makes the given DOM element invisible.
+    // Makes the given DOM element d-none.
     const hide = (id) => {
-        elem(id).className = "invisible";
+        elem(id).className = "d-none";
     }
 
     // Sets the message element's text to the given text.
@@ -663,39 +665,39 @@ export default function Profile() {
                                         </div>
                                     </Tab.Pane>
                                     <Tab.Pane eventKey="faceai">
-                                        <Button variant='light' className='mx-2' onClick={startFaceRecognition} >Start Face Recognition</Button>
-                                        <Button variant='light' className='mx-2' onClick={stopFaceRecognition} >Stop Face Recognition</Button>
+                                        <Button id='start-face-ai' variant='light' className='mx-2' onClick={startFaceRecognition} >Start Face AI Training</Button>
+                                        <Button id='stop-face-ai' variant='dark' className='mx-2 d-none' onClick={stopFaceRecognition} >Stop Face AI Training</Button>
                                         <div className="container mt-4">
                                             <div>
                                                 <label id="filelabel" htmlFor="file" className="clickable">
                                                 <div id="camera">
                                                     <img id="image"/>
-                                                    <video playsInline="" id="video" className="invisible" />
-                                                    <canvas id="canvas" className="invisible" />
+                                                    <video playsInline="" id="video" className="d-none" />
+                                                    <canvas id="canvas" className="d-none" />
                                                 </div>
                                                 </label>
                                                 <input
                                                 id="file"
-                                                className="file invisible"
+                                                className="file d-none"
                                                 name="file"
                                                 type="file"
                                                 accept="image/png, image/jpeg"
                                                 />
                                             </div>
                                             <div>
-                                                <img id="loader" src="loader.svg" className="invisible" />
+                                                <img id="loader" src="loader.svg" className="d-none" />
                                             </div>
                                             <div id="toolbar">
-                                                <div id="buttons" className="invisible">
-                                                    <Button className='mx-2' variant='light' id="recognize">
-                                                        Recognize
-                                                    </Button>
+                                                <div id="buttons" className="d-none">
                                                     <Button className='mx-2' id="store" variant='light'>
-                                                        Add person
+                                                        Add New Sample
+                                                    </Button>
+                                                    <Button className='mx-2' variant='dark' id="recognize">
+                                                        Recognize
                                                     </Button>
                                                 </div>
                                                 <div id="message" />
-                                                <div id="restart" className="invisible">
+                                                <div id="restart" className="d-none">
                                                     <Button className='mx-2' variant='light'>
                                                         Back
                                                     </Button>
