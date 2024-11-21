@@ -695,9 +695,11 @@ export default function Profile() {
                                                     </Button>
                                                 </div>
                                                 <div id="message" />
-                                                <Button id="restart" className='mx-2 invisible' variant='light'>
-                                                    Back
-                                                </Button>
+                                                <div id="restart" className="invisible">
+                                                    <Button className='mx-2' variant='light'>
+                                                        Back
+                                                    </Button>
+                                                </div>
                                             </div>
 
                                         </div>

@@ -8,12 +8,37 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProgressBar from 'react-bootstrap/ProgressBar';
-// import { pickme_backend } from 'declarations/pickme_backend';
+import { pickme_backend } from '../../../../../declarations/pickme_backend';
 import Spinner from 'react-bootstrap/Spinner';
-// import { useAuth } from '../../AuthProvider';
-import { pickme_face_recognition } from 'declarations/pickme_face_recognition';
+import Ticket from "../../profile/Ticket";
+import { useAuth } from '../../../AuthProvider';
+import { pickme_face_recognition } from '../../../../../declarations/pickme_face_recognition';
 
-export default function FaceRecognition() {
+let packageBasic = { id: 0, name: 'Basic', desc: '0 Events and max 0 tickets/event', price: '0' };
+let packageBronze = { id: 1, name: 'Bronze', desc: '3 Events and max 100 tickets/event', price: '20' };
+let packageSilver = { id: 2, name: 'Silver', desc: '5 Events and max 500 tickets/event', price: '50' };
+let packageGold = { id: 3, name: 'Gold', desc: '7 Events and max 5000 tickets/event', price: '100' };
+let packageDiamond = { id: 4, name: 'Diamond', desc: '10 Events and max 10.000 tickets/event', price: '500' };
+let listPackage = [
+    { id: 0, name: 'Bronze', desc: '3 Events and max 100 tickets/event', price: '20' },
+    { id: 1, name: 'Silver', desc: '5 Events and max 500 tickets/event', price: '50' },
+    { id: 2, name: 'Gold', desc: '7 Events and max 5000 tickets/event', price: '100' },
+    { id: 3, name: 'Diamond', desc: '10 Events and max 10.000 tickets/event', price: '500' },
+];
+
+let resellerBasic = { id: 0, name: 'Basic', desc: '0 Events and max 0 tickets/event', price: '0' };
+let resellerBronze = { id: 1, name: 'Bronze', desc: '3 Events and max 30 tickets/event', price: '20' };
+let resellerSilver = { id: 2, name: 'Silver', desc: '5 Events and max 75 tickets/event', price: '50' };
+let resellerGold = { id: 3, name: 'Gold', desc: '7 Events and max 200 tickets/event', price: '100' };
+let resellerDiamond = { id: 4, name: 'Diamond', desc: '10 Events and max 1.000 tickets/event', price: '500' };
+let listResellerPackage = [
+    { id: 0, name: 'Bronze', desc: '3 Events and max 30 tickets/event', price: '20' },
+    { id: 1, name: 'Silver', desc: '5 Events and max 75 tickets/event', price: '50' },
+    { id: 2, name: 'Gold', desc: '7 Events and max 200 tickets/event', price: '100' },
+    { id: 3, name: 'Diamond', desc: '10 Events and max 1.000 tickets/event', price: '500' },
+];
+
+export default function Profile() {
 
     const { principal } = useAuth();
     const [progress, setProgress] = useState(0);
@@ -29,6 +54,19 @@ export default function FaceRecognition() {
     const [tickets, setTickets] = useState([]);
     const [itemPackage, setItemPackage] = useState({});
     const [resellerPackage, setResellerPackage] = useState({});
+    const [showPackage, setShowPackage] = useState(false);
+    const [showResellerPackage, setShowResellerPackage] = useState(false);
+    const [showTicket, setShowTicket] = useState(false);
+    const [modalTicket, setModalTicket] = useState({});
+    const [modalTicketEvent, setModalTicketEvent] = useState({});
+    const [packages] = useState(listPackage);
+    const [item, setItem] = useState({ selectedPackage: "Bronze" });
+    const { selectedPackage } = item;
+    const [itemReseller, setItemReseller] = useState({ selectedReseller: "Bronze" });
+    const { selectedReseller } = itemReseller;
+    const videoRef = useRef(null);
+    const [isCameraActive, setIsCameraActive] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         pickme_backend.checkUserById(principal).then((res) => {
@@ -56,17 +94,7 @@ export default function FaceRecognition() {
             }
         });
         
-        // startFaceRecognition();
-
-        // return () => {
-        // // Cleanup function to stop the camera when the component unmounts
-        // if (videoRef.current && videoRef.current.srcObject) {
-        //     const stream = videoRef.current.srcObject;
-        //     const tracks = stream.getTracks();
-
-        //     tracks.forEach(track => track.stop());
-        // }
-        // };
+        document.querySelector('header').classList.add('d-none');
     },[]);
 
     const updateSetting = () => {
@@ -113,6 +141,86 @@ export default function FaceRecognition() {
                 break;
         }
     }
+
+    const handleUpdate = (e) => {
+        e.preventDefault();
+        var count = 0;
+        count += principal ? 1 : 0;
+        count += fullname ? 1 : 0;
+        count += username ? 1 : 0;
+        count += avatar ? 1 : 0;
+        count += dob ? 1 : 0;
+        count += domicile ? 1 : 0;
+        count += address ? 1 : 0;
+        
+        var lastProgress = (count+2)*10;
+        setProgress((count+2)*10);
+        pickme_backend.updateProfile(principal, username, fullname, dob, domicile, address, "Basic", "Basic", avatar, parseInt(lastProgress)).then((res) => {
+            if (res) {
+                window.location.reload();
+            }
+        });
+    };
+    
+    const handleAvatar = (e) => {
+        const data = new FileReader();
+        data.addEventListener('load', () => {
+            setAvatar(data.result);
+        })
+        data.readAsDataURL(e.target.files[0]);
+    };
+
+    const handleChange = e => {
+        e.persist();
+
+        setItem(prevState => ({
+        ...prevState,
+        selectedPackage: e.target.value
+        }));
+    };
+
+    const handlePackageClose = () => setShowPackage(false);
+    const handlePackageShow = () => setShowPackage(true);
+    const handleUpgradePackage = (e) => {
+        pickme_backend.updateProfile(principal, profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, selectedReseller, profile.avatar, profile.progress).then((res) => {
+            if (res) {
+                setShowPackage(false);
+                window.location.reload();;
+            }
+        });
+    };
+
+    const handleResellerChange = e => {
+        e.persist();
+
+        setItemReseller(prevState => ({
+        ...prevState,
+        selectedReseller: e.target.value
+        }));
+    };
+
+    const handleResellerPackageClose = () => setShowResellerPackage(false);
+    const handleResellerPackageShow = () => setShowResellerPackage(true);
+    const handleResellerPackage = (e) => {
+        pickme_backend.updateProfile(principal, profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, selectedReseller, profile.avatar, profile.progress).then((res) => {
+            if (res) {
+                setShowPackage(false);
+                window.location.reload();;
+            }
+        });
+    };
+
+    const handleTicketClose = () => setShowTicket(false);
+    const handleTicketShow = (data) => {
+        const selectedTicket = tickets.filter((ticket) => ticket.uuid === data.uuid);
+        if (selectedTicket) {
+            pickme_backend.getEventById(selectedTicket[0].event_id).then((res) => {
+                setModalTicketEvent(res.ok);
+            });
+        }
+        setModalTicket(data)
+        setShowTicket(true)
+    };
 
     const startFaceRecognition = async () => {
         elem("recognize").onclick = recognize;
@@ -395,45 +503,128 @@ export default function FaceRecognition() {
 
 
     return (
-        <div className="container mt-3 pt-6">
-            <div className="row pt-6">
+        <div className="container">
+            <div className="row pt-3">
                 <div className="col-md-12">
-                    <div className="container mt-4">
-                        <div>
-                            <label id="filelabel" htmlFor="file" className="clickable">
-                            <div id="camera">
-                                <img id="image"/>
-                                <video playsInline="" id="video" className="invisible" />
-                                <canvas id="canvas" className="invisible" />
-                            </div>
-                            </label>
-                            <input
-                            id="file"
-                            className="file invisible"
-                            name="file"
-                            type="file"
-                            accept="image/png, image/jpeg"
-                            />
+                    <div className="card rounded-6 card-bg-dark text-start">
+                        <div className="card-body p-5">
+                            <h4 className="text-white mb-3">Attendance Progress So Far!</h4>
+                            {/* <p className="fs-6 text-white-50">Let's fill in your personal data to get various attractive 
+                                treatments and limited discounts by completing your personal data. No need to worry because 
+                                this platform uses blockchain technology so only you can access all your data.</p> */}
+                            <ProgressBar now={progress} label={`${progress}%`} />
                         </div>
-                        <div>
-                            <img id="loader" src="loader.svg" className="invisible" />
-                        </div>
-                        <div id="toolbar">
-                            <div id="buttons" className="invisible">
-                                <Button className='mx-2' variant='light' id="recognize">
-                                    Recognize
-                                </Button>
-                                <Button className='mx-2' id="store" variant='light'>
-                                    Add person
-                                </Button>
-                            </div>
-                            <div id="message" />
-                            <Button id="restart" className='mx-2 invisible' variant='light'>
-                                Back
-                            </Button>
-                        </div>
-
                     </div>
+                    <div className="card rounded-6 card-bg-dark text-center my-3">
+                        <div className="card-body p-5">
+                            <Button variant='light' className='mx-2' onClick={startFaceRecognition} >Start Absence</Button>
+                            {/* <Button variant='light' className='mx-2' onClick={stopFaceRecognition} >Stop</Button> */}
+                            <div className="container text-center mt-4">
+                                <div>
+                                    <label id="filelabel" htmlFor="file" className="clickable">
+                                    <div id="camera">
+                                        <img id="image"/>
+                                        <video playsInline="" id="video" className="invisible" />
+                                        <canvas id="canvas" className="invisible" />
+                                    </div>
+                                    </label>
+                                    <input
+                                    id="file"
+                                    className="file invisible"
+                                    name="file"
+                                    type="file"
+                                    accept="image/png, image/jpeg"
+                                    />
+                                </div>
+                                <div>
+                                    <img id="loader" src="loader.svg" className="invisible text-white" />
+                                </div>
+                                <div id="toolbar">
+                                    <div id="buttons" className="invisible">
+                                        <Button className='mx-2' variant='light' id="recognize">
+                                            Recognize
+                                        </Button>
+                                        <Button className='mx-2' id="store" variant='light'>
+                                            Add person
+                                        </Button>
+                                    </div>
+                                    <div id="message" className="text-white" />
+                                    <div id="restart" className="invisible">
+                                        <Button className='mx-2' variant='light'>
+                                            Back
+                                        </Button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <Modal show={showPackage} onHide={handlePackageClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
+                        <Modal.Header closeButton>
+                            <div className="mx-2 text-light fs-5 fw-bold">Committee Package</div>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Container className="my-1 text-light">
+                                <Row className="my-1">
+                                    <Col className="pl-5 pr-3 text-start">
+                                        <Form.Group controlId="selectedPackage">
+                                            {packages.map(item => (
+                                                <Form.Check
+                                                key={item.id}
+                                                value={item.name}
+                                                type="radio"
+                                                aria-label={`radio ${item.id}`}
+                                                label={`[`+item.name+`] $`+item.price+` for `+item.desc}
+                                                onChange={handleChange}
+                                                checked={selectedPackage === item.name}
+                                                style={{ fontSize: 16 }}
+                                                />
+                                            ))}
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </Modal.Body>
+                        <Modal.Footer>
+                        <Button variant="light" onClick={handleUpgradePackage}>
+                            Upgrade Package
+                        </Button>
+                        </Modal.Footer>
+                    </Modal>
+
+                    <Modal show={showResellerPackage} onHide={handleResellerPackageClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
+                        <Modal.Header closeButton>
+                            <div className="mx-2 text-light fs-5 fw-bold">Reseller Package</div>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Container className="my-1 text-light">
+                                <Row className="my-1">
+                                    <Col className="pl-5 pr-3 text-start">
+                                        <Form.Group controlId="selectedPackage">
+                                            {listResellerPackage.map(item => (
+                                                <Form.Check
+                                                key={item.id}
+                                                value={item.name}
+                                                type="radio"
+                                                aria-label={`radio ${item.id}`}
+                                                label={`[`+item.name+`] $`+item.price+` for `+item.desc}
+                                                onChange={handleResellerChange}
+                                                checked={selectedReseller === item.name}
+                                                style={{ fontSize: 16 }}
+                                                />
+                                            ))}
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </Modal.Body>
+                        <Modal.Footer>
+                        <Button variant="light" onClick={handleResellerPackage}>
+                            Buy Package
+                        </Button>
+                        </Modal.Footer>
+                    </Modal>
                 </div>
             </div>
         </div>

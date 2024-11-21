@@ -3,11 +3,13 @@ import { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { pickme_backend } from 'declarations/pickme_backend';
 import { Button } from 'react-bootstrap';
+import { useAuth } from '../AuthProvider';
 
 export default function Headline() {
 
     const [event, setEvent] = useState('');
     const [logged] = useState(window.localStorage.getItem('logged') !== null ? true : false);
+    const { login } = useAuth();
 
     useEffect(() => {
         pickme_backend.getHeadlineEvent().then((res) => {

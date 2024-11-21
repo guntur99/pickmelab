@@ -19,7 +19,7 @@ import '../../public/assets/js/skrollr.min.js';
 export default function Guest() {
     
     return (
-        <div className="content-wrap home-exist">
+        <div className="content-wrap">
             <Headline/>
             <BestEventsCategories/>
             <HowToGetTicket/>
