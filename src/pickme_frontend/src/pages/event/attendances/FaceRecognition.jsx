@@ -223,6 +223,7 @@ export default function Profile() {
     };
 
     const startFaceRecognition = async () => {
+        document.querySelector('#start-attendance').classList.add('d-none');
         elem("recognize").onclick = recognize;
         elem("store").onclick = store;
         elem("file").onchange = load_local_image;
@@ -257,9 +258,9 @@ export default function Profile() {
         const video = elem("video");
         const image = elem("image");
         const canvas = elem("canvas");
-        if (!video.className.includes("invisible")) {
+        if (!video.className.includes("d-none")) {
             return [video, video.videoWidth, video.videoHeight];
-        } else if (!image.className.includes("invisible")) {
+        } else if (!image.className.includes("d-none")) {
             return [image, image.width, image.height];
         } else {
             return [canvas, canvas.width, canvas.height];
@@ -363,7 +364,8 @@ export default function Profile() {
             }
             let label = sanitize(result.Ok.label);
             let score = Math.round(result.Ok.score * 100) / 100;
-            message(`${label}, difference=${score}`);
+            message(`Selamat Datang ${label}, Enjoy the event!`);
+            // message(`${label}, difference=${score}`);
         } catch (err) {
             console.error(`An error occurred: ${err}`);
             message(err.toString());
@@ -480,9 +482,9 @@ export default function Profile() {
         window.location.reload();
     }
 
-    // Makes the given DOM element invisible.
+    // Makes the given DOM element d-none.
     const hide = (id) => {
-        elem(id).className = "invisible";
+        elem(id).className = "d-none";
     }
 
     // Sets the message element's text to the given text.
@@ -517,43 +519,44 @@ export default function Profile() {
                     </div>
                     <div className="card rounded-6 card-bg-dark text-center my-3">
                         <div className="card-body p-5">
-                            <Button variant='light' className='mx-2' onClick={startFaceRecognition} >Start Absence</Button>
+                            <Button id="start-attendance" variant='light' className='mx-2' onClick={startFaceRecognition} >Start Attendance</Button>
                             {/* <Button variant='light' className='mx-2' onClick={stopFaceRecognition} >Stop</Button> */}
+
+                                <div>
+                                    <img id="loader" src="loader.svg" className="d-none text-white" />
+                                </div>
+                                <div id="toolbar">
+                                    <div id="buttons" className="d-none">
+                                        <Button className='mx-2' variant='light' id="recognize">
+                                            Recognize
+                                        </Button>
+                                        <Button className='mx-2 d-none' id="store" variant='light'>
+                                            Add person
+                                        </Button>
+                                    </div>
+                                    <div id="message" className="text-white" />
+                                    <div id="restart" className="d-none">
+                                        <Button className='mx-2' variant='light'>
+                                            Complete
+                                        </Button>
+                                    </div>
+                                </div>
                             <div className="container text-center mt-4">
                                 <div>
                                     <label id="filelabel" htmlFor="file" className="clickable">
                                     <div id="camera">
                                         <img id="image"/>
-                                        <video playsInline="" id="video" className="invisible" />
-                                        <canvas id="canvas" className="invisible" />
+                                        <video playsInline="" id="video" className="d-none" />
+                                        <canvas id="canvas" className="d-none" />
                                     </div>
                                     </label>
                                     <input
                                     id="file"
-                                    className="file invisible"
+                                    className="file d-none"
                                     name="file"
                                     type="file"
                                     accept="image/png, image/jpeg"
                                     />
-                                </div>
-                                <div>
-                                    <img id="loader" src="loader.svg" className="invisible text-white" />
-                                </div>
-                                <div id="toolbar">
-                                    <div id="buttons" className="invisible">
-                                        <Button className='mx-2' variant='light' id="recognize">
-                                            Recognize
-                                        </Button>
-                                        <Button className='mx-2' id="store" variant='light'>
-                                            Add person
-                                        </Button>
-                                    </div>
-                                    <div id="message" className="text-white" />
-                                    <div id="restart" className="invisible">
-                                        <Button className='mx-2' variant='light'>
-                                            Back
-                                        </Button>
-                                    </div>
                                 </div>
 
                             </div>
