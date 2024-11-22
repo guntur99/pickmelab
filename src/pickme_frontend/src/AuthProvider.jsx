@@ -57,10 +57,10 @@ export const useAuthClient = (options = defaultOptions) => {
     }
 
     const login = () => {
-        localStorage.setItem('logged', true);
         authUser.login({
             ...options.loginOptions,
             onSuccess: () => {
+                localStorage.setItem('logged', true);
                 updateClient(authUser);
                 window.location.reload();
             }

@@ -5,6 +5,7 @@ import EventCreate from "../pages/event/Create.jsx"
 import Event from "../pages/event/Event.jsx"
 import Profile from "../pages/profile/Profile.jsx"
 import FaceRecognition from "../pages/event/attendances/FaceRecognition.jsx";
+import TicketQRScan from "../pages/event/attendances/TicketQRScan.jsx";
 import { useAuth } from '../AuthProvider';
 import { Navigate } from "react-router-dom";
 
@@ -20,7 +21,8 @@ function RoutesIndex() {
                     <Route path="/" element={<Home />} />
                     <Route path="/event/create" element={<EventCreate />} />
                     <Route path="/event/:eventId" element={<Event />} />
-                    <Route path="/event/attendance/:eventId" element={<FaceRecognition />} />
+                    <Route path="/event/attendance/face-ai/:eventId" element={<FaceRecognition />} />
+                    <Route path="/event/attendance/scan-qr/:eventId" element={<TicketQRScan />} />
                     <Route path="/profile" element={<Profile />} />
                 </Routes>
                 }
