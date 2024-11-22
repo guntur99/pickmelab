@@ -17,11 +17,11 @@
   ],
   "dependencies": {
     "@dfinity/auth-client": "^1.4.0",
-    "@yudiel/react-qr-scanner": "^2.0.8",
     "bootstrap": "^5.3.3",
     "date-fns": "^3.6.0",
     "react-bootstrap": "^2.10.2",
     "react-qr-code": "^2.0.15",
+    "react-qr-reader": "^3.0.0-beta-1",
     "react-router-dom": "^6.23.1"
   }
 }

@@ -38,7 +38,7 @@ let listResellerPackage = [
     { id: 3, name: 'Diamond', desc: '10 Events and max 1.000 tickets/event', price: '500' },
 ];
 
-export default function Profile() {
+export default function FaceRecognition() {
 
     const { principal } = useAuth();
     const [progress, setProgress] = useState(0);
