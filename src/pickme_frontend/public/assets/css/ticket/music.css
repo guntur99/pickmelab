@@ -63,6 +63,7 @@ body {
     display: inline-block;
     float: left;
     position: absolute;
+    border: #fff 1px solid;
     left: -50px;
     bottom: 30px;
     -webkit-filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));

@@ -10,7 +10,7 @@ import { pickme_backend } from 'declarations/pickme_backend';
 //     { id: 3, val: 'Year' },
 // ];
 
-export default function TopEvents() {
+export default function TopLatesEvents() {
 
     // const [times, setTimes] = useState(listTime);
     const [latestEvent, setLatestEvent] = useState([]);

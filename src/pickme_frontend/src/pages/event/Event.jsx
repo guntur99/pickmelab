@@ -56,7 +56,7 @@ export default function Event() {
         e.preventDefault();
         resellerBuyTicket(inputs);
         setIsLoading(true);
-        pickme_backend.buyTicket(principal, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-"
+        pickme_backend.buyTicket(principal, profile.username, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-"
         ).then((res) => {
             pickme_backend.updateEvent(eventId, event.title, event.poster, event.category, parseInt(event.total_ticket), 
                 parseInt(event.available_ticket-totalTicket), parseInt(event.price), parseInt(Math.ceil(event.price/5)), event.date, 
@@ -76,7 +76,7 @@ export default function Event() {
                 const user = res.ok;
                 if (user.length > 0) {
                     setExistUsername(true);
-                    pickme_backend.buyTicket(user[0].internet_identity, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-");
+                    pickme_backend.buyTicket(user[0].internet_identity, user.username, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-");
                 
                 }else{
                     setExistUsername(false);
@@ -244,8 +244,8 @@ export default function Event() {
                             <Tab.Pane eventKey="detail"><h5 className='text-light'>Detail not found</h5></Tab.Pane>
                             <Tab.Pane eventKey="scanner">
                                 <h5 className='text-light'>Click button bellow for scanning Face AI or Ticket QR Code for attendance!</h5>
-                                <Button id='scan' className="mx-2" variant="light" href={`/event/attendance/face-ai/${event.uuid}`} target="__blank" >Start Face AI Attendance</Button>
-                                <Button id='scan' className="mx-2" variant="light" href={`/event/attendance/scan-qr/${event.uuid}`} target="__blank" >Start Scan QR Attendance</Button>
+                                <Button id='scan' className="mx-2" variant="light" href={`/event/attendance/face-ai/${event.uuid}`} target="__blank" >Face AI Attendance</Button>
+                                <Button id='scan' className="mx-2" variant="light" href={`/event/attendance/scan-qr/${event.uuid}`} target="__blank" >QR Code Attendance</Button>
                             </Tab.Pane>
                         </Tab.Content>
                     </Tab.Container>
