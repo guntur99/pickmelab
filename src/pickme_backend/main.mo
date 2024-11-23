@@ -16,6 +16,7 @@ actor {
   let usersIi = TrieMap.TrieMap<Principal, User>(Principal.equal, Principal.hash);
   let tickets = TrieMap.TrieMap<Text, Tickets>(Text.equal, Text.hash);
   let events = TrieMap.TrieMap<Text, Events>(Text.equal, Text.hash);
+  let attendances = TrieMap.TrieMap<Text, Attendances>(Text.equal, Text.hash);
 
   type User = {
     internet_identity : Principal;
@@ -53,12 +54,21 @@ actor {
   public type Tickets = {
     uuid : Text;
     user_id : Principal;
+    username : Text;
     event_id : Text;
     event_title : Text;
     category : Text;
     price : Nat32;
     icp_price : Nat32;
     discount : Text;
+    timestamp : Time.Time;
+  };
+
+  public type Attendances = {
+    uuid : Text;
+    user_id : Principal;
+    event_id : Text;
+    ticket_id : Text;
     timestamp : Time.Time;
   };
 
@@ -166,8 +176,7 @@ actor {
 
   public func createEvent(title : Text, poster : Text, category : Text, total_ticket : Nat32, 
     price : Nat32, icp_price : Nat32, date : Text, time : Text, country : Text, city : Text, 
-    location : Text, description : Text, published_by : Text) : async Bool 
-  {
+    location : Text, description : Text, published_by : Text) : async Bool {
     let eventId = await generateUUID();
     let event : Events = {
       uuid = eventId;
@@ -195,8 +204,7 @@ actor {
 
   public func updateEvent(eventId : Text, title : Text, poster : Text, category : Text, total_ticket : Nat32, 
     available_ticket : Nat32, price : Nat32, icp_price : Nat32, date : Text, time : Text, country : Text, city : Text, 
-    location : Text, description : Text, published_by : Text) : async Bool 
-  {
+    location : Text, description : Text, published_by : Text) : async Bool {
     let event = events.get(eventId);
     switch (event) {
         case (?event) {
@@ -227,12 +235,13 @@ actor {
     };
   };
 
-  public func buyTicket(userId : Principal, eventId : Text, eventTitle : Text, ticketCategory : Text, totalTicket : Nat32, price : Nat32, icpPrice : Nat32, discount : Text) : async Bool 
-  {
+  public func buyTicket(userId : Principal, username : Text, eventId : Text, eventTitle : Text, ticketCategory : Text, 
+  totalTicket : Nat32, price : Nat32, icpPrice : Nat32, discount : Text) : async Bool {
     let ticketId = await generateUUID();
     let ticket : Tickets = {
       uuid = ticketId;
       user_id = userId;
+      username = username;
       event_id = eventId;
       event_title = eventTitle;
       category = ticketCategory;
@@ -272,14 +281,15 @@ actor {
     return #ok(Vector.toArray(allTicket));
   };
 
-  public func transferTicket(receiverId : Principal, eventId : Text, eventTitle : Text, ticketCategory : Text, totalTicket : Nat32, price : Nat32, icpPrice : Nat32, discount : Text, ticketId : Text) : async Bool 
-  {
+  public func transferTicket(receiverId : Principal, username : Text, eventId : Text, eventTitle : Text, ticketCategory : Text, 
+  totalTicket : Nat32, price : Nat32, icpPrice : Nat32, discount : Text, ticketId : Text) : async Bool {
     let ticket = tickets.get(ticketId);
     switch (ticket) {
         case (?ticket) {
           let ticket : Tickets = {
             uuid = ticketId;
             user_id = receiverId;
+            username = username;
             event_id = eventId;
             event_title = eventTitle;
             category = ticketCategory;
@@ -324,7 +334,9 @@ actor {
     var hEvent = Vector.Vector<Events>();
     
     for (event in events.vals()) {
-      if (event.price <= 10) {
+      if (event.price <= 10 and event.timestamp > Time.now()) {
+        hEvent.add(event);
+      } else if (event.price > 10 and event.price <= 100  and event.timestamp > Time.now()) {
         hEvent.add(event);
       }
     };
@@ -357,6 +369,18 @@ actor {
   public shared func generateUUID() : async Text {
       let g = Source.Source();
       return UUID.toText(await g.new());
+  };
+
+  public query func getTicketsByEventId(eventId : Text) : async Result.Result<[Tickets], Text> {
+    var allTicket = Vector.Vector<Tickets>();
+
+    for (ticket in tickets.vals()) {
+      if (ticket.event_id == eventId) {
+        allTicket.add(ticket);
+      }
+    };
+
+    return #ok(Vector.toArray(allTicket));
   };
 
 };

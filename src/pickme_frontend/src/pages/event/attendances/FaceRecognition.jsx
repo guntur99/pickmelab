@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import Nav from 'react-bootstrap/Nav';
-import Tab from 'react-bootstrap/Tab';
+import { useParams } from "react-router-dom";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -9,64 +8,18 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { pickme_backend } from '../../../../../declarations/pickme_backend';
-import Spinner from 'react-bootstrap/Spinner';
-import Ticket from "../../profile/Ticket";
 import { useAuth } from '../../../AuthProvider';
 import { pickme_face_recognition } from '../../../../../declarations/pickme_face_recognition';
-
-let packageBasic = { id: 0, name: 'Basic', desc: '0 Events and max 0 tickets/event', price: '0' };
-let packageBronze = { id: 1, name: 'Bronze', desc: '3 Events and max 100 tickets/event', price: '20' };
-let packageSilver = { id: 2, name: 'Silver', desc: '5 Events and max 500 tickets/event', price: '50' };
-let packageGold = { id: 3, name: 'Gold', desc: '7 Events and max 5000 tickets/event', price: '100' };
-let packageDiamond = { id: 4, name: 'Diamond', desc: '10 Events and max 10.000 tickets/event', price: '500' };
-let listPackage = [
-    { id: 0, name: 'Bronze', desc: '3 Events and max 100 tickets/event', price: '20' },
-    { id: 1, name: 'Silver', desc: '5 Events and max 500 tickets/event', price: '50' },
-    { id: 2, name: 'Gold', desc: '7 Events and max 5000 tickets/event', price: '100' },
-    { id: 3, name: 'Diamond', desc: '10 Events and max 10.000 tickets/event', price: '500' },
-];
-
-let resellerBasic = { id: 0, name: 'Basic', desc: '0 Events and max 0 tickets/event', price: '0' };
-let resellerBronze = { id: 1, name: 'Bronze', desc: '3 Events and max 30 tickets/event', price: '20' };
-let resellerSilver = { id: 2, name: 'Silver', desc: '5 Events and max 75 tickets/event', price: '50' };
-let resellerGold = { id: 3, name: 'Gold', desc: '7 Events and max 200 tickets/event', price: '100' };
-let resellerDiamond = { id: 4, name: 'Diamond', desc: '10 Events and max 1.000 tickets/event', price: '500' };
-let listResellerPackage = [
-    { id: 0, name: 'Bronze', desc: '3 Events and max 30 tickets/event', price: '20' },
-    { id: 1, name: 'Silver', desc: '5 Events and max 75 tickets/event', price: '50' },
-    { id: 2, name: 'Gold', desc: '7 Events and max 200 tickets/event', price: '100' },
-    { id: 3, name: 'Diamond', desc: '10 Events and max 1.000 tickets/event', price: '500' },
-];
 
 export default function FaceRecognition() {
 
     const { principal } = useAuth();
-    const [progress, setProgress] = useState(0);
+    const [progress, setProgress] = useState(10);
     const [fullname, setFullname] = useState('');
     const [username, setUsername] = useState('');
-    const [avatar, setAvatar] = useState('');
-    const [dob, setDob] = useState('');
-    const [domicile, setDomicile] = useState('');
-    const [address, setAddress] = useState('');
-    const [userType, setUserType] = useState('');
-    const [resellerType, setResellerType] = useState('');
     const [profile, setProfile] = useState('');
-    const [tickets, setTickets] = useState([]);
-    const [itemPackage, setItemPackage] = useState({});
-    const [resellerPackage, setResellerPackage] = useState({});
-    const [showPackage, setShowPackage] = useState(false);
-    const [showResellerPackage, setShowResellerPackage] = useState(false);
-    const [showTicket, setShowTicket] = useState(false);
-    const [modalTicket, setModalTicket] = useState({});
-    const [modalTicketEvent, setModalTicketEvent] = useState({});
-    const [packages] = useState(listPackage);
-    const [item, setItem] = useState({ selectedPackage: "Bronze" });
-    const { selectedPackage } = item;
-    const [itemReseller, setItemReseller] = useState({ selectedReseller: "Bronze" });
-    const { selectedReseller } = itemReseller;
-    const videoRef = useRef(null);
-    const [isCameraActive, setIsCameraActive] = useState(false);
-    const [error, setError] = useState('');
+    const {eventId} = useParams();
+    const [usernameTickets, setUsernameTickets] = useState([]);
 
     useEffect(() => {
         pickme_backend.checkUserById(principal).then((res) => {
@@ -75,152 +28,25 @@ export default function FaceRecognition() {
                 setProfile(profile);
                 setFullname(profile.fullname);
                 setUsername(profile.username);
-                setAvatar(profile.avatar);
-                setDob(profile.dob);
-                setDomicile(profile.domicile);
-                setAddress(profile.address);
-                setProgress(profile.progress);
-                setUserType(profile.user_type);
-                setResellerType(profile.reseller_type);
-                getMemberPackage();
-                getResellerPackage();
             }
         });
+        console.log('eventId:',eventId);
+        // const eventIdText = document.createElement('p');
+        // eventIdText.innerText = `Event ID: ${eventId}`;
+        // document.querySelector('.card-body').appendChild(eventIdText);
 
-        pickme_backend.getAllTicketsByUId(principal).then((res) => {
+        pickme_backend.getTicketsByEventId(eventId).then((res) => {
             if (res.ok) {
-                const tickets = res.ok;
-                setTickets(tickets);
+                const allTicket = res.ok;
+                const usernames = allTicket.map(ticket => ticket.username);
+                setUsernameTickets(usernames);
+                console.log('usernames:',usernames);
+                
             }
         });
         
         document.querySelector('header').classList.add('d-none');
     },[]);
-
-    const updateSetting = () => {
-        getMemberPackage();
-        getResellerPackage();
-    }
-
-    const getMemberPackage = () => {
-        switch (profile.user_type) {
-            case "Bronze":
-                setItemPackage(packageBronze);
-                break;
-            case "Silver":
-                setItemPackage(packageSilver);
-                break;
-            case "Gold":
-                setItemPackage(packageGold);
-                break;
-            case "Diamond":
-                setItemPackage(packageDiamond);
-                break;
-            default:
-                setItemPackage(packageBasic);
-                break;
-        }
-    }
-
-    const getResellerPackage = () => {
-        switch (profile.reseller_type) {
-            case "Bronze":
-                setResellerPackage(resellerBronze);
-                break;
-            case "Silver":
-                setResellerPackage(resellerSilver);
-                break;
-            case "Gold":
-                setResellerPackage(resellerGold);
-                break;
-            case "Diamond":
-                setResellerPackage(resellerDiamond);
-                break;
-            default:
-                setResellerPackage(resellerBasic);
-                break;
-        }
-    }
-
-    const handleUpdate = (e) => {
-        e.preventDefault();
-        var count = 0;
-        count += principal ? 1 : 0;
-        count += fullname ? 1 : 0;
-        count += username ? 1 : 0;
-        count += avatar ? 1 : 0;
-        count += dob ? 1 : 0;
-        count += domicile ? 1 : 0;
-        count += address ? 1 : 0;
-        
-        var lastProgress = (count+2)*10;
-        setProgress((count+2)*10);
-        pickme_backend.updateProfile(principal, username, fullname, dob, domicile, address, "Basic", "Basic", avatar, parseInt(lastProgress)).then((res) => {
-            if (res) {
-                window.location.reload();
-            }
-        });
-    };
-    
-    const handleAvatar = (e) => {
-        const data = new FileReader();
-        data.addEventListener('load', () => {
-            setAvatar(data.result);
-        })
-        data.readAsDataURL(e.target.files[0]);
-    };
-
-    const handleChange = e => {
-        e.persist();
-
-        setItem(prevState => ({
-        ...prevState,
-        selectedPackage: e.target.value
-        }));
-    };
-
-    const handlePackageClose = () => setShowPackage(false);
-    const handlePackageShow = () => setShowPackage(true);
-    const handleUpgradePackage = (e) => {
-        pickme_backend.updateProfile(principal, profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, selectedReseller, profile.avatar, profile.progress).then((res) => {
-            if (res) {
-                setShowPackage(false);
-                window.location.reload();;
-            }
-        });
-    };
-
-    const handleResellerChange = e => {
-        e.persist();
-
-        setItemReseller(prevState => ({
-        ...prevState,
-        selectedReseller: e.target.value
-        }));
-    };
-
-    const handleResellerPackageClose = () => setShowResellerPackage(false);
-    const handleResellerPackageShow = () => setShowResellerPackage(true);
-    const handleResellerPackage = (e) => {
-        pickme_backend.updateProfile(principal, profile.username, profile.fullname, profile.dob, profile.domicile, profile.address, selectedPackage, selectedReseller, profile.avatar, profile.progress).then((res) => {
-            if (res) {
-                setShowPackage(false);
-                window.location.reload();;
-            }
-        });
-    };
-
-    const handleTicketClose = () => setShowTicket(false);
-    const handleTicketShow = (data) => {
-        const selectedTicket = tickets.filter((ticket) => ticket.uuid === data.uuid);
-        if (selectedTicket) {
-            pickme_backend.getEventById(selectedTicket[0].event_id).then((res) => {
-                setModalTicketEvent(res.ok);
-            });
-        }
-        setModalTicket(data)
-        setShowTicket(true)
-    };
 
     const startFaceRecognition = async () => {
         document.querySelector('#start-attendance').classList.add('d-none');
@@ -364,7 +190,11 @@ export default function FaceRecognition() {
             }
             let label = sanitize(result.Ok.label);
             let score = Math.round(result.Ok.score * 100) / 100;
-            message(`Selamat Datang ${label}, Enjoy the event!`);
+            if (usernameTickets.includes(label)) {
+                message(`Selamat Datang ${label}, Enjoy the event!`);
+            } else {
+                message(`Sorry ${label}, you do not have a ticket for this event.`);
+            }
             // message(`${label}, difference=${score}`);
         } catch (err) {
             console.error(`An error occurred: ${err}`);
@@ -477,11 +307,6 @@ export default function FaceRecognition() {
         elem(id).className = "";
     }
 
-    // Refresh page
-    const stopFaceRecognition = () => {
-        window.location.reload();
-    }
-
     // Makes the given DOM element d-none.
     const hide = (id) => {
         elem(id).className = "d-none";
@@ -520,27 +345,25 @@ export default function FaceRecognition() {
                     <div className="card rounded-6 card-bg-dark text-center my-3">
                         <div className="card-body p-5">
                             <Button id="start-attendance" variant='light' className='mx-2' onClick={startFaceRecognition} >Start Attendance</Button>
-                            {/* <Button variant='light' className='mx-2' onClick={stopFaceRecognition} >Stop</Button> */}
-
-                                <div>
-                                    <img id="loader" src="loader.svg" className="d-none text-white" />
+                            <div>
+                                <img id="loader" src="loader.svg" className="d-none text-white" />
+                            </div>
+                            <div id="toolbar">
+                                <div id="buttons" className="d-none">
+                                    <Button className='mx-2' variant='light' id="recognize">
+                                        Recognize
+                                    </Button>
+                                    <Button className='mx-2 d-none' id="store" variant='light'>
+                                        Add person
+                                    </Button>
                                 </div>
-                                <div id="toolbar">
-                                    <div id="buttons" className="d-none">
-                                        <Button className='mx-2' variant='light' id="recognize">
-                                            Recognize
-                                        </Button>
-                                        <Button className='mx-2 d-none' id="store" variant='light'>
-                                            Add person
-                                        </Button>
-                                    </div>
-                                    <div id="message" className="text-white" />
-                                    <div id="restart" className="d-none">
-                                        <Button className='mx-2' variant='light'>
-                                            Complete
-                                        </Button>
-                                    </div>
+                                <div id="message" className="text-white" />
+                                <div id="restart" className="d-none">
+                                    <Button className='mx-2' variant='light'>
+                                        Complete
+                                    </Button>
                                 </div>
+                            </div>
                             <div className="container text-center mt-4">
                                 <div>
                                     <label id="filelabel" htmlFor="file" className="clickable">
@@ -562,72 +385,6 @@ export default function FaceRecognition() {
                             </div>
                         </div>
                     </div>
-
-                    <Modal show={showPackage} onHide={handlePackageClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
-                        <Modal.Header closeButton>
-                            <div className="mx-2 text-light fs-5 fw-bold">Committee Package</div>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <Container className="my-1 text-light">
-                                <Row className="my-1">
-                                    <Col className="pl-5 pr-3 text-start">
-                                        <Form.Group controlId="selectedPackage">
-                                            {packages.map(item => (
-                                                <Form.Check
-                                                key={item.id}
-                                                value={item.name}
-                                                type="radio"
-                                                aria-label={`radio ${item.id}`}
-                                                label={`[`+item.name+`] $`+item.price+` for `+item.desc}
-                                                onChange={handleChange}
-                                                checked={selectedPackage === item.name}
-                                                style={{ fontSize: 16 }}
-                                                />
-                                            ))}
-                                        </Form.Group>
-                                    </Col>
-                                </Row>
-                            </Container>
-                        </Modal.Body>
-                        <Modal.Footer>
-                        <Button variant="light" onClick={handleUpgradePackage}>
-                            Upgrade Package
-                        </Button>
-                        </Modal.Footer>
-                    </Modal>
-
-                    <Modal show={showResellerPackage} onHide={handleResellerPackageClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
-                        <Modal.Header closeButton>
-                            <div className="mx-2 text-light fs-5 fw-bold">Reseller Package</div>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <Container className="my-1 text-light">
-                                <Row className="my-1">
-                                    <Col className="pl-5 pr-3 text-start">
-                                        <Form.Group controlId="selectedPackage">
-                                            {listResellerPackage.map(item => (
-                                                <Form.Check
-                                                key={item.id}
-                                                value={item.name}
-                                                type="radio"
-                                                aria-label={`radio ${item.id}`}
-                                                label={`[`+item.name+`] $`+item.price+` for `+item.desc}
-                                                onChange={handleResellerChange}
-                                                checked={selectedReseller === item.name}
-                                                style={{ fontSize: 16 }}
-                                                />
-                                            ))}
-                                        </Form.Group>
-                                    </Col>
-                                </Row>
-                            </Container>
-                        </Modal.Body>
-                        <Modal.Footer>
-                        <Button variant="light" onClick={handleResellerPackage}>
-                            Buy Package
-                        </Button>
-                        </Modal.Footer>
-                    </Modal>
                 </div>
             </div>
         </div>

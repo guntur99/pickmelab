@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useParams } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { pickme_backend } from '../../../../../declarations/pickme_backend';
@@ -11,7 +12,13 @@ import { Scanner } from '@yudiel/react-qr-scanner';
 export default function QRScanner() {
 
     const { principal } = useAuth();
-    const [progress, setProgress] = useState(0);
+    const [progress, setProgress] = useState(9);
+    const [fullname, setFullname] = useState('');
+    const [username, setUsername] = useState('');
+    const [profile, setProfile] = useState('');
+    const {eventId} = useParams();
+    const [tickets, setTickets] = useState([]);
+    const [qrData, setQrData] = useState('No result');
 
     useEffect(() => {
         pickme_backend.checkUserById(principal).then((res) => {
@@ -20,35 +27,32 @@ export default function QRScanner() {
                 setProfile(profile);
                 setFullname(profile.fullname);
                 setUsername(profile.username);
-                setAvatar(profile.avatar);
-                setDob(profile.dob);
-                setDomicile(profile.domicile);
-                setAddress(profile.address);
-                setProgress(profile.progress);
-                setUserType(profile.user_type);
-                setResellerType(profile.reseller_type);
-                getMemberPackage();
-                getResellerPackage();
             }
         });
 
-        pickme_backend.getAllTicketsByUId(principal).then((res) => {
+        pickme_backend.getTicketsByEventId(eventId).then((res) => {
             if (res.ok) {
-                const tickets = res.ok;
-                setTickets(tickets);
+                const allTicket = res.ok;
+                const ticketIds = allTicket.map(ticket => ticket.uuid);
+                setTickets(ticketIds);
+                console.log('ticketIds:',ticketIds);
+                
             }
         });
         
         document.querySelector('header').classList.add('d-none');
     },[]);
 
-    const [qrData, setQrData] = useState('No result');
-
     const handleScan = (result) => {
         if (result) {
-            setQrData(result[0].rawValue); // Extract scanned QR code data
-            console.log(result[0]);
-            
+            if (tickets.includes(result[0].rawValue)) {
+                setProgress(progress + 1);
+                document.getElementById('message').innerHTML = 'Ticket scanned successfully!';
+                setQrData('Ticket scanned successfully!'); // Extract scanned QR code data
+            } else {
+                document.getElementById('message').innerHTML = 'Ticket not found!';
+                setQrData('Ticket not found!');
+            }
         }
     };
 

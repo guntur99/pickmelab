@@ -56,7 +56,7 @@ export default function Event() {
         e.preventDefault();
         resellerBuyTicket(inputs);
         setIsLoading(true);
-        pickme_backend.buyTicket(principal, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-"
+        pickme_backend.buyTicket(principal, profile.username, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-"
         ).then((res) => {
             pickme_backend.updateEvent(eventId, event.title, event.poster, event.category, parseInt(event.total_ticket), 
                 parseInt(event.available_ticket-totalTicket), parseInt(event.price), parseInt(Math.ceil(event.price/5)), event.date, 
@@ -76,7 +76,7 @@ export default function Event() {
                 const user = res.ok;
                 if (user.length > 0) {
                     setExistUsername(true);
-                    pickme_backend.buyTicket(user[0].internet_identity, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-");
+                    pickme_backend.buyTicket(user[0].internet_identity, user.username, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-");
                 
                 }else{
                     setExistUsername(false);
