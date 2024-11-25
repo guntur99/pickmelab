@@ -20,28 +20,32 @@ export default function FaceRecognition() {
     const [profile, setProfile] = useState('');
     const {eventId} = useParams();
     const [usernameTickets, setUsernameTickets] = useState([]);
+    const [tickets, setTickets] = useState([]);
+    const [attendance, setAttendance] = useState([]);
+    const [event, setEvent] = useState('');
 
     useEffect(() => {
-        pickme_backend.checkUserById(principal).then((res) => {
-            if (res.ok) {
-                const profile = res.ok;
-                setProfile(profile);
-                setFullname(profile.fullname);
-                setUsername(profile.username);
-            }
-        });
-        console.log('eventId:',eventId);
-        // const eventIdText = document.createElement('p');
-        // eventIdText.innerText = `Event ID: ${eventId}`;
-        // document.querySelector('.card-body').appendChild(eventIdText);
-
         pickme_backend.getTicketsByEventId(eventId).then((res) => {
             if (res.ok) {
                 const allTicket = res.ok;
                 const usernames = allTicket.map(ticket => ticket.username);
+                setTickets(allTicket);
                 setUsernameTickets(usernames);
-                console.log('usernames:',usernames);
-                
+            }
+        });
+
+        pickme_backend.getAllAttendanceByEventId(eventId).then((res) => {
+            if (res.ok) {
+                const attendances = res.ok;
+                pickme_backend.getEventById(eventId).then((res) => {
+                    if (res.ok) {
+                        const eventDetail = res.ok;
+                        setEvent(eventDetail);
+                        const progress = attendances.length / eventDetail.total_ticket * 100;
+                        setAttendance(attendances);
+                        setProgress(progress);
+                    }
+                });
             }
         });
         
@@ -171,33 +175,47 @@ export default function FaceRecognition() {
         hide("buttons");
         show("loader");
         message("Detecting face..");
-            console.log('Detecting face..');
         try {
             
             const [blob, scaling] = await capture_image();
             let result;
             result = await pickme_face_recognition.detect(new Uint8Array(blob));
             if (!result.Ok) {
-            throw result.Err.message;
+                throw result.Err.message;
             }
-            console.log('result:',result);
-            
             let face = await render(scaling, result.Ok);
             message("Face detected. Recognizing..");
             result = await pickme_face_recognition.recognize(new Uint8Array(face));
             if (!result.Ok) {
-            throw result.Err.message;
+                throw result.Err.message;
             }
             let label = sanitize(result.Ok.label);
             let score = Math.round(result.Ok.score * 100) / 100;
+            setUsername(label);
+            const userTicket = tickets.find(ticket => ticket.username === label);
             if (usernameTickets.includes(label)) {
+                pickme_backend.getAttendancesByUIdAndEventId(userTicket.user_id, eventId).then((res) => {
+                    if (res.ok) {
+                        const attendances = res.ok;
+                        const attendance = attendances.find(attendance => attendance.username === label);
+                        if (attendance) {
+                            message(`Sorry ${label}, you have already attended this event.`);
+                        } else {
+                            pickme_backend.attendEvent(userTicket.user_id, label, eventId, userTicket.uuid, 'face').then((res) => {
+                                if (res.ok) {
+                                    setProgress(progress + 1);
+                                }
+                            });
+                            message(`Selamat Datang ${label}, Enjoy the event!`);
+                        }
+                    }
+                });
                 message(`Selamat Datang ${label}, Enjoy the event!`);
             } else {
                 message(`Sorry ${label}, you do not have a ticket for this event.`);
             }
             // message(`${label}, difference=${score}`);
         } catch (err) {
-            console.error(`An error occurred: ${err}`);
             message(err.toString());
         }
         hide("loader");
@@ -220,24 +238,22 @@ export default function FaceRecognition() {
             let result;
             result = await pickme_face_recognition.detect(new Uint8Array(blob));
             if (!result.Ok) {
-            throw result.Err.message;
+                throw result.Err.message;
             }
             let face = await render(scaling, result.Ok);
             message("Face detected. Adding..");
-            // let label = prompt("Enter name of the person");
             let label = username;
             if (!label) {
-            throw "cannot add without a name";
+                throw "cannot add without a name";
             }
             label = sanitize(label);
             message(`Face detected. Adding ${label}..`);
             result = await pickme_face_recognition.add(label, new Uint8Array(face));
             if (!result.Ok) {
-            throw result.Err.message;
+                throw result.Err.message;
             }
             message(`Successfully added ${label}.`);
         } catch (err) {
-            console.error(`An error occurred: ${err}`);
             message("Failed to add the face: " + err.toString());
         }
 
@@ -282,6 +298,7 @@ export default function FaceRecognition() {
 
     // Restarts the face recognition / addition user flow.
     const restart = (event) => {
+        
         hide("restart");
         message("");
         if (video.srcObject) {

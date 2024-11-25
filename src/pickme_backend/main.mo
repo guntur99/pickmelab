@@ -67,8 +67,10 @@ actor {
   public type Attendances = {
     uuid : Text;
     user_id : Principal;
+    username : Text;
     event_id : Text;
     ticket_id : Text;
+    category : Text;
     timestamp : Time.Time;
   };
 
@@ -381,6 +383,47 @@ actor {
     };
 
     return #ok(Vector.toArray(allTicket));
+  };
+
+  public func attendEvent(userId : Principal, username : Text, eventId : Text, ticketId : Text, ticketCategory : Text) : async Bool {
+    let attendanceId = await generateUUID();
+    let attendance : Attendances = {
+      uuid = attendanceId;
+      user_id = userId;
+      username = username;
+      event_id = eventId;
+      ticket_id = ticketId;
+      category = ticketCategory;
+      timestamp = Time.now();
+    };
+
+    attendances.put(attendance.uuid, attendance);
+
+    return true;
+  };
+
+  public query func getAttendancesByUIdAndEventId(userId : Principal, eventId : Text) : async Result.Result<[Attendances], Text> {
+    var allAttendance = Vector.Vector<Attendances>();
+
+    for (attendance in attendances.vals()) {
+      if(attendance.user_id == userId and attendance.event_id == eventId){
+        allAttendance.add(attendance);
+      }
+    };
+
+    return #ok(Vector.toArray(allAttendance));
+  };
+
+  public query func getAllAttendanceByEventId(eventId : Text) : async Result.Result<[Attendances], Text> {
+    var allAttendance = Vector.Vector<Attendances>();
+
+    for (attendance in attendances.vals()) {
+      if (attendance.event_id == eventId) {
+        allAttendance.add(attendance);
+      }
+    };
+
+    return #ok(Vector.toArray(allAttendance));
   };
 
 };
