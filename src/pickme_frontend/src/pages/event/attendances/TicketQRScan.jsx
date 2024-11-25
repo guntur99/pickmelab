@@ -5,8 +5,6 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import { pickme_backend } from '../../../../../declarations/pickme_backend';
 import Spinner from 'react-bootstrap/Spinner';
 import { useAuth } from '../../../AuthProvider';
-import { pickme_face_recognition } from '../../../../../declarations/pickme_face_recognition';
-// import { QrReader } from 'react-qr-reader';
 import { Scanner } from '@yudiel/react-qr-scanner';
 
 export default function QRScanner() {
@@ -17,8 +15,11 @@ export default function QRScanner() {
     const [username, setUsername] = useState('');
     const [profile, setProfile] = useState('');
     const {eventId} = useParams();
+    const [ticketIds, setTicketIds] = useState([]);
     const [tickets, setTickets] = useState([]);
     const [qrData, setQrData] = useState('No result');
+    const [attendance, setAttendance] = useState([]);
+    const [event, setEvent] = useState('');
 
     useEffect(() => {
         pickme_backend.checkUserById(principal).then((res) => {
@@ -34,9 +35,25 @@ export default function QRScanner() {
             if (res.ok) {
                 const allTicket = res.ok;
                 const ticketIds = allTicket.map(ticket => ticket.uuid);
-                setTickets(ticketIds);
-                console.log('ticketIds:',ticketIds);
-                
+                setTicketIds(ticketIds);
+                setTickets(allTicket);
+            }
+        });
+
+        pickme_backend.getAllAttendanceByEventId(eventId).then((res) => {
+            if (res.ok) {
+                if (res.ok) {
+                const attendances = res.ok;
+                pickme_backend.getEventById(eventId).then((res) => {
+                    if (res.ok) {
+                        const eventDetail = res.ok;
+                        setEvent(eventDetail);
+                        const progress = attendances.length / eventDetail.total_ticket * 100;
+                        setAttendance(attendances);
+                        setProgress(progress);
+                    }
+                });
+            }
             }
         });
         
@@ -45,7 +62,25 @@ export default function QRScanner() {
 
     const handleScan = (result) => {
         if (result) {
-            if (tickets.includes(result[0].rawValue)) {
+            const userTicket = tickets.find(ticket => ticket.uuid === result[0].rawValue);
+            if (userTicket) {
+                pickme_backend.getAttendancesByUIdAndEventId(userTicket.user_id, eventId).then((res) => {
+                    if (res.ok) {
+                        const attendances = res.ok;
+                        const attendance = attendances.find(attendance => attendance.ticket_id === userTicket.uuid);
+                        if (attendance) {
+                            document.getElementById('message').innerHTML = `Sorry ${attendance.username}, you have already attended this event.`;
+                        } else {
+                            pickme_backend.attendEvent(userTicket.user_id, userTicket.username, eventId, userTicket.uuid, 'qr').then((res) => {
+                                if (res.ok) {
+                                    setProgress(progress + 1);
+                                }
+                            });
+                            document.getElementById('message').innerHTML = `Welcome ${userTicket.username}, you have successfully attended this event.`;
+                        }
+                    }
+                }
+                );
                 setProgress(progress + 1);
                 document.getElementById('message').innerHTML = 'Ticket scanned successfully!';
                 setQrData('Ticket scanned successfully!'); // Extract scanned QR code data

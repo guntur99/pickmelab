@@ -564,6 +564,17 @@ export default function Profile() {
                                 <Tab.Content className="text-light mt-3 text-start">
                                     <Tab.Pane eventKey="personal"> 
                                         <Container className="my-1 text-light">
+                                            {/* <Row className="my-1">
+                                                <Col className="pl-5 pr-3 text-start">
+                                                    <Form.Label className="fs-6">Full Name</Form.Label>
+                                                    <Form.Control className="text-light border" type="text" value={fullname} placeholder="Fullname" 
+                                                    onChange={(e) => setFullname(e.target.value)}
+                                                    style={{ 
+                                                        maxWidth: "100%",
+                                                        padding: "0.5em 1em",
+                                                    }} />
+                                                </Col>
+                                            </Row> */}
                                             <Row className="my-1">
                                                 <Col className="pl-5 pr-3 text-start">
                                                     <Form.Label className="fs-6">Full Name</Form.Label>
@@ -574,8 +585,6 @@ export default function Profile() {
                                                         padding: "0.5em 1em",
                                                     }} />
                                                 </Col>
-                                            </Row>
-                                            <Row className="my-1">
                                                 <Col className="pl-5 pr-3 text-start">
                                                     <Form.Label className="fs-6">Photo</Form.Label>
                                                     <Form.Control className="text-light border" type="file"
@@ -585,7 +594,7 @@ export default function Profile() {
                                                         padding: "0.5em 1em",
                                                     }} />
                                                 </Col>
-                                                <Col className="pl-5 pr-3 text-start">
+                                                {/* <Col className="pl-5 pr-3 text-start">
                                                     <Form.Label className="fs-6">Username</Form.Label>
                                                     <Form.Control className="text-light border" type="text" value={username} placeholder="Username" 
                                                     onChange={(e) => setUsername(e.target.value)}
@@ -593,7 +602,7 @@ export default function Profile() {
                                                         maxWidth: "100%",
                                                         padding: "0.5em 1em",
                                                     }} />
-                                                </Col>
+                                                </Col> */}
                                             </Row>
                                             <Row className="my-1">
                                                 <Col className="pl-5 pr-3 text-start">
