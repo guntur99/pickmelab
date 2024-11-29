@@ -14,10 +14,10 @@ import { format } from 'date-fns';
 import { useAuth } from '../../AuthProvider';
 
 let listPackage = [
-    { id: 0, name: 'Bronze', desc: '3 Events and max 100 tickets/event', price: '20' },
-    { id: 1, name: 'Silver', desc: '5 Events and max 500 tickets/event', price: '50' },
-    { id: 2, name: 'Gold', desc: '7 Events and max 5000 tickets/event', price: '100' },
-    { id: 3, name: 'Diamond', desc: '10 Events and max 10.000 tickets/event', price: '500' },
+    { id: 0, name: 'Bronze', desc: '1 Events and max 100 tickets/event', price: '20' },
+    { id: 1, name: 'Silver', desc: '3 Events and max 500 tickets/event', price: '100' },
+    { id: 2, name: 'Gold', desc: '3 Events and max 5000 tickets/event', price: '1,000' },
+    { id: 3, name: 'Diamond', desc: '3 Events and max 50.000 tickets/event', price: '5,000' },
 ];
 
 export default function Create() {

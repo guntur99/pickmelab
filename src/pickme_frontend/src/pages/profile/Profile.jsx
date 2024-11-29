@@ -20,10 +20,10 @@ let packageSilver = { id: 2, name: 'Silver', desc: '5 Events and max 500 tickets
 let packageGold = { id: 3, name: 'Gold', desc: '7 Events and max 5000 tickets/event', price: '100' };
 let packageDiamond = { id: 4, name: 'Diamond', desc: '10 Events and max 10.000 tickets/event', price: '500' };
 let listPackage = [
-    { id: 0, name: 'Bronze', desc: '3 Events and max 100 tickets/event', price: '20' },
-    { id: 1, name: 'Silver', desc: '5 Events and max 500 tickets/event', price: '50' },
-    { id: 2, name: 'Gold', desc: '7 Events and max 5000 tickets/event', price: '100' },
-    { id: 3, name: 'Diamond', desc: '10 Events and max 10.000 tickets/event', price: '500' },
+    { id: 0, name: 'Bronze', desc: '1 Events and max 100 tickets/event', price: '20' },
+    { id: 1, name: 'Silver', desc: '3 Events and max 500 tickets/event', price: '100' },
+    { id: 2, name: 'Gold', desc: '3 Events and max 5.000 tickets/event', price: '1,000' },
+    { id: 3, name: 'Diamond', desc: '3 Events and max 50.000 tickets/event', price: '5,000' },
 ];
 
 let resellerBasic = { id: 0, name: 'Basic', desc: '0 Events and max 0 tickets/event', price: '0' };
@@ -32,10 +32,10 @@ let resellerSilver = { id: 2, name: 'Silver', desc: '5 Events and max 75 tickets
 let resellerGold = { id: 3, name: 'Gold', desc: '7 Events and max 200 tickets/event', price: '100' };
 let resellerDiamond = { id: 4, name: 'Diamond', desc: '10 Events and max 1.000 tickets/event', price: '500' };
 let listResellerPackage = [
-    { id: 0, name: 'Bronze', desc: '3 Events and max 30 tickets/event', price: '20' },
-    { id: 1, name: 'Silver', desc: '5 Events and max 75 tickets/event', price: '50' },
-    { id: 2, name: 'Gold', desc: '7 Events and max 200 tickets/event', price: '100' },
-    { id: 3, name: 'Diamond', desc: '10 Events and max 1.000 tickets/event', price: '500' },
+    { id: 0, name: 'Bronze', desc: '1 Events and max 50 tickets/event', price: '20' },
+    { id: 1, name: 'Silver', desc: '3 Events and max 200 tickets/event', price: '100' },
+    { id: 2, name: 'Gold', desc: '3 Events and max 1.000 tickets/event', price: '1,000' },
+    { id: 3, name: 'Diamond', desc: '3 Events and max 5.000 tickets/event', price: '3,000' },
 ];
 
 export default function Profile() {
