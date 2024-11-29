@@ -54,20 +54,23 @@ export default function Event() {
 
     const handlePayment = (e) => {
         e.preventDefault();
-        resellerBuyTicket(inputs);
         setIsLoading(true);
-        pickme_backend.buyTicket(principal, profile.username, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-"
-        ).then((res) => {
-            pickme_backend.updateEvent(eventId, event.title, event.poster, event.category, parseInt(event.total_ticket), 
-                parseInt(event.available_ticket-totalTicket), parseInt(event.price), parseInt(Math.ceil(event.price/5)), event.date, 
-                event.time, event.country, event.city, event.location, event.description, event.published_by
+        if (profile.reseller_type == "Basic") {
+            pickme_backend.buyTicket(principal, profile.username, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-"
             ).then((res) => {
-                setIsLoading(false);
-                setShow(false);
-                getEvent();
-                window.location.reload();
+                pickme_backend.updateEvent(eventId, event.title, event.poster, event.category, parseInt(event.total_ticket), 
+                    parseInt(event.available_ticket-totalTicket), parseInt(event.price), parseInt(Math.ceil(event.price/5)), event.date, 
+                    event.time, event.country, event.city, event.location, event.description, event.published_by
+                ).then((res) => {
+                    setIsLoading(false);
+                    setShow(false);
+                    getEvent();
+                    window.location.reload();
+                });
             });
-        });
+        } else {
+            resellerBuyTicket(inputs);
+        }
     };
 
     const resellerBuyTicket = (data) => {
@@ -76,10 +79,16 @@ export default function Event() {
                 const user = res.ok;
                 if (user.length > 0) {
                     setExistUsername(true);
-                    pickme_backend.buyTicket(user[0].internet_identity, user.username, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-");
-                
+                    pickme_backend.buyTicket(user[0].internet_identity, user[0].username, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-")
+                    .then((res) => {
+                        setIsLoading(false);
+                        setShow(false);
+                        getEvent();
+                        window.location.reload();
+                    });
                 }else{
                     setExistUsername(false);
+                    setIsLoading(false);
                 }
             });
         });
@@ -102,7 +111,7 @@ export default function Event() {
 
     const handleAddInput = () => {
         setInputs([...inputs, { username: "", ticket: 1 }]);
-        setOtherPrice(inputs.length*price);
+        setOtherPrice(inputs.length * (price - (price * 0.2)));
     };
 
     const handleChange = (event, index) => {
@@ -116,7 +125,7 @@ export default function Event() {
         const newArray = [...inputs];
         newArray.splice(index, 1);
         setInputs(newArray);
-        setOtherPrice(otherPrice-price);
+        setOtherPrice(otherPrice-(price - (price * 0.2)));
     };
 
     return (
@@ -258,11 +267,13 @@ export default function Event() {
                 </Modal.Header>
                 <Modal.Body>
                     <Container className="my-1 text-light">
+                        {profile.reseller_type == "Basic" ? 
                         <Row className="my-1">
                             <Col className="pl-5 pr-3 text-start">
                                 <Form.Label className="fs-6">Total Ticket</Form.Label>
                                 <InputGroup>
-                                    <Form.Control className="text-light border" type="number" required min={1} max={1} disabled={isLoading}
+                                    <Form.Control className="text-light border" type="number" required min={1} value={1} max={1} disabled={true}
+                                    // disabled={isLoading}
                                     onChange={(e) => { 
                                         setTotalTicket(e.target.value); 
                                         setTicketPrice(e.target.value*event.price); 
@@ -280,7 +291,7 @@ export default function Event() {
                                 <Form.Label className="fs-6">Price</Form.Label>
                                 <InputGroup>
                                     <InputGroup.Text>$</InputGroup.Text>
-                                    <Form.Control className="text-light border" type="number" value={price} disabled aria-label="Amount (to the nearest dollar)" style={{ 
+                                    <Form.Control className="text-light border" type="number" value={profile.reseller_type !== "Basic" ? (price - (price * 0.2)) : price} disabled aria-label="Amount (to the nearest dollar)" style={{ 
                                         maxWidth: "100%",
                                         padding: "0.5em 1em",
                                     }}/>
@@ -288,13 +299,15 @@ export default function Event() {
                                 </InputGroup>
                             </Col>
                         </Row>
+                        : <></>
+                        }
                         {profile.reseller_type !== "Basic" ? 
                         <>
                             <Row className="my-1">
                                 <Col className="pl-5 mt-4 pr-3 text-start">
                                     <Form.Label className="fs-6">
                                         <b>Buy for others</b>
-                                        <br/><b className=" text-primary-second">Total Price: ${otherPrice+price}</b>
+                                        <br/><b className=" text-primary-second">Total Price: ${otherPrice+(price - (price * 0.2))}</b>
                                     </Form.Label>
                                 </Col>
                             </Row>
