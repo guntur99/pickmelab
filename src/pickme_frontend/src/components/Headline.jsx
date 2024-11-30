@@ -21,7 +21,7 @@ export default function Headline() {
         <div className="container pb-lg-5">
             <div className="row align-items-center justify-content-between pt-6 col-mb-30">
                 <div className="col-lg-7">
-                    <h2 className="display-3 fw-bold text-white">Buy &amp; Sell your Event Ticket in our <span className="gradient-text gradient-color">PICKME LAB</span>.</h2>
+                    <h2 className="display-3 fw-bold text-white">Buy &amp; Sell your Event Ticket in our <span className="gradient-text gradient-color">PICKME Platform</span>.</h2>
                     <p className="op-07 lead mb-5 text-white">Don't miss the various exciting events here! Let's go buy tickets to the extraordinary event that is right for you.</p>
                     <div className="clear"></div>
                     <a className="button button-large gradient-color rounded-5 border-0">Explore Now</a>

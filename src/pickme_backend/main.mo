@@ -336,9 +336,9 @@ actor {
     var hEvent = Vector.Vector<Events>();
     
     for (event in events.vals()) {
-      if (event.price <= 10 and event.timestamp > Time.now()) {
+      if (event.price <= 10) {
         hEvent.add(event);
-      } else if (event.price > 10 and event.price <= 100  and event.timestamp > Time.now()) {
+      } else if (event.price > 10 and event.price <= 100) {
         hEvent.add(event);
       }
     };

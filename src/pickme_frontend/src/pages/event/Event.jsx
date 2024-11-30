@@ -56,10 +56,10 @@ export default function Event() {
         e.preventDefault();
         setIsLoading(true);
         if (profile.reseller_type == "Basic") {
-            pickme_backend.buyTicket(principal, profile.username, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-"
+            pickme_backend.buyTicket(principal, profile.username, eventId, event.title, "Reguler", 1, parseInt(ticketPrice), parseInt(ticketIcpPrice), "-"
             ).then((res) => {
                 pickme_backend.updateEvent(eventId, event.title, event.poster, event.category, parseInt(event.total_ticket), 
-                    parseInt(event.available_ticket-totalTicket), parseInt(event.price), parseInt(Math.ceil(event.price/5)), event.date, 
+                    parseInt(event.available_ticket-1), parseInt(event.price), parseInt(Math.ceil(event.price/5)), event.date, 
                     event.time, event.country, event.city, event.location, event.description, event.published_by
                 ).then((res) => {
                     setIsLoading(false);
@@ -74,24 +74,35 @@ export default function Event() {
     };
 
     const resellerBuyTicket = (data) => {
+        let counter = 0;
+        let ticketCounter = 0;
         data.forEach(user => {
             pickme_backend.checkUsername(user.username).then((res) => {
                 const user = res.ok;
+                counter++;
+                
                 if (user.length > 0) {
+                    ticketCounter++;
                     setExistUsername(true);
-                    pickme_backend.buyTicket(user[0].internet_identity, user[0].username, eventId, event.title, "Reguler", parseInt(totalTicket), parseInt(ticketPrice), parseInt(ticketIcpPrice), "-")
-                    .then((res) => {
+                    pickme_backend.buyTicket(user[0].internet_identity, user[0].username, eventId, event.title, "Reguler", 1, parseInt(ticketPrice), parseInt(ticketIcpPrice), "-");
+                }else{
+                    setExistUsername(false);
+                    setIsLoading(false);
+                }
+                if (counter === data.length) {
+                    pickme_backend.updateEvent(eventId, event.title, event.poster, event.category, parseInt(event.total_ticket), 
+                        parseInt(event.available_ticket-ticketCounter), parseInt(event.price), parseInt(Math.ceil(event.price/5)), event.date, 
+                        event.time, event.country, event.city, event.location, event.description, event.published_by
+                    ).then((res) => {
                         setIsLoading(false);
                         setShow(false);
                         getEvent();
                         window.location.reload();
                     });
-                }else{
-                    setExistUsername(false);
-                    setIsLoading(false);
                 }
             });
         });
+        
     }
 
     const getTicket = () =>  {
@@ -228,20 +239,21 @@ export default function Event() {
                 </div>
             </div>
 
+            {event.published_by == profile.username ?
             <div className="card rounded-6 card-bg-dark text-center my-4">
                 <div className="card-body p-5">
-                    <Tab.Container id="left-tabs" defaultActiveKey="activity">
-                        <Nav variant="underline" defaultActiveKey="activity" className='fs-6'>
-                            <Nav.Item>
+                    <Tab.Container id="left-tabs" defaultActiveKey="attendance">
+                        <Nav variant="underline" defaultActiveKey="attendance" className='fs-6'>
+                            {/* <Nav.Item>
                                 <Nav.Link className="text-light px-2" eventKey="activity">Activity</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
                                 <Nav.Link className="text-light px-2" eventKey="detail">Detail</Nav.Link>
-                            </Nav.Item>
+                            </Nav.Item> */}
                             {event.published_by == profile.username ?
                             <>
                                 <Nav.Item>
-                                    <Nav.Link className="text-light px-2" eventKey="scanner">Attendance</Nav.Link>
+                                    <Nav.Link className="text-light px-2" eventKey="attendance">Attendance</Nav.Link>
                                 </Nav.Item>
                             </>: <></>
                             }
@@ -251,7 +263,7 @@ export default function Event() {
                                 <h5 className='text-light'>Activity not found</h5>
                             </Tab.Pane>
                             <Tab.Pane eventKey="detail"><h5 className='text-light'>Detail not found</h5></Tab.Pane>
-                            <Tab.Pane eventKey="scanner">
+                            <Tab.Pane eventKey="attendance">
                                 <h5 className='text-light'>Click button bellow for scanning Face AI or Ticket QR Code for attendance!</h5>
                                 <Button id='scan' className="mx-2" variant="light" href={`/event/attendance/face-ai/${event.uuid}`} target="__blank" >Face AI Attendance</Button>
                                 <Button id='scan' className="mx-2" variant="light" href={`/event/attendance/scan-qr/${event.uuid}`} target="__blank" >QR Code Attendance</Button>
@@ -260,6 +272,8 @@ export default function Event() {
                     </Tab.Container>
                 </div>
             </div>
+            : <></>
+            }
 
             <Modal show={show} onHide={handleClose} size="lg" backdrop="static" keyboard={false} data-bs-theme="dark">
                 <Modal.Header closeButton>
@@ -275,7 +289,6 @@ export default function Event() {
                                     <Form.Control className="text-light border" type="number" required min={1} value={1} max={1} disabled={true}
                                     // disabled={isLoading}
                                     onChange={(e) => { 
-                                        setTotalTicket(e.target.value); 
                                         setTicketPrice(e.target.value*event.price); 
                                         setPrice(e.target.value*event.price); 
                                         setTicketIcpPrice(e.target.value*event.icp_price); 

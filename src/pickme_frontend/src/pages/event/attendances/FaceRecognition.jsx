@@ -206,11 +206,11 @@ export default function FaceRecognition() {
                                     setProgress(progress + 1);
                                 }
                             });
-                            message(`Selamat Datang ${label}, Enjoy the event!`);
+                            message(`Welcome ${label}, Enjoy the event!`);
                         }
                     }
                 });
-                message(`Selamat Datang ${label}, Enjoy the event!`);
+                message(`Welcome ${label}, Enjoy the event!`);
             } else {
                 message(`Sorry ${label}, you do not have a ticket for this event.`);
             }
