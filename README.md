@@ -119,21 +119,21 @@ Foster a vibrant ecosystem of creators, attendees, and communities through block
 - [Video Demo](https://youtu.be/8KNDj6gYdo0)
 
 # Setup Environment
-git clone
-run ./download-face-detection-model.sh
-run (install python & pip first)
-pip3 install facenet-pytorch
-pip3 install torch
-pip3 install onnx
-run python3 and enter
-import torch
-import facenet_pytorch
-resnet = facenet_pytorch.InceptionResnetV1(pretrained='vggface2').eval()
-input = torch.randn(1, 3, 160, 160)
-torch.onnx.export(resnet, input, "face-recognition.onnx", verbose=False, opset_version=11)
-run cargo install wasm-opt (npm install first if nodejs not installed)
-run
-dfx start --background
-dfx deploy
-run cargo install ic-file-uploader
-run ./upload-models-to-canister.sh
+1. git clone
+2. run ./download-face-detection-model.sh
+3. run (install python & pip first) 
+    1. pip3 install facenet-pytorch 
+    2. pip3 install torch 
+    3. pip3 install onnx
+4. run python3 and enter
+    1. import torch
+    2. import facenet_pytorch
+    3. resnet = facenet_pytorch.InceptionResnetV1(pretrained='vggface2').eval()
+    4. input = torch.randn(1, 3, 160, 160)
+    5. torch.onnx.export(resnet, input, "face-recognition.onnx", verbose=False, opset_version=11)
+5. run cargo install wasm-opt (npm install first if nodejs not installed)
+6. run
+    1. dfx start --background
+    2. dfx deploy
+7. run cargo install ic-file-uploader
+8. run ./upload-models-to-canister.sh
