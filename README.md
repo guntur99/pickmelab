@@ -57,56 +57,6 @@ Scalability: Enable events of any size, from small private gatherings to large-s
 
 Raemi, a high school student and aspiring musician, uses PICKME to organize a small event for 10 friends. By selling tickets, she gains experience, fans, and revenue while rewarding attendees with exclusive NFTs. This fosters a community and offers long-term investment opportunities for her supporters.
 
-# Revenue Model
-
-Organizer Packages (Committee):
-
-Bronze: $20 (1 event, max 100 tickets)
-
-Silver: $100 (3 events, max 500 tickets)
-
-Gold: $1,000 (3 events, max 5,000 tickets)
-
-Diamond: $3,000 (3 events, max 50,000 tickets)
-
-Reseller Packages:
-
-Bronze: $20 (1 event, max 50 tickets)
-
-Silver: $100 (3 events, max 200 tickets)
-
-Gold: $1,000 (3 events, max 1,000 tickets)
-
-Diamond: $3,000 (3 events, max 5,000 tickets)
-
-Transaction Fees:
-
-Ticket transactions: 1-3% per transaction.
-
-NFT transactions: 1-3% per transaction.
-
-Partnerships and Collaborations:
-
-Strategic alliances to enhance offerings and expand reach.
-
-# Roadmap
-
-Ticket Categories: Introduce VIP, VVIP, and other categories.
-
-Multi-Day Events: Support events spanning multiple days.
-
-Wallet Integration: Simplify payment processes.
-
-Sell NFTs: Enable organizers to sell NFTs for exclusive rights (e.g., meet-and-greets, VVIP access).
-
-Buy NFTs: Allow attendees to purchase digital artworks and exclusive tickets.
-
-PICKME Token ($PICKME): Provide rewards, discounts, and additional benefits.
-
-Community Forum: Foster discussions and networking among users.
-
-Ticket Bidding/Auctioning: Enable competitive pricing for exclusive tickets.
-
 # Vision
 
 PICKME strives to:
