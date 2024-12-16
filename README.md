@@ -1,4 +1,5 @@
 # `PICKME - Event Ticket App`
+- [Video Demo](https://youtu.be/8KNDj6gYdo0)
 
 # Overview
 
@@ -115,8 +116,6 @@ Revolutionize the event ticketing landscape with cutting-edge technology.
 Empower individuals and organizations to host events with ease and transparency.
 
 Foster a vibrant ecosystem of creators, attendees, and communities through blockchain-powered rewards and secure ticketing solutions.
-
-- [Video Demo](https://youtu.be/8KNDj6gYdo0)
 
 # Setup Environment
 1. git clone
